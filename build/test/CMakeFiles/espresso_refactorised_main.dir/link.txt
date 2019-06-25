@@ -1,1 +1,0 @@
-/usr/bin/cc    CMakeFiles/espresso_refactorised_main.dir/main.c.o  -o espresso_refactorised_main ../source/libespresso_refactorised.a -lm /usr/lib/x86_64-linux-gnu/libopenblas.so -lcblas 

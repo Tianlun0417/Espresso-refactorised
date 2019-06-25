@@ -1,2 +1,0 @@
-/usr/bin/ar qc libespresso_refactorised.a  CMakeFiles/espresso_refactorised.dir/BatchNormLayer.c.o CMakeFiles/espresso_refactorised.dir/ConvolutionalLayer.c.o CMakeFiles/espresso_refactorised.dir/DataLoader.c.o CMakeFiles/espresso_refactorised.dir/DenseLayer.c.o CMakeFiles/espresso_refactorised.dir/InputLayer.c.o CMakeFiles/espresso_refactorised.dir/RandomInit.c.o CMakeFiles/espresso_refactorised.dir/Tensor.c.o CMakeFiles/espresso_refactorised.dir/Utilities.c.o
-/usr/bin/ranlib libespresso_refactorised.a

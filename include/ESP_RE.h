@@ -9,4 +9,6 @@
 #include "ActivationFunctions.h"
 #include "MnistLoader.h"
 
+#include "RandomInit.h"
+
 #endif //ESP_RE_H

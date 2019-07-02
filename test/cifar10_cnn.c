@@ -13,7 +13,19 @@ int main(){
     cifar10_load(image_path, 0, 1, &cifar_image, &cifar_label);
     //print_tensor(&cifar_image);
 
-
+    inputLayer input_layer;
+    denseLayer dense_layer_1 = denseLayer_init(1024, 8192);
+    denseLayer dense_layer_2 = denseLayer_init(1024, 1024);
+    denseLayer dense_layer_3 = denseLayer_init(1024, 10);
+    bnormLayer bnorm_layer_1 = bnormLayer_init(0);
+    bnormLayer bnorm_layer_2 = bnormLayer_init(0);
+    bnormLayer bnorm_layer_3 = bnormLayer_init(0);
+    bnormLayer bnorm_layer_4 = bnormLayer_init(0);
+    bnormLayer bnorm_layer_5 = bnormLayer_init(0);
+    bnormLayer bnorm_layer_6 = bnormLayer_init(0);
+    bnormLayer bnorm_layer_7 = bnormLayer_init(0);
+    bnormLayer bnorm_layer_8 = bnormLayer_init(0);
+    bnormLayer bnorm_layer_9 = bnormLayer_init(0);
 
     return 0;
 }

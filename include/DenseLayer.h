@@ -15,16 +15,16 @@ extern "C" {
 
 typedef struct {
     int M, N;
-    floatTensors W, b;
-    floatTensors in, out;
+    FloatTensor W, b;
+    FloatTensor in, out;
 } denseLayer;
 
 denseLayer denseLayer_init(int M, int N);
 void denseLayer_print_shape(denseLayer *dl);
 void denseLayer_free(denseLayer *dl);
-void denseLayer_set(floatTensors *W, denseLayer *dl);
-void denseLayer_forward(floatTensors *input_tensor, denseLayer *dense_layer, int cpy);
-void denseLayer_backward(floatTensors *dt, denseLayer *dl);
+void denseLayer_set(FloatTensor *W, denseLayer *dl);
+void denseLayer_forward(FloatTensor *input_tensor, denseLayer *dense_layer, int cpy);
+void denseLayer_backward(FloatTensor *dt, denseLayer *dl);
 
 
 #ifdef __cplusplus

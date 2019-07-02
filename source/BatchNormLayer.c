@@ -10,11 +10,16 @@ bnormLayer bnormLayer_init(int use_global)
 
 void bnormLayer_free(bnormLayer *bnl)
 {
-    ftens_free(&bnl->mean);  ftens_free(&bnl->istd);
-    ftens_free(&bnl->gmean); ftens_free(&bnl->gistd);
-    ftens_free(&bnl->beta);  ftens_free(&bnl->gamma);
-    ftens_free(&bnl->dbeta); ftens_free(&bnl->dgamma);
-    ftens_free(&bnl->tmp);   ftens_free(&bnl->in);
+    tensor_free(&bnl->mean);
+    tensor_free(&bnl->istd);
+    tensor_free(&bnl->gmean);
+    tensor_free(&bnl->gistd);
+    tensor_free(&bnl->beta);
+    tensor_free(&bnl->gamma);
+    tensor_free(&bnl->dbeta);
+    tensor_free(&bnl->dgamma);
+    tensor_free(&bnl->tmp);
+    tensor_free(&bnl->in);
 }
 
 void bnormLayer_print_shape(bnormLayer *bnl)
@@ -22,20 +27,20 @@ void bnormLayer_print_shape(bnormLayer *bnl)
     printf("bnorm: %d %d\n", bnl->N, bnl->ug);
 }
 
-void bnormLayer_set(floatTensors *mean,  floatTensors *istd,
-                    floatTensors *gamma, floatTensors *beta, bnormLayer *bnl)
+void bnormLayer_set(FloatTensor *mean,  FloatTensor *istd,
+                    FloatTensor *gamma, FloatTensor *beta, bnormLayer *bnl)
 {
-    const int N=ftens_len(mean);
-    ASSERT(N == ftens_len(istd) &&
-           N == ftens_len(beta) &&
-           N == ftens_len(gamma), "err: bnorm shape\n");
+    const int N= tensor_len(mean);
+    ASSERT(N == tensor_len(istd) &&
+           N == tensor_len(beta) &&
+           N == tensor_len(gamma), "err: bnorm shape\n");
 
     bnormLayer_free(bnl);
     bnl->N     = N;
-    bnl->mean  = ftens_copy(mean);
-    bnl->istd  = ftens_copy(istd);
-    bnl->beta  = ftens_copy(beta);
-    bnl->gamma = ftens_copy(gamma);
+    bnl->mean  = tensor_copy(mean);
+    bnl->istd  = tensor_copy(istd);
+    bnl->beta  = tensor_copy(beta);
+    bnl->gamma = tensor_copy(gamma);
 }
 
 
@@ -51,14 +56,14 @@ void bnorm(const float *mean, const float *istd,
                  (beta[i%N]));
 }
 
-void bnormLayer_forward(floatTensors *input_tensor, bnormLayer *batchnorm_layer, int save)
+void bnormLayer_forward(FloatTensor *input_tensor, bnormLayer *batchnorm_layer, int save)
 {
     const int D=input_tensor->D, M=input_tensor->M, N=input_tensor->N, L=input_tensor->L;
     const int asd = L>1 ? L : N*M;
     ASSERT(asd == batchnorm_layer->N, "err: bnorm shape\n")
 
     if (save) {
-        if (!batchnorm_layer->in.data) batchnorm_layer->in=ftens_init(D, M, N, L);
+        if (!batchnorm_layer->in.data) batchnorm_layer->in= tensor_init(D, M, N, L);
         memcpy(batchnorm_layer->in.data, input_tensor->data, input_tensor->bytes);
     }
 
@@ -79,7 +84,7 @@ void bnormLayer_forward(floatTensors *input_tensor, bnormLayer *batchnorm_layer,
 }
 
 
-void bnormLayer_backward(floatTensors *dt, bnormLayer *bnl)
+void bnormLayer_backward(FloatTensor *dt, bnormLayer *bnl)
 {
     fprintf(stderr, "not implemented\n");
     exit(-2);

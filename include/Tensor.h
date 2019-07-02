@@ -7,45 +7,51 @@
 extern "C" {
 #endif
 
-typedef struct {
+typedef struct floatTensor{
     int D, M, N, L, MNL;
     int bytes;
     float *data;
-} floatTensors;
+} FloatTensor;
+
+typedef struct{
+    int D, M, N, L, MNL;
+    int bytes;
+    int *data;
+} intTensor;
 
 
-floatTensors ftens_init(int D, int M, int N, int L);
-floatTensors ftens_zeros(int D, int M, int N, int L);
-floatTensors ftens_ones(int D, int M, int N, int L);
-floatTensors ftens_rand(int D, int M, int N, int L);
-floatTensors ftens_rand_range(int D, int M, int N, int L,
-                       float min, float max);
+FloatTensor tensor_init(int D, int M, int N, int L);
+FloatTensor tensor_zeros(int D, int M, int N, int L);
+FloatTensor tensor_ones(int D, int M, int N, int L);
+FloatTensor tensor_rand(int D, int M, int N, int L);
+FloatTensor tensor_rand_range(int D, int M, int N, int L,
+                          float min, float max);
 
-floatTensors ftens_copy(floatTensors *in);
-floatTensors ftens_copy_pad(floatTensors *t, int p);
+FloatTensor tensor_copy(FloatTensor *in);
+FloatTensor tensor_copy_pad(FloatTensor *t, int p);
 
-floatTensors ftens_from_ptr(int D, int M, int N, int L, float *ptr);
-floatTensors ftens_from_file(int D, int M, int N, int L, FILE *pf);
+FloatTensor tensor_from_ptr(int D, int M, int N, int L, float *ptr);
+FloatTensor tensor_from_file(int D, int M, int N, int L, FILE *pf);
 
-floatTensors ftens_copy_tch(floatTensors *a);
-void  ftens_tch(floatTensors *a, floatTensors *b);
-void  ftens_clear(floatTensors *t);
-void  ftens_reshape(floatTensors *t, int D, int M, int N, int L);
-void  ftens_pad(floatTensors *src, floatTensors *dst, int p);
-void  ftens_maxpool(floatTensors *src, floatTensors *dst, int W, int H,
-                    int Sx, int Sy);
+FloatTensor tensor_copy_tch(FloatTensor *a);
+void  tensor_tch(FloatTensor *a, FloatTensor *b);
+void  tensor_clear(FloatTensor *t);
+void  tensor_reshape(FloatTensor *t, int D, int M, int N, int L);
+void  tensor_pad(FloatTensor *src, FloatTensor *dst, int p);
+void  tensor_maxpool(FloatTensor *src, FloatTensor *dst, int W, int H,
+                     int Sx, int Sy);
 
-void ftens_lower(floatTensors *src, floatTensors *dst,
-                 int W, int H, int Sx, int Sy);
+void tensor_lower(FloatTensor *src, FloatTensor *dst,
+                  int W, int H, int Sx, int Sy);
 
-void ftens_sign(floatTensors *t);
-void ftens_free(floatTensors *t);
-void ftens_print_shape(floatTensors *t);
-void ftens_print(floatTensors *t, const char *fmt);
-void ftens_print_ch(floatTensors *t, int w, int k, int ii, int jj, const char *fmt);
+void tensor_sign(FloatTensor *t);
+void tensor_free(FloatTensor *t);
+void tensor_print_shape(FloatTensor *t);
+void tensor_print(FloatTensor *t, const char *fmt);
+void tensor_print_ch(FloatTensor *t, int w, int k, int ii, int jj, const char *fmt);
 
 static inline
-int ftens_len(floatTensors *t) {return t->bytes/sizeof(float);}
+int tensor_len(FloatTensor *t) {return t->bytes/sizeof(float);}
 
 
 #ifdef __cplusplus

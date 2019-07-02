@@ -18,19 +18,19 @@ extern "C" {
 
 typedef struct {
     int N, ug;
-    floatTensors mean,  istd, gmean,  gistd;
-    floatTensors gamma, beta, dgamma, dbeta;
-    floatTensors in, tmp;
+    FloatTensor mean,  istd, gmean,  gistd;
+    FloatTensor gamma, beta, dgamma, dbeta;
+    FloatTensor in, tmp;
 } bnormLayer;
 
 
 bnormLayer bnormLayer_init(int use_global);
 void bnormLayer_free(bnormLayer *bnl);
-void bnormLayer_forward(floatTensors *input_tensor, bnormLayer *batchnorm_layer, int save);
-void bnormLayer_backward(floatTensors *dt, bnormLayer *bnl);
+void bnormLayer_forward(FloatTensor *input_tensor, bnormLayer *batchnorm_layer, int save);
+void bnormLayer_backward(FloatTensor *dt, bnormLayer *bnl);
 void bnormLayer_update(bnormLayer *bnl);
-void bnormLayer_set(floatTensors *mean,  floatTensors *istd,
-                    floatTensors *gamma, floatTensors *beta, bnormLayer *bnl);
+void bnormLayer_set(FloatTensor *mean,  FloatTensor *istd,
+                    FloatTensor *gamma, FloatTensor *beta, bnormLayer *bnl);
 
 
 #ifdef __cplusplus

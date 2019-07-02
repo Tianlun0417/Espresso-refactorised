@@ -6,6 +6,7 @@
 #include "DenseLayer.h"
 #include "BatchNormLayer.h"
 #include "ConvolutionalLayer.h"
-#include "DataLoader.h"
+#include "ActivationFunctions.h"
+#include "MnistLoader.h"
 
 #endif //ESP_RE_H

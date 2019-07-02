@@ -7,52 +7,54 @@ extern float *scratch;
 convLayer convLayer_init(int Sm, int Sn, int do_padding)
 {
     convLayer cl; CONVL_INIT(cl);
-    cl.Sm=Sm; cl.Sn=Sn; cl.do_padding=do_padding;
+    cl.Stride_m=Sm; cl.Stride_n=Sn; cl.do_padding=do_padding;
     return cl;
 }
 
 
 void convLayer_free(convLayer *cl)
 {
-    ftens_free(&cl->W);   ftens_free(&cl->b);
-    //ftens_free(&cl->dW);  ftens_free(&cl->db);
-    ftens_free(&cl->out); ftens_free(&cl->in);
+    tensor_free(&cl->W);
+    tensor_free(&cl->b);
+    //ftens_free(&cl->dW);  tensor_free(&cl->db);
+    tensor_free(&cl->out);
+    tensor_free(&cl->in);
 }
 
 
 void convLayer_print_shape(convLayer *cl)
 {
-    printf("conv: D=%d M=%d N=%d L=%d Sm=%d Sn=%d do_padding=%d\n",
-           cl->D, cl->M, cl->N, cl->L, cl->Sm, cl->Sn, cl->do_padding);
+    printf("conv: D=%d M=%d N=%d L=%d Stride_m=%d Stride_n=%d do_padding=%d\n",
+           cl->D, cl->M, cl->N, cl->L, cl->Stride_m, cl->Stride_n, cl->do_padding);
 }
 
 
-void convLayer_set(floatTensors *W, convLayer *cl)
+void convLayer_set(FloatTensor *W, convLayer *cl)
 {
     int D=W->D, M=W->M, N=W->N, L=W->L;
-    ftens_free(&cl->W);
+    tensor_free(&cl->W);
     cl->D=D; cl->M=M; cl->N=N; cl->L=L;
-    cl->W = ftens_copy(W);
+    cl->W = tensor_copy(W);
 }
 
 
-void convLayer_copy_input(floatTensors *t, convLayer *cl)
+void convLayer_copy_input(FloatTensor *t, convLayer *cl)
 {
     if (!cl->in.data)
-        cl->in=ftens_init(t->D, t->M, t->N, t->L);
+        cl->in= tensor_init(t->D, t->M, t->N, t->L);
     memcpy(cl->in.data, t->data, t->bytes);
 }
 
 
-floatTensors convLayer_pad_input(floatTensors *t, float *scr,
+FloatTensor convLayer_pad_input(FloatTensor *t, float *scr,
                           int *M, int *N, int do_padding)
 {
-    floatTensors tp; const int D=t->D, L=t->L;
+    FloatTensor tp; const int D=t->D, L=t->L;
     *M=PAD(*M, do_padding); *N=PAD(*N, do_padding);
-    if (!scratch) tp=ftens_copy_pad(t, do_padding);
+    if (!scratch) tp= tensor_copy_pad(t, do_padding);
     else {
-        tp = ftens_from_ptr(D, *M, *N, L, scr);
-        ftens_pad(t, &tp, do_padding);
+        tp = tensor_from_ptr(D, *M, *N, L, scr);
+        tensor_pad(t, &tp, do_padding);
         scr += (*M)*(*N)*L*D;
     }
 
@@ -60,12 +62,12 @@ floatTensors convLayer_pad_input(floatTensors *t, float *scr,
 }
 
 
-void convLayer_forward(floatTensors *t, convLayer *cl, int save)
+void convLayer_forward(FloatTensor *t, convLayer *cl, int save)
 {
-    float *scr = scratch; floatTensors tp, tmp;
+    float *scr = scratch; FloatTensor tp, tmp;
     int D=t->D,  Ms=t->M, Ns=t->N, Ls=t->L;
     int F=cl->D, W=cl->M, H=cl->N, L=cl->L;
-    int p=cl->do_padding, Sy=cl->Sm, Sx=cl->Sn;
+    int p=cl->do_padding, Sy=cl->Stride_m, Sx=cl->Stride_n;
     ASSERT(t->L == cl->L, "err: conv shape\n");
 
     if (save)      convLayer_copy_input(t, cl);
@@ -75,25 +77,25 @@ void convLayer_forward(floatTensors *t, convLayer *cl, int save)
     const int Md = OUT_LEN(Ms, H, Sy);
     const int Nd = OUT_LEN(Ns, W, Sx);
     const int Ld =  W*H*L;
-    if (!scratch) tmp=ftens_init(D, Md, Nd, Ld);
-    else          tmp=ftens_from_ptr(D, Md, Nd, Ld, scr);
+    if (!scratch) tmp= tensor_init(D, Md, Nd, Ld);
+    else          tmp= tensor_from_ptr(D, Md, Nd, Ld, scr);
 
-    ftens_lower(p ? &tp : t, &tmp, W, H, Sx, Sy);
+    tensor_lower(p ? &tp : t, &tmp, W, H, Sx, Sy);
 
     // mat mul
-    if (!cl->out.data) cl->out=ftens_init(D, Md, Nd, F);
+    if (!cl->out.data) cl->out= tensor_init(D, Md, Nd, F);
     int M=Md*Nd, N=F, K=cl->W.MNL;
     cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasTrans,
                 M, N, K, 1, tmp.data, K, cl->W.data, K,
                 0, cl->out.data, N);
 
 
-    if (!scratch)      ftens_free(&tmp);
-    if (!scratch && p) ftens_free(&tp);
+    if (!scratch) tensor_free(&tmp);
+    if (!scratch && p) tensor_free(&tp);
 }
 
 
-void convLayer_backward(floatTensors *dout, convLayer *cl)
+void convLayer_backward(FloatTensor *dout, convLayer *cl)
 {
     exit(-2);
 }

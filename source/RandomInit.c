@@ -17,8 +17,8 @@ void init_conv_layer(convLayer *conv_layer){
     conv_layer->M = 128;
     conv_layer->N = 3;
     conv_layer->L = 3;
-    conv_layer->Sm = 3;
-    conv_layer->Sn = 1;
+    conv_layer->Stride_m = 3;
+    conv_layer->Stride_n = 1;
     conv_layer->do_padding = 1;
     float arr_W[128];
 

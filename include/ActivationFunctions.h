@@ -1,8 +1,23 @@
-//
-// Created by tianlun on 01/07/19.
-//
+#ifndef ACTIVATIONFUNCTIONS_H
+#define ACTIVATIONFUNCTIONS_H
 
-#ifndef ESPRESSO_REFACTORISED_ACTIVATIONFUNCTIONS_H
-#define ESPRESSO_REFACTORISED_ACTIVATIONFUNCTIONS_H
+#include "Tensor.h"
+#include "Utilities.h"
 
-#endif //ESPRESSO_REFACTORISED_ACTIVATIONFUNCTIONS_H
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+void signAct_forward(FloatTensor *t);
+void signAct_backward(FloatTensor *dout);
+void reluAct_forward(FloatTensor *t);
+void reluAct_backward(FloatTensor *dout);
+void softmaxAct_forward(FloatTensor *t);
+void softmaxAct_backward(FloatTensor *dout);
+
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif //ACTIVATIONFUNCTIONS_H

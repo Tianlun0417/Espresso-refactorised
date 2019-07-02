@@ -2,101 +2,101 @@
 #include "Utilities.h"
 
 
-floatTensors ftens_init(int D, int M, int N, int L)
+FloatTensor tensor_init(int D, int M, int N, int L)
 {
-    floatTensors t = {D, M, N, L, M*N*L, BYTES(float, D*M*N*L)};
+    FloatTensor t = {D, M, N, L, M*N*L, BYTES(float, D*M*N*L)};
     t.data = MALLOC(float, D*M*N*L);
-    ASSERT(t.data, "err: floatTensors malloc");
+    ASSERT(t.data, "err: FloatTensor malloc");
     return t;
 }
 
-floatTensors ftens_from_ptr(int D, int M, int N, int L, float *ptr)
+FloatTensor tensor_from_ptr(int D, int M, int N, int L, float *ptr)
 {
-    floatTensors t = {D, M, N, L, M*N*L, BYTES(float, D*M*N*L)};
+    FloatTensor t = {D, M, N, L, M*N*L, BYTES(float, D*M*N*L)};
     ASSERT(ptr, "err: NULL ptr\n");
     t.data = ptr;
     return t;
 }
 
-void ftens_print_shape(floatTensors *t)
+void tensor_print_shape(FloatTensor *t)
 {
-    printf("floatTensors: %d %d %d %d\n", t->D, t->M, t->N, t->L);
+    printf("FloatTensor: %d %d %d %d\n", t->D, t->M, t->N, t->L);
 }
 
-void ftens_free(floatTensors *t)
+void tensor_free(FloatTensor *t)
 {
     if (t->data) {free(t->data); t->data=NULL;}
 }
 
-floatTensors ftens_copy(floatTensors *t)
+FloatTensor tensor_copy(FloatTensor *in)
 {
-    const int D=t->D, M=t->M, N=t->N, L=t->L;
-    floatTensors out = ftens_init(D, M, N, L);
-    ASSERT(t->data, "err: null tens\n");
-    memcpy(out.data, t->data, t->bytes);
+    const int D=in->D, M=in->M, N=in->N, L=in->L;
+    FloatTensor out = tensor_init(D, M, N, L);
+    ASSERT(in->data, "err: null tens\n");
+    memcpy(out.data, in->data, in->bytes);
     return out;
 }
 
-floatTensors ftens_from_file(int D, int M, int N, int L, FILE *pf)
+FloatTensor tensor_from_file(int D, int M, int N, int L, FILE *pf)
 {
-    floatTensors out = ftens_init(D, M, N, L);
+    FloatTensor out = tensor_init(D, M, N, L);
     fread(out.data, sizeof(float), D*M*N*L, pf);
     return out;
 }
 
-void ftens_reshape(floatTensors *t, int D, int M, int N, int L)
+void tensor_reshape(FloatTensor *t, int D, int M, int N, int L)
 {
-    const int len = ftens_len(t);
-    ASSERT(len== D*M*N*L, "err: floatTensors reshape\n");
+    const int len = tensor_len(t);
+    ASSERT(len== D*M*N*L, "err: FloatTensor reshape\n");
     t->D=D; t->M=M; t->N=N; t->L=L;
 }
 
 
-void ftens_clear(floatTensors *t) {memset(t->data, 0, t->bytes);}
+void tensor_clear(FloatTensor *t) {memset(t->data, 0, t->bytes);}
 
-floatTensors ftens_zeros(int D, int M, int N, int L)
+FloatTensor tensor_zeros(int D, int M, int N, int L)
 {
-    floatTensors t = ftens_init(D, M, N, L);
+    FloatTensor t = tensor_init(D, M, N, L);
     memset(t.data, 0, t.bytes);
     return t;
 }
 
-floatTensors ftens_ones(int D, int M, int N, int L)
+FloatTensor tensor_ones(int D, int M, int N, int L)
 {
-    floatTensors t = ftens_init(D, M, N, L);
+    FloatTensor t = tensor_init(D, M, N, L);
     for (int i=0; i < LEN(t); i++)
         D(t)[i] = 1.0f;
     return t;
 }
 
-floatTensors ftens_rand(int D, int M, int N, int L)
+FloatTensor tensor_rand(int D, int M, int N, int L)
 {
-    floatTensors t = ftens_init(D, M, N, L);
+    FloatTensor t = tensor_init(D, M, N, L);
     for (int i=0; i < LEN(t); i++)
         D(t)[i] = (rand() % 255) - 128.0f;
     return t;
 }
 
 
-void ftens_sign(floatTensors *t)
+void tensor_sign(FloatTensor *t)
 {
     for (int i=0; i < t->bytes/sizeof(float); i++)
-        t->data[i] = 2.0f * (t->data[i] > 0.0f) - 1.0f;
+        t->data[i] = 2.0f * (t->data[i] > 0) - 1.0f;
 }
 
-floatTensors ftens_rand_range(int D, int M, int N, int L,
-                       float min, float max)
+FloatTensor tensor_rand_range(int D, int M, int N, int L,
+                          float min, float max)
 {
-    floatTensors t = ftens_init(D, M, N, L);
-    for (int i=0; i < ftens_len(&t); i++)
+    FloatTensor t = tensor_init(D, M, N, L);
+    for (int i=0; i < tensor_len(&t); i++)
         t.data[i] = ((max-min)*rand())/RAND_MAX + min;
     return t;
 }
 
-floatTensors ftens_copy_tch(floatTensors *a)
+FloatTensor tensor_copy_tch(FloatTensor *a)
 {
     const int M=a->M, N=a->N, L=a->L, D=a->D;
-    floatTensors b = ftens_init(D, N, L, M);
+    FloatTensor b = tensor_init(D, N, L, M);
     for (int w=0; w<D; w++) {
         float *src = a->data + w*a->MNL;
         float *dst = b. data + w*b. MNL;
@@ -109,7 +109,7 @@ floatTensors ftens_copy_tch(floatTensors *a)
     return b;
 }
 
-void ftens_tch(floatTensors *a, floatTensors *b)
+void tensor_tch(FloatTensor *a, FloatTensor *b)
 {
     const int M=a->M, N=a->N, L=a->L, D=a->D;
     for (int w=0; w<D; w++) {
@@ -123,8 +123,8 @@ void ftens_tch(floatTensors *a, floatTensors *b)
     }
 }
 
-void ftens_lower(floatTensors *src, floatTensors *dst,
-                 int W, int H, int Sx, int Sy)
+void tensor_lower(FloatTensor *src, FloatTensor *dst,
+                  int W, int H, int Sx, int Sy)
 {
     const int D=src->D;
     const int Ms=src->M, Ns=src->N, Ls=src->L;
@@ -144,8 +144,8 @@ void ftens_lower(floatTensors *src, floatTensors *dst,
 }
 
 
-void ftens_maxpool(floatTensors *src, floatTensors *dst, int W, int H,
-                   int Sx, int Sy)
+void tensor_maxpool(FloatTensor *src, FloatTensor *dst, int W, int H,
+                    int Sx, int Sy)
 {
     const int D =src->D, L =src->L;
     const int Ms=src->M, Ns=src->N;
@@ -169,11 +169,11 @@ void ftens_maxpool(floatTensors *src, floatTensors *dst, int W, int H,
 }
 
 
-floatTensors ftens_copy_pad(floatTensors *t, int p)
+FloatTensor tensor_copy_pad(FloatTensor *t, int p)
 {
     const int Ms=t->M, Ns=t->N, L=t->L, D=t->D;
     const int Md=PAD(Ms,p), Nd=PAD(Ns,p);
-    floatTensors out = ftens_zeros(D, Md, Nd, L);
+    FloatTensor out = tensor_zeros(D, Md, Nd, L);
     float *pin  = t->data;
     float *pout = out.data;
     for (int w=0; w < D; w++) {
@@ -188,7 +188,7 @@ floatTensors ftens_copy_pad(floatTensors *t, int p)
     return out;
 }
 
-void ftens_pad(floatTensors *src, floatTensors *dst, int p)
+void tensor_pad(FloatTensor *src, FloatTensor *dst, int p)
 {
     const int D=src->D, L=src->L;
     const int Ms=src->M, Ns=src->N;
@@ -208,9 +208,9 @@ void ftens_pad(floatTensors *src, floatTensors *dst, int p)
     }
 }
 
-void ftens_print(floatTensors *t, const char *fmt)
+void tensor_print(FloatTensor *t, const char *fmt)
 {
-    if (!t->data) {printf("floatTensors NULL\n"); return;}
+    if (!t->data) {printf("FloatTensor NULL\n"); return;}
     const int M=t->M, N=t->N, L=t->L, D=t->D;
     float *ptr = t->data;
     for (int w=0; w < D; w++) {
@@ -227,10 +227,10 @@ void ftens_print(floatTensors *t, const char *fmt)
     NL;
 }
 
-void ftens_print_ch(floatTensors *t, int w, int k, int ii, int jj,
-                    const char *fmt)
+void tensor_print_ch(FloatTensor *t, int w, int k, int ii, int jj,
+                     const char *fmt)
 {
-    if (!t->data) {printf("floatTensors NULL\n"); return;}
+    if (!t->data) {printf("FloatTensor NULL\n"); return;}
     const int D=t->D, M=t->M, N=t->N, L=t->L;
     ASSERT(w < D, "err: print\n");
     float *ptr = t->data + w * t->MNL;

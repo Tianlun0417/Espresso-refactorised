@@ -2,15 +2,15 @@
 #include "Utilities.h"
 
 
-void inputLayer_load(floatTensors *t, inputLayer *il)
+void inputLayer_load(FloatTensor *t, inputLayer *il)
 {
-    il->out = ftens_copy(t);
+    il->out = tensor_copy(t);
 }
 
 
 void inputLayer_free(inputLayer *il)
 {
-    ftens_free(&il->out);
+    tensor_free(&il->out);
 }
 
 /*
@@ -24,7 +24,7 @@ void inputLayer_forward(inputLayer *il)
     }
 
     float *ptr = il->out.data;
-    const int len = ftens_len(&il->out);
+    const int len = tensor_len(&il->out);
     for (int i=0; i < len; i++)
-        ptr[i] = 2.0f * ptr[i]/255.0f - 1.0f;
+        ptr[i] = 2.0f * ptr[i]/255 - 1.0f;
 }

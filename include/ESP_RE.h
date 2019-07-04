@@ -6,6 +6,7 @@
 #include "DenseLayer.h"
 #include "BatchNormLayer.h"
 #include "ConvolutionalLayer.h"
+#include "PoolingLayer.h"
 #include "ActivationFunctions.h"
 #include "MnistLoader.h"
 

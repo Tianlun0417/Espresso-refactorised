@@ -33,23 +33,11 @@ void init_batchnorm_layer(bnormLayer *bnorm_layer, size_t layer_size){
     free(arr_bnorm_beta);
 }
 
-void init_conv_layer(convLayer *conv_layer){
-    conv_layer->D = 1;
-    conv_layer->M = 128;
-    conv_layer->N = 3;
-    conv_layer->L = 3;
-    conv_layer->Stride_m = 3;
-    conv_layer->Stride_n = 1;
-    conv_layer->do_padding = 1;
-    float arr_W[128];
-
-    for (int i=0; i<128; i++){
-        int random_int = rand();
-        if (random_int>15000) arr_W[i] = 1;
-        else arr_W[i] = 0;
-    }
-
-    conv_layer->W.data = arr_W;
+void init_conv_layer(convLayer *conv_layer, int D, int M, int N, int L){
+    float* conv_w_arr  = (float*) calloc(D*M*N*L, sizeof(float));
+    FloatTensor conv_w = tensor_from_ptr(D, M, N, L, conv_w_arr);
+    convLayer_set(&conv_w, conv_layer);
+    free(conv_w_arr);
 }
 
 void random_init_arr(float* arr, size_t arr_length){

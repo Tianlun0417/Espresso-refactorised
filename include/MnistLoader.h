@@ -1,5 +1,5 @@
-#ifndef ESPRESSO_REFACTORISED_DATALOADER_H
-#define ESPRESSO_REFACTORISED_DATALOADER_H
+#ifndef DATALOADER_H
+#define DATALOADER_H
 #include <stdint.h>
 
 #define MNIST_LABEL_MAGIC 0x00000801
@@ -35,4 +35,4 @@ mnist_dataset_t * mnist_get_dataset(const char * image_path, const char * label_
 void mnist_free_dataset(mnist_dataset_t * dataset);
 int mnist_batch(mnist_dataset_t * dataset, mnist_dataset_t * batch, int batch_size, int batch_number);
 
-#endif //ESPRESSO_REFACTORISED_DATALOADER_H
+#endif //DATALOADER_H

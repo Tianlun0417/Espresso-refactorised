@@ -34,6 +34,12 @@ void init_batchnorm_layer(bnormLayer *bnorm_layer, size_t layer_size){
 }
 
 void init_conv_layer(convLayer *conv_layer, int D, int M, int N, int L){
+
+    // D - no input channels
+    // M - height
+    // N - width
+    // L - no channels
+
     float* conv_w_arr  = (float*) calloc(D*M*N*L, sizeof(float));
     FloatTensor conv_w = tensor_from_ptr(D, M, N, L, conv_w_arr);
     convLayer_set(&conv_w, conv_layer);

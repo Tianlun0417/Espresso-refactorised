@@ -41,8 +41,10 @@ void init_conv_layer(convLayer *conv_layer, int D, int M, int N, int L){
     // L - no channels
 
     float* conv_w_arr  = (float*) calloc(D*M*N*L, sizeof(float));
+    random_init_arr(conv_w_arr, D*M*N*L);
     FloatTensor conv_w = tensor_from_ptr(D, M, N, L, conv_w_arr);
     convLayer_set(&conv_w, conv_layer);
+//    print_tensor(&conv_w);
     free(conv_w_arr);
 }
 
@@ -52,4 +54,8 @@ void random_init_arr(float* arr, size_t arr_length){
         if((float) rand()/(float) (RAND_MAX)>THRESHOLD) arr[i] = 1.0f;
         else arr[i] = 0.0f;
     }
+}
+
+void random_init_tensor(int D, int M, int N, int L){
+
 }

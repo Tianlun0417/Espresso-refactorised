@@ -96,10 +96,15 @@ void convLayer_forward(FloatTensor *t, convLayer *cl, int save)
     // mat mul
     if (!cl->out.data) cl->out= tensor_init(D, Md, Nd, F);
     int M=Md*Nd, N=F, K=cl->W.MNL;
+
+//    print_tensor(&tmp);
+//    print_tensor(&cl->W);
+
     cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasTrans,
                 M, N, K, 1, tmp.data, K, cl->W.data, K,
                 0, cl->out.data, N);
-
+//    printf("\nafter bals\n");
+//    print_tensor(&cl->out);
 
     if (!scratch) tensor_free(&tmp);
     if (!scratch && p) tensor_free(&padded_input);
@@ -115,4 +120,17 @@ void convLayer_backward(FloatTensor *dout, convLayer *cl)
 void convLayer_update(convLayer *cl)
 {
     exit(-3);
+}
+
+
+void print_tensor(FloatTensor* tensor){
+    int count = 0;
+    printf("The shape of the tensor is: %d x %d\n", tensor->M, tensor->N);
+    for(int i=0; i<tensor->M; i++){
+        for(int j=0; j<tensor->N; j++){
+            printf("%.2f, ", tensor->data[i*tensor->M + j]);
+            if(tensor->data[i*tensor->M + j] == -1) count++;
+        }
+        puts("");
+    }
 }

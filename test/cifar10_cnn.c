@@ -2,7 +2,7 @@
 #include "Cifar10Loader.h"
 
 const char * image_path = "/home/tianlun/codes/espresso-refactorised/data/test_batch.bin";
-void print_tensor(FloatTensor* tensor);
+//void print_tensor(FloatTensor* tensor);
 float *scratch = NULL;
 
 
@@ -58,6 +58,7 @@ int main(){
     init_conv_layer(&conv_layer_4, 256, 3, 3, 256);
     init_conv_layer(&conv_layer_5, 512, 3, 3, 256);
     init_conv_layer(&conv_layer_6, 512, 3, 3, 512);
+
     /*------------------------Initialise each layer------------------------*/
 
     int save = 1;
@@ -67,6 +68,7 @@ int main(){
 
         inputLayer_load(&cifar_image, &input_layer);
         inputLayer_forward(&input_layer);
+//        print_tensor(&input_layer.out);
 
 //        puts("\nThe image after input layer forward is: \n");
 //        print_tensor(&input_layer.out);
@@ -124,14 +126,14 @@ int main(){
 
     return 0;
 }
-
-void print_tensor(FloatTensor* tensor){
-    int count = 0;
-    for(int i=0; i<tensor->M; i++){
-        for(int j=0; j<tensor->N; j++){
-            printf("%.2f, ", tensor->data[i*tensor->M + j]);
-            if(tensor->data[i*tensor->M + j] == -1) count++;
-        }
-        puts("");
-    }
-}
+//
+//void print_tensor(FloatTensor* tensor){
+//    int count = 0;
+//    for(int i=0; i<tensor->M; i++){
+//        for(int j=0; j<tensor->N; j++){
+//            printf("%.2f, ", tensor->data[i*tensor->M + j]);
+//            if(tensor->data[i*tensor->M + j] == -1) count++;
+//        }
+//        puts("");
+//    }
+//}

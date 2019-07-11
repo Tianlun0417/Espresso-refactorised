@@ -1,3 +1,3 @@
 # source files
 file(GLOB SRC *.c)
-add_library(espresso_refactorised ${SRC})
+add_library(espresso_refactorised ${SRC} ../test/cblas_test.c)

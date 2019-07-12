@@ -1,7 +1,7 @@
 #include <cblas.h>
 #include "ConvolutionalLayer.h"
 
-extern float *scratch;
+float *scratch = NULL;
 
 
 convLayer convLayer_init(int Sm, int Sn, int do_padding)

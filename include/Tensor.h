@@ -13,11 +13,11 @@ typedef struct floatTensor{
     float *data;
 } FloatTensor;
 
-typedef struct{
+typedef struct intTensor{
     int D, M, N, L, MNL;
     int bytes;
     int *data;
-} intTensor;
+} IntTensor;
 
 
 FloatTensor tensor_init(int D, int M, int N, int L);

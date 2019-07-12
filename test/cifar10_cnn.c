@@ -3,7 +3,6 @@
 
 const char * image_path = "/home/tianlun/codes/espresso-refactorised/data/test_batch.bin";
 //void print_tensor(FloatTensor* tensor);
-float *scratch = NULL;
 
 
 int main(){

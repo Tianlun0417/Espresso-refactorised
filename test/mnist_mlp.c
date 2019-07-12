@@ -2,22 +2,21 @@
 #include <stdlib.h>
 #include <time.h>
 #include "ESP_RE.h"
-#define TEST_SIZE 1000
+#define TEST_SIZE 5
 
 const char * image_path = "/home/tianlun/codes/espresso-refactorised/data/t10k-images-idx3-ubyte";
 const char * label_path = "/home/tianlun/codes/espresso-refactorised/data/t10k-labels-idx1-ubyte";
 
 void print_mnist_image(float* image_array);
-void print_tensor(FloatTensor* tensor);
 
 int main() {
-    //srand(time(NULL));
     /*---------------------Initialise the layers----------------------*/
     inputLayer input_layer;
     denseLayer dense_layer_1 = denseLayer_init(4096, 784);
     denseLayer dense_layer_2 = denseLayer_init(4096, 4096);
     denseLayer output_layer  = denseLayer_init(4096, 10);
-    bnormLayer batch_norm_layer = bnormLayer_init(0);
+    bnormLayer batch_norm_layer_1 = bnormLayer_init(0);
+    bnormLayer batch_norm_layer_2 = bnormLayer_init(0);
     bnormLayer output_batch_norm_layer = bnormLayer_init(0);
     /*---------------------Initialise the layers----------------------*/
 
@@ -31,7 +30,8 @@ int main() {
     init_dense_layer(&output_layer, 10, 4096);
 
     // The tensors for batch normalisation layer
-    init_batchnorm_layer(&batch_norm_layer, 4096);
+    init_batchnorm_layer(&batch_norm_layer_1, 4096);
+    init_batchnorm_layer(&batch_norm_layer_2, 4096);
     init_batchnorm_layer(&output_batch_norm_layer, 10);
     /*----------Random initialise the weights for the layers----------*/
 
@@ -56,14 +56,14 @@ int main() {
 
         denseLayer_forward(&input_layer.out, &dense_layer_1, save);
         //print_tensor(&dense_layer_1.out);
-        bnormLayer_forward(&dense_layer_1.out, &batch_norm_layer, save);
-        signAct_forward(&dense_layer_1.out);
+        bnormLayer_forward(&dense_layer_1.out, &batch_norm_layer_1, save);
+        //signAct_forward(&dense_layer_1.out);
         //print_tensor(&dense_layer_1.out);
 
         denseLayer_forward(&dense_layer_1.out, &dense_layer_2, save);
         //print_tensor(&dense_layer_2.out);
-        bnormLayer_forward(&dense_layer_2.out, &batch_norm_layer, save);
-        signAct_forward(&dense_layer_2.out);
+        bnormLayer_forward(&dense_layer_2.out, &batch_norm_layer_2, save);
+        //signAct_forward(&dense_layer_2.out);
         //print_tensor(&dense_layer_2.out);
 
         denseLayer_forward(&dense_layer_2.out, &output_layer, save);
@@ -74,19 +74,19 @@ int main() {
 
         float results[10];
         for(int i=0; i<10; i++){
-            //printf("%f\n", output_layer.out.data[i]);
+            printf("%f\n", output_layer.out.data[i]);
             results[i] = output_layer.out.data[i];
         }
 
         float temp = results[0];
         int predicted_num = 1;
         for(int i=0; i<10; i++){
-            if(results[i] > temp){
+            if(results[i] < temp){
                 temp = results[i];
                 predicted_num = i + 1;
             }
         }
-        printf("the predicted number is %d and the value is %f \n",
+        printf("\nThe predicted number is %d and the value is %f \n",
                predicted_num, results[predicted_num - 1]);
         if(label == predicted_num){
             correct_predict_count+=1;
@@ -117,17 +117,4 @@ void print_mnist_image(float* image_array){
         puts("");
     }
     puts("");
-}
-
-void print_tensor(FloatTensor* tensor){
-    int count = 0;
-    for(int i=0; i<tensor->M; i++){
-        for(int j=0; j<tensor->N; j++){
-            printf("%.2f, ", tensor->data[i*tensor->M + j]);
-            if(tensor->data[i*tensor->M + j] == -1) count++;
-        }
-        puts("");
-    }
-    printf("The length of tensor is %d. There are %d -1 in the tensor.\n\n",
-            tensor->MNL, count);
 }

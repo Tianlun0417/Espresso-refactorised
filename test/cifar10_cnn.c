@@ -67,11 +67,6 @@ int main(){
 
         inputLayer_load(&cifar_image, &input_layer);
         inputLayer_forward(&input_layer);
-//        print_tensor(&input_layer.out);
-
-//        puts("\nThe image after input layer forward is: \n");
-//        print_tensor(&input_layer.out);
-//        puts("");
 
         convLayer_forward(&input_layer.out, &conv_layer_1, save);
         bnormLayer_forward(&conv_layer_1.out, &bnorm_layer_1, save);
@@ -125,14 +120,3 @@ int main(){
 
     return 0;
 }
-//
-//void print_tensor(FloatTensor* tensor){
-//    int count = 0;
-//    for(int i=0; i<tensor->M; i++){
-//        for(int j=0; j<tensor->N; j++){
-//            printf("%.2f, ", tensor->data[i*tensor->M + j]);
-//            if(tensor->data[i*tensor->M + j] == -1) count++;
-//        }
-//        puts("");
-//    }
-//}

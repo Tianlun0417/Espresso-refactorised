@@ -1,5 +1,6 @@
 #include "Tensor.h"
 #include "Utilities.h"
+#include "stdio.h"
 
 
 FloatTensor tensor_init(int D, int M, int N, int L)

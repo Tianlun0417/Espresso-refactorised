@@ -8,6 +8,8 @@ void init_dense_layer(denseLayer *den_layer, int M, int N){
 
     FloatTensor dense_weight = tensor_from_ptr(1, M, N, 1, arr_weight);
     denseLayer_set(&dense_weight, den_layer);
+
+    free(arr_weight);
 }
 
 void init_batchnorm_layer(bnormLayer *bnorm_layer, size_t layer_size){
@@ -36,15 +38,15 @@ void init_batchnorm_layer(bnormLayer *bnorm_layer, size_t layer_size){
 void init_conv_layer(convLayer *conv_layer, int D, int M, int N, int L){
 
     // D - no input channels
-    // M - height
-    // N - width
-    // L - no channels
+    // M - kernel height
+    // N - kernel width
+    // L - no output channels
 
     float* conv_w_arr  = (float*) calloc(D*M*N*L, sizeof(float));
     random_init_arr(conv_w_arr, D*M*N*L);
     FloatTensor conv_w = tensor_from_ptr(D, M, N, L, conv_w_arr);
     convLayer_set(&conv_w, conv_layer);
-//    print_tensor(&conv_w);
+
     free(conv_w_arr);
 }
 

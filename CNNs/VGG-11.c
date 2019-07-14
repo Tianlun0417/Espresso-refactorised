@@ -1,7 +1,9 @@
 #include "ESP_RE.h"
 #include "Cifar10Loader.h"
+#include <stdbool.h>
 
 const char * image_path = "/home/tianlun/codes/espresso-refactorised/data/test_batch.bin";
+bool use_batch_norm = false;
 
 int main(){
     FloatTensor cifar_image = tensor_init(1, CIFAR_IMAGE_W, CIFAR_IMAGE_H, CIFAR_CHANNEL);
@@ -26,6 +28,15 @@ int main(){
     denseLayer dense_layer_2 = denseLayer_init(4096, 4096);
     denseLayer dense_layer_3 = denseLayer_init(10, 4096);
 
+    bnormLayer bnorm_layer_1 = bnormLayer_init(0);
+    bnormLayer bnorm_layer_2 = bnormLayer_init(0);
+    bnormLayer bnorm_layer_3 = bnormLayer_init(0);
+    bnormLayer bnorm_layer_4 = bnormLayer_init(0);
+    bnormLayer bnorm_layer_5 = bnormLayer_init(0);
+    bnormLayer bnorm_layer_6 = bnormLayer_init(0);
+    bnormLayer bnorm_layer_7 = bnormLayer_init(0);
+    bnormLayer bnorm_layer_8 = bnormLayer_init(0);
+
     /*------------------------Initialise each layer------------------------*/
     init_conv_layer(&conv_layer_1, 64,  3, 3, 3);
     init_conv_layer(&conv_layer_2, 128, 3, 3, 64);
@@ -39,6 +50,17 @@ int main(){
     init_dense_layer(&dense_layer_1, 4096, 512);
     init_dense_layer(&dense_layer_2, 4096, 4096);
     init_dense_layer(&dense_layer_3, 10, 4096);
+
+    if(use_batch_norm){
+        init_batchnorm_layer(&bnorm_layer_1, 64 );
+        init_batchnorm_layer(&bnorm_layer_2, 128);
+        init_batchnorm_layer(&bnorm_layer_3, 256);
+        init_batchnorm_layer(&bnorm_layer_4, 256);
+        init_batchnorm_layer(&bnorm_layer_5, 512);
+        init_batchnorm_layer(&bnorm_layer_6, 512);
+        init_batchnorm_layer(&bnorm_layer_7, 512);
+        init_batchnorm_layer(&bnorm_layer_8, 512);
+    }
     /*------------------------Initialise each layer------------------------*/
 
     int save = 0;
@@ -50,35 +72,59 @@ int main(){
         inputLayer_forward(&input_layer);
 
         convLayer_forward(&input_layer.out, &conv_layer_1, save);
+        if(use_batch_norm){
+            bnormLayer_forward(&conv_layer_1.out, &bnorm_layer_1, save);
+        }
         reluAct_forward(&conv_layer_1.out);
 
         poolLayer_forward(&conv_layer_1.out, &maxPool_layer);
         convLayer_forward(&maxPool_layer.out, &conv_layer_2, save);
         tensor_free(&maxPool_layer.out);
+        if(use_batch_norm){
+            bnormLayer_forward(&conv_layer_2.out, &bnorm_layer_2, save);
+        }
         reluAct_forward(&conv_layer_2.out);
 
         poolLayer_forward(&conv_layer_2.out, &maxPool_layer);
         convLayer_forward(&maxPool_layer.out, &conv_layer_3, save);
         tensor_free(&maxPool_layer.out);
+        if(use_batch_norm){
+            bnormLayer_forward(&conv_layer_3.out, &bnorm_layer_3, save);
+        }
         reluAct_forward(&conv_layer_3.out);
 
         convLayer_forward(&conv_layer_3.out, &conv_layer_4, save);
+        if(use_batch_norm){
+            bnormLayer_forward(&conv_layer_4.out, &bnorm_layer_4, save);
+        }
         reluAct_forward(&conv_layer_4.out);
 
         poolLayer_forward(&conv_layer_4.out, &maxPool_layer);
         convLayer_forward(&maxPool_layer.out, &conv_layer_5, save);
         tensor_free(&maxPool_layer.out);
+        if(use_batch_norm){
+            bnormLayer_forward(&conv_layer_5.out, &bnorm_layer_5, save);
+        }
         reluAct_forward(&conv_layer_5.out);
 
         convLayer_forward(&conv_layer_5.out, &conv_layer_6, save);
+        if(use_batch_norm){
+            bnormLayer_forward(&conv_layer_6.out, &bnorm_layer_6, save);
+        }
         reluAct_forward(&conv_layer_6.out);
 
         poolLayer_forward(&conv_layer_6.out, &maxPool_layer);
         convLayer_forward(&maxPool_layer.out, &conv_layer_7, save);
         tensor_free(&maxPool_layer.out);
+        if(use_batch_norm){
+            bnormLayer_forward(&conv_layer_7.out, &bnorm_layer_7, save);
+        }
         reluAct_forward(&conv_layer_7.out);
 
         convLayer_forward(&conv_layer_7.out, &conv_layer_8, save);
+        if(use_batch_norm){
+            bnormLayer_forward(&conv_layer_8.out, &bnorm_layer_8, save);
+        }
         reluAct_forward(&conv_layer_8.out);
         poolLayer_forward(&conv_layer_8.out, &maxPool_layer);
 

@@ -5,7 +5,7 @@
 #include "DenseLayer.h"
 #include "BatchNormLayer.h"
 #include "ConvolutionalLayer.h"
-#define THRESHOLD 0.2
+#define THRESHOLD 0.5
 
 
 void init_dense_layer(denseLayer *den_layer, int M, int N);

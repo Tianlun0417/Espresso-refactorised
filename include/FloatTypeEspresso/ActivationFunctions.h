@@ -1,7 +1,7 @@
 #ifndef ACTIVATIONFUNCTIONS_H
 #define ACTIVATIONFUNCTIONS_H
 
-#include "Tensor.h"
+#include "FloatTensor.h"
 #include "Utilities.h"
 
 #ifdef __cplusplus

@@ -1,5 +1,5 @@
-#include "Tensor.h"
-#include "Utilities.h"
+#include "FloatTypeEspresso/FloatTensor.h"
+#include "FloatTypeEspresso/Utilities.h"
 #include "stdio.h"
 
 
@@ -8,6 +8,7 @@ FloatTensor tensor_init(int D, int M, int N, int L)
     FloatTensor t = {D, M, N, L, M*N*L, BYTES(float, D*M*N*L)};
     t.data = MALLOC(float, D*M*N*L);
     ASSERT(t.data, "err: FloatTensor malloc");
+
     return t;
 }
 

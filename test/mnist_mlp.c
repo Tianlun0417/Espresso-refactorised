@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
-#include "ESP_RE.h"
+#include "FloatTypeEspresso/ESP_RE.h"
 #define TEST_SIZE 5
 
 const char * image_path = "/home/tianlun/codes/espresso-refactorised/data/t10k-images-idx3-ubyte";

@@ -1,5 +1,5 @@
 #include <cblas.h>
-#include "ConvolutionalLayer.h"
+#include "FloatTypeEspresso/ConvolutionalLayer.h"
 
 float *scratch = NULL;
 
@@ -64,10 +64,10 @@ FloatTensor convLayer_pad_input(FloatTensor *t, float *scr,
 }
 
 
-void convLayer_forward(FloatTensor *t, convLayer *cl, int save)
+void convLayer_forward(FloatTensor *input_t, convLayer *cl, int save)
 {
     float *scr = scratch; FloatTensor padded_input, tmp;
-    int D=t->D,  Ms=t->M, Ns=t->N, Ls=t->L;
+    int D=input_t->D,  Ms=input_t->M, Ns=input_t->N, Ls=input_t->L;
 
     // D - no images
     // M - height
@@ -77,10 +77,10 @@ void convLayer_forward(FloatTensor *t, convLayer *cl, int save)
     //int F=cl->D, W=cl->M, H=cl->N, L=cl->L;
     int F=cl->D, H=cl->M, W=cl->N, L=cl->L;
     int p=cl->padding, Sy=cl->Stride_m, Sx=cl->Stride_n;
-    ASSERT(t->L == cl->L, "err: conv shape\n");
+    ASSERT(input_t->L == cl->L, "err: conv shape\n");
 
-    if (save)      convLayer_copy_input(t, cl);
-    if (p)    padded_input = convLayer_pad_input(t, scr, &Ms, &Ns, p);
+    if (save)      convLayer_copy_input(input_t, cl);
+    if (p)    padded_input = convLayer_pad_input(input_t, scr, &Ms, &Ns, p);
 
     // lower
     //const int Md = OUT_LEN(Ms, H, Sy);
@@ -93,7 +93,7 @@ void convLayer_forward(FloatTensor *t, convLayer *cl, int save)
     if (!scratch) tmp= tensor_init(D, Md, Nd, Ld);
     else          tmp= tensor_from_ptr(D, Md, Nd, Ld, scr);
 
-    tensor_lower(p ? &padded_input : t, &tmp, W, H, Sx, Sy);
+    tensor_lower(p ? &padded_input : input_t, &tmp, W, H, Sx, Sy);
 
     // mat mul
     if (!cl->out.data) cl->out= tensor_init(D, Md, Nd, F);
@@ -103,8 +103,10 @@ void convLayer_forward(FloatTensor *t, convLayer *cl, int save)
                 M, N, K, 1, tmp.data, K, cl->W.data, K,
                 0, cl->out.data, N);
 
-    if (!scratch) tensor_free(&tmp);
-    if (!scratch && p) tensor_free(&padded_input);
+    if (!scratch)
+        tensor_free(&tmp);
+    if (!scratch && p)
+        tensor_free(&padded_input);
 }
 
 

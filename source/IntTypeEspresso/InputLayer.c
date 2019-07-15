@@ -1,8 +1,7 @@
-#include "InputLayer.h"
-#include "Utilities.h"
+#include "IntTypeEspresso/InputLayer.h"
 
 
-void inputLayer_load(FloatTensor *t, inputLayer *il)
+void inputLayer_load(IntTensor *t, inputLayer *il)
 {
     il->out = tensor_copy(t);
 }
@@ -23,8 +22,8 @@ void inputLayer_forward(inputLayer *il)
         exit(-1);
     }
 
-    float *ptr = il->out.data;
+    EspInt *ptr = il->out.data;
     const int len = tensor_len(&il->out);
     for (int i=0; i < len; i++)
-        ptr[i] = 2.0f * ptr[i]/255 - 1.0f;
+        ptr[i] = 2 * ptr[i]/255 - 1;
 }

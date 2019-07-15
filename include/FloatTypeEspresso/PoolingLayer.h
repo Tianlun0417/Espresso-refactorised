@@ -1,6 +1,6 @@
 #ifndef ESPRESSO_REFACTORISED_POOLINGLAYER_H
 #define ESPRESSO_REFACTORISED_POOLINGLAYER_H
-#include "Tensor.h"
+#include "FloatTensor.h"
 #include "Utilities.h"
 
 #ifdef __cplusplus

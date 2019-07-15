@@ -3,8 +3,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
-#include "Tensor.h"
-#include "Utilities.h"
+#include "FloatTypeEspresso/FloatTensor.h"
+#include "FloatTypeEspresso/Utilities.h"
 
 #define CIFAR_IMAGE_W 32
 #define CIFAR_IMAGE_H 32

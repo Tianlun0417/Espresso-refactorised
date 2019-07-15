@@ -1,4 +1,4 @@
-#include "RandomInit.h"
+#include "FloatTypeEspresso/RandomInit.h"
 
 
 void init_dense_layer(denseLayer *den_layer, int M, int N){

@@ -1,4 +1,4 @@
-#include "Cifar10Loader.h"
+#include "FloatTypeEspresso/Cifar10Loader.h"
 
 
 void cifar10_load(const char *tf, int start, int num,

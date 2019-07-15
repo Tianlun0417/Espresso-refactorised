@@ -1,6 +1,6 @@
 #ifndef BATCHNORMLAYER_H
 #define BATCHNORMLAYER_H
-#include "Tensor.h"
+#include "FloatTensor.h"
 
 #define BNORML_INIT(bnl) {                                       \
           bnl.N=0; bnl.ug=0;                                    \

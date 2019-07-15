@@ -1,4 +1,4 @@
-#include "ActivationFunctions.h"
+#include "FloatTypeEspresso/ActivationFunctions.h"
 
 
 void reluAct_forward(FloatTensor *t)

@@ -1,7 +1,7 @@
 #include <string.h>
 #include <cblas.h>
-#include "DenseLayer.h"
-#include "Utilities.h"
+#include "IntTypeEspresso/DenseLayer.h"
+#include "IntTypeEspresso/Utilities.h"
 
 
 denseLayer denseLayer_init(int M, int N)
@@ -15,7 +15,6 @@ void denseLayer_free(denseLayer *dl)
 {
     tensor_free(&dl->W);
     tensor_free(&dl->b);
-    //ftens_free(&dl->dW);  tensor_free(&dl->db);
     tensor_free(&dl->out);
     tensor_free(&dl->in);
 }
@@ -27,7 +26,7 @@ void denseLayer_print_shape(denseLayer *dl)
 }
 
 
-void denseLayer_set(FloatTensor *W, denseLayer *dl)
+void denseLayer_set(IntTensor *W, denseLayer *dl)
 {
     const int M=W->M, N=W->N;
     ASSERT(W->D==1 && W->L==1, "err: dense shape\n");
@@ -37,7 +36,7 @@ void denseLayer_set(FloatTensor *W, denseLayer *dl)
 }
 
 
-void denseLayer_forward(FloatTensor *input_tensor, denseLayer *dense_layer, int save)
+void denseLayer_forward(IntTensor *input_tensor, denseLayer *dense_layer, int save)
 {
     const int D=input_tensor->D, M=dense_layer->M, N=dense_layer->N;
     ASSERT(input_tensor->MNL == dense_layer->N,  "err: dense shape\n");
@@ -49,17 +48,10 @@ void denseLayer_forward(FloatTensor *input_tensor, denseLayer *dense_layer, int 
     }
 
     if (!dense_layer->out.data) dense_layer->out = tensor_init(D, 1, M, 1);
-    const float *a=dense_layer->W.data;
-    const float *b=input_tensor->data;
-    float       *c=dense_layer->out.data;
+    const EspInt *a=dense_layer->W.data;
+    const EspInt *b=input_tensor->data;
+    EspInt       *c=dense_layer->out.data;
 
     cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasTrans,
                 D, M, N, 1, b, N, a, N, 0, c, M);
-}
-
-
-void denseLayer_backward(FloatTensor *dout, denseLayer *dl)
-{
-    fprintf(stderr, "not implemented yet\n");
-    exit(-2);
 }

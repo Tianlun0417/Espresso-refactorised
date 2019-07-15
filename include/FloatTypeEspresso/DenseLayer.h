@@ -1,6 +1,6 @@
 #ifndef DENSELAYER_H
 #define DENSELAYER_H
-#include "Tensor.h"
+#include "FloatTensor.h"
 
 
 #define DENSEL_INIT(dl) (                   \

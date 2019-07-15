@@ -1,6 +1,6 @@
 #ifndef INPUTLAYER_H
 #define INPUTLAYER_H
-#include "Tensor.h"
+#include "FloatTensor.h"
 
 #ifdef __cplusplus
 extern "C" {

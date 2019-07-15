@@ -1,5 +1,5 @@
-#include "BatchNormLayer.h"
-#include "Utilities.h"
+#include "FloatTypeEspresso/BatchNormLayer.h"
+#include "FloatTypeEspresso/Utilities.h"
 
 
 bnormLayer bnormLayer_init(int use_global)

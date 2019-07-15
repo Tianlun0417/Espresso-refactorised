@@ -1,7 +1,7 @@
 #ifndef CONVOLUTIONALLAYER_H
 #define CONVOLUTIONALLAYER_H
 
-#include "Tensor.h"
+#include "FloatTensor.h"
 #include "Utilities.h"
 
 #define CONVL_INIT(cl) {                                       \
@@ -25,7 +25,7 @@ convLayer convLayer_init(int Sm, int Sn, int padding);
 void convLayer_print_shape(convLayer *cl);
 void convLayer_free(convLayer *cl);
 void convLayer_set(FloatTensor *W, convLayer *cl);
-void convLayer_forward(FloatTensor *t, convLayer *cl, int save);
+void convLayer_forward(FloatTensor *input_t, convLayer *cl, int save);
 void print_tensor(FloatTensor* tensor);
 #ifdef __cplusplus
 }

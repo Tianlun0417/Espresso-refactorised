@@ -1,5 +1,5 @@
-#include "ESP_RE.h"
-#include "Cifar10Loader.h"
+#include "FloatTypeEspresso/ESP_RE.h"
+#include "FloatTypeEspresso/Cifar10Loader.h"
 
 const char * image_path = "/home/tianlun/codes/espresso-refactorised/data/test_batch.bin";
 //void print_tensor(FloatTensor* tensor);

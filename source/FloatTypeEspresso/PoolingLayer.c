@@ -1,4 +1,4 @@
-#include "PoolingLayer.h"
+#include "FloatTypeEspresso/PoolingLayer.h"
 
 
 poolLayer poolLayer_init(int M, int N, int Sm, int Sn)

@@ -1,7 +1,7 @@
 #ifndef DROPOUTLAYER_H
 #define DROPOUTLAYER_H
 
-#include "Tensor.h"
+#include "FloatTensor.h"
 #include <stdlib.h>
 
 typedef struct {

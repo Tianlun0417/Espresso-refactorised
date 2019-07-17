@@ -1,5 +1,6 @@
 #ifndef DENSELAYER_H
 #define DENSELAYER_H
+
 #include "IntTensor.h"
 
 
@@ -20,9 +21,13 @@ typedef struct {
 } denseLayer;
 
 denseLayer denseLayer_init(int M, int N);
+
 void denseLayer_print_shape(denseLayer *dl);
+
 void denseLayer_free(denseLayer *dl);
+
 void denseLayer_set(IntTensor *W, denseLayer *dl);
+
 void denseLayer_forward(IntTensor *input_tensor, denseLayer *dense_layer, int cpy);
 
 

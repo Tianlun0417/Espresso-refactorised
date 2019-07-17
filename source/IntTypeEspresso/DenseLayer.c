@@ -4,15 +4,16 @@
 #include "IntTypeEspresso/Utilities.h"
 
 
-denseLayer denseLayer_init(int M, int N)
-{
-    denseLayer dl; DENSEL_INIT(dl); dl.M=M; dl.N=N;
+denseLayer denseLayer_init(int M, int N) {
+    denseLayer dl;
+    DENSEL_INIT(dl);
+    dl.M = M;
+    dl.N = N;
     return dl;
 }
 
 
-void denseLayer_free(denseLayer *dl)
-{
+void denseLayer_free(denseLayer *dl) {
     tensor_free(&dl->W);
     tensor_free(&dl->b);
     tensor_free(&dl->out);
@@ -20,38 +21,33 @@ void denseLayer_free(denseLayer *dl)
 }
 
 
-void denseLayer_print_shape(denseLayer *dl)
-{
+void denseLayer_print_shape(denseLayer *dl) {
     printf("dense: %d %d\n", dl->M, dl->N);
 }
 
 
-void denseLayer_set(IntTensor *W, denseLayer *dl)
-{
-    const int M=W->M, N=W->N;
-    ASSERT(W->D==1 && W->L==1, "err: dense shape\n");
+void denseLayer_set(IntTensor *W, denseLayer *dl) {
+    const int M = W->M, N = W->N;
+    ASSERT(W->D == 1 && W->L == 1, "err: dense shape\n");
     tensor_free(&dl->W);
-    dl->M = M; dl->N = N;
+    dl->M = M;
+    dl->N = N;
     dl->W = tensor_copy(W);
 }
 
 
-void denseLayer_forward(IntTensor *input_tensor, denseLayer *dense_layer, int save)
-{
-    const int D=input_tensor->D, M=dense_layer->M, N=dense_layer->N;
-    ASSERT(input_tensor->MNL == dense_layer->N,  "err: dense shape\n");
+void denseLayer_forward(IntTensor *input_tensor, denseLayer *dense_layer, int save) {
+    const int D = input_tensor->D, M = dense_layer->M, N = dense_layer->N;
+    ASSERT(input_tensor->MNL == dense_layer->N, "err: dense shape\n");
 
     if (save) {
-        int M=input_tensor->M, N=input_tensor->N, L=input_tensor->L;
+        int M = input_tensor->M, N = input_tensor->N, L = input_tensor->L;
         if (!dense_layer->in.data) dense_layer->in = tensor_init(D, M, N, L);
         memcpy(dense_layer->in.data, input_tensor->data, input_tensor->bytes);
     }
 
     if (!dense_layer->out.data) dense_layer->out = tensor_init(D, 1, M, 1);
-    const EspInt *a=dense_layer->W.data;
-    const EspInt *b=input_tensor->data;
-    EspInt       *c=dense_layer->out.data;
-
-    cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasTrans,
-                D, M, N, 1, b, N, a, N, 0, c, M);
+    const EspInt *a = dense_layer->W.data;
+    const EspInt *b = input_tensor->data;
+    EspInt *c = dense_layer->out.data;
 }

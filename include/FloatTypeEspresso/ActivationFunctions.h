@@ -9,10 +9,15 @@ extern "C" {
 #endif
 
 void signAct_forward(FloatTensor *t);
+
 void signAct_backward(FloatTensor *dout);
+
 void reluAct_forward(FloatTensor *t);
+
 void reluAct_backward(FloatTensor *dout);
+
 void softmaxAct_forward(FloatTensor *t);
+
 void softmaxAct_backward(FloatTensor *dout);
 
 

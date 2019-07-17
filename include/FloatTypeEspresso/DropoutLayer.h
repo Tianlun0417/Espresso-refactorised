@@ -9,6 +9,7 @@ typedef struct {
 } dropoutLayer;
 
 dropoutLayer dropoutLayer_init(float dropout_rate);
-void dropoutLayer_forward(FloatTensor * input_tensor, dropoutLayer * dropout_layer);
+
+void dropoutLayer_forward(FloatTensor *input_tensor, dropoutLayer *dropout_layer);
 
 #endif //ESPRESSO_REFACTORISED_DROPOUTLAYER_H

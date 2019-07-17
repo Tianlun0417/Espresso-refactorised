@@ -1,5 +1,6 @@
 #ifndef BATCHNORMLAYER_H
 #define BATCHNORMLAYER_H
+
 #include "FloatTensor.h"
 
 #define BNORML_INIT(bnl) {                                      \
@@ -16,18 +17,23 @@ extern "C" {
 
 typedef struct {
     int N, ug;
-    FloatTensor mean,  istd;
+    FloatTensor mean, istd;
     FloatTensor gamma, beta;
     FloatTensor in;
 } bnormLayer;
 
 
 bnormLayer bnormLayer_init(int use_global);
+
 void bnormLayer_free(bnormLayer *bnl);
+
 void bnormLayer_forward(FloatTensor *input_tensor, bnormLayer *batchnorm_layer, int save);
+
 void bnormLayer_backward(FloatTensor *dt, bnormLayer *bnl);
+
 void bnormLayer_update(bnormLayer *bnl);
-void bnormLayer_set(FloatTensor *mean,  FloatTensor *istd,
+
+void bnormLayer_set(FloatTensor *mean, FloatTensor *istd,
                     FloatTensor *gamma, FloatTensor *beta, bnormLayer *bnl);
 
 

@@ -8,13 +8,12 @@
  * Convert from the big endian format in the dataset if we're on a little endian
  * machine.
  */
-uint32_t map_uint32(uint32_t in)
-{
+uint32_t map_uint32(uint32_t in) {
 #if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
     return (
             ((in & 0xFF000000) >> 24) |
-            ((in & 0x00FF0000) >>  8) |
-            ((in & 0x0000FF00) <<  8) |
+            ((in & 0x00FF0000) >> 8) |
+            ((in & 0x0000FF00) << 8) |
             ((in & 0x000000FF) << 24)
     );
 #else
@@ -27,11 +26,10 @@ uint32_t map_uint32(uint32_t in)
  *
  * File format: http://yann.lecun.com/exdb/mnist/
  */
-uint8_t * get_labels(const char * path, uint32_t * number_of_labels)
-{
-    FILE * stream;
+uint8_t *get_labels(const char *path, uint32_t *number_of_labels) {
+    FILE *stream;
     mnist_label_file_header_t header;
-    uint8_t * labels;
+    uint8_t *labels;
 
     stream = fopen(path, "rb");
 
@@ -50,7 +48,8 @@ uint8_t * get_labels(const char * path, uint32_t * number_of_labels)
     header.number_of_labels = map_uint32(header.number_of_labels);
 
     if (MNIST_LABEL_MAGIC != header.magic_number) {
-        fprintf(stderr, "Invalid header read from label file: %s (%08X not %08X)\n", path, header.magic_number, MNIST_LABEL_MAGIC);
+        fprintf(stderr, "Invalid header read from label file: %s (%08X not %08X)\n", path, header.magic_number,
+                MNIST_LABEL_MAGIC);
         fclose(stream);
         return NULL;
     }
@@ -82,11 +81,10 @@ uint8_t * get_labels(const char * path, uint32_t * number_of_labels)
  *
  * File format: http://yann.lecun.com/exdb/mnist/
  */
-mnist_image_t * get_images(const char * path, uint32_t * number_of_images)
-{
-    FILE * stream;
+mnist_image_t *get_images(const char *path, uint32_t *number_of_images) {
+    FILE *stream;
     mnist_image_file_header_t header;
-    mnist_image_t * images;
+    mnist_image_t *images;
 
     stream = fopen(path, "rb");
 
@@ -108,17 +106,20 @@ mnist_image_t * get_images(const char * path, uint32_t * number_of_images)
     header.number_of_columns = map_uint32(header.number_of_columns);
 
     if (MNIST_IMAGE_MAGIC != header.magic_number) {
-        fprintf(stderr, "Invalid header read from image file: %s (%08X not %08X)\n", path, header.magic_number, MNIST_IMAGE_MAGIC);
+        fprintf(stderr, "Invalid header read from image file: %s (%08X not %08X)\n", path, header.magic_number,
+                MNIST_IMAGE_MAGIC);
         fclose(stream);
         return NULL;
     }
 
     if (MNIST_IMAGE_WIDTH != header.number_of_rows) {
-        fprintf(stderr, "Invalid number of image rows in image file %s (%d not %d)\n", path, header.number_of_rows, MNIST_IMAGE_WIDTH);
+        fprintf(stderr, "Invalid number of image rows in image file %s (%d not %d)\n", path, header.number_of_rows,
+                MNIST_IMAGE_WIDTH);
     }
 
     if (MNIST_IMAGE_HEIGHT != header.number_of_columns) {
-        fprintf(stderr, "Invalid number of image columns in image file %s (%d not %d)\n", path, header.number_of_columns, MNIST_IMAGE_HEIGHT);
+        fprintf(stderr, "Invalid number of image columns in image file %s (%d not %d)\n", path,
+                header.number_of_columns, MNIST_IMAGE_HEIGHT);
     }
 
     *number_of_images = header.number_of_images;
@@ -142,9 +143,8 @@ mnist_image_t * get_images(const char * path, uint32_t * number_of_images)
     return images;
 }
 
-mnist_dataset_t * mnist_get_dataset(const char * image_path, const char * label_path)
-{
-    mnist_dataset_t * dataset;
+mnist_dataset_t *mnist_get_dataset(const char *image_path, const char *label_path) {
+    mnist_dataset_t *dataset;
     uint32_t number_of_images, number_of_labels;
 
     // allocate the memory space for a mnist_dataset_t instance and return a pointer
@@ -169,7 +169,8 @@ mnist_dataset_t * mnist_get_dataset(const char * image_path, const char * label_
     }
 
     if (number_of_images != number_of_labels) {
-        fprintf(stderr, "Number of images does not match number of labels (%d != %d)\n", number_of_images, number_of_labels);
+        fprintf(stderr, "Number of images does not match number of labels (%d != %d)\n", number_of_images,
+                number_of_labels);
         mnist_free_dataset(dataset);
         return NULL;
     }
@@ -183,8 +184,7 @@ mnist_dataset_t * mnist_get_dataset(const char * image_path, const char * label_
  * Free all the memory allocated in a dataset. This should not be used on a
  * batched dataset as the memory is allocated to the parent.
  */
-void mnist_free_dataset(mnist_dataset_t * dataset)
-{
+void mnist_free_dataset(mnist_dataset_t *dataset) {
     free(dataset->images);
     free(dataset->labels);
     free(dataset);
@@ -193,8 +193,7 @@ void mnist_free_dataset(mnist_dataset_t * dataset)
 /**
  * Fills the batch dataset with a subset of the parent dataset.
  */
-int mnist_batch(mnist_dataset_t * dataset, mnist_dataset_t * batch, int size, int number)
-{
+int mnist_batch(mnist_dataset_t *dataset, mnist_dataset_t *batch, int size, int number) {
     int start_offset;
 
     start_offset = size * number;

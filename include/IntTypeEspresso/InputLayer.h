@@ -12,8 +12,11 @@ typedef struct {
 } inputLayer;
 
 void inputLayer_load(IntTensor *in, inputLayer *il);
+
 void inputLayer_free(inputLayer *il);
+
 void inputLayer_forward(inputLayer *il);
+
 void inputLayer_pad(inputLayer *il, int p);
 
 

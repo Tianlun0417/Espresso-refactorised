@@ -22,11 +22,17 @@ typedef struct {
 } convLayer;
 
 convLayer convLayer_init(int Sm, int Sn, int padding);
+
 void convLayer_print_shape(convLayer *cl);
+
 void convLayer_free(convLayer *cl);
+
 void convLayer_set(FloatTensor *W, convLayer *cl);
+
 void convLayer_forward(FloatTensor *input_t, convLayer *cl, int save);
-void print_tensor(FloatTensor* tensor);
+
+void print_tensor(FloatTensor *tensor);
+
 #ifdef __cplusplus
 }
 #endif

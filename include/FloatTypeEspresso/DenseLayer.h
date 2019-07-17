@@ -1,5 +1,6 @@
 #ifndef DENSELAYER_H
 #define DENSELAYER_H
+
 #include "FloatTensor.h"
 
 
@@ -20,10 +21,15 @@ typedef struct {
 } denseLayer;
 
 denseLayer denseLayer_init(int M, int N);
+
 void denseLayer_print_shape(denseLayer *dl);
+
 void denseLayer_free(denseLayer *dl);
+
 void denseLayer_set(FloatTensor *W, denseLayer *dl);
+
 void denseLayer_forward(FloatTensor *input_tensor, denseLayer *dense_layer, int cpy);
+
 void denseLayer_backward(FloatTensor *dt, denseLayer *dl);
 
 

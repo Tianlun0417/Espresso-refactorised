@@ -32,7 +32,7 @@ extern "C" {
 #define SEP                 printf(" | ");
 #define D(t)                (t.data)
 #define LEN(t)              (t.bytes/sizeof(float))
-#define FOR(x,y,n)          for (int x=y; x<(n); x++)
+#define FOR(x, y, n)          for (int x=y; x<(n); x++)
 #define READ_INT(x, pf)     FREAD(x, sizeof(int), 1, pf, "asd")
 #define READ_UINT8(x, pf)   FREAD(x, sizeof(uint8_t), 1, pf, "asd")
 #define MALLOC(type, num)   (type *) malloc((num) * sizeof(type))

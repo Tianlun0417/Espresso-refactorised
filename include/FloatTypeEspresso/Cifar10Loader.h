@@ -1,5 +1,6 @@
 #ifndef CIFAR10LOADER_H
 #define CIFAR10LOADER_H
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>

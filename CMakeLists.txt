@@ -3,13 +3,13 @@ project(espresso_refactorised C)
 
 #find_package(GEMMLOWP REQUIRED)
 
-option(USE_GEMMLOWP     OFF)
-option(USE_CBLAS        ON)
+option(USE_GEMMLOWP OFF)
+option(USE_CBLAS ON)
 
 
-if(USE_CBLAS)
+if (USE_CBLAS)
     find_package(BLAS REQUIRED)
-endif()
+endif ()
 
 set(CMAKE_C_STANDARD 99)
 

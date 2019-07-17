@@ -21,12 +21,12 @@ void poolLayer_forward(FloatTensor *t, poolLayer *pl)
 {
     const int W=pl->M, H=pl->N, Sy=pl->Stride_m, Sx=pl->Stride_n;
     const int D=t->D, L=t->L, Ms=t->M, Ns=t->N;
-    const int Md=OUT_LEN(Ms, H, Sy);
-    const int Nd=OUT_LEN(Ns, W, Sx);
+    const int Md=OUT_LEN(Ms, W, Sy);
+    const int Nd=OUT_LEN(Ns, H, Sx);
 
     if (!pl->out.data) pl->out=tensor_init(D, Md, Nd, L);
 
-    if (pl->op == MAX)
+    if (pl->strategy == MAX)
         tensor_maxpool(t, &pl->out, W, H, Sx, Sy);
     else
         exit(-3);
@@ -36,4 +36,8 @@ void poolLayer_forward(FloatTensor *t, poolLayer *pl)
 void poolLayer_backward(FloatTensor *dout, poolLayer *pl)
 {
     exit(-2);
+}
+
+void set_pooling_strategy(poolLayer *pl, int strategy){
+    pl->strategy = strategy;
 }

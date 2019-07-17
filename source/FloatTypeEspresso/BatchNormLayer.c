@@ -12,13 +12,8 @@ void bnormLayer_free(bnormLayer *bnl)
 {
     tensor_free(&bnl->mean);
     tensor_free(&bnl->istd);
-    tensor_free(&bnl->gmean);
-    tensor_free(&bnl->gistd);
     tensor_free(&bnl->beta);
     tensor_free(&bnl->gamma);
-    tensor_free(&bnl->dbeta);
-    tensor_free(&bnl->dgamma);
-    tensor_free(&bnl->tmp);
     tensor_free(&bnl->in);
 }
 

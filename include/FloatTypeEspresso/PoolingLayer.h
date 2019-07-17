@@ -10,7 +10,8 @@ extern "C" {
 typedef enum {MAX, AVG} poolingStrategy;
 
 typedef struct {
-    int M, N, Stride_m, Stride_n; poolingStrategy op;
+    int M, N, Stride_m, Stride_n, padding;
+    poolingStrategy strategy;
     FloatTensor out, mask;
 } poolLayer;
 
@@ -19,6 +20,7 @@ poolLayer poolLayer_init(int M, int N, int Sm, int Sn);
 void poolLayer_free(poolLayer *pl);
 void poolLayer_forward(FloatTensor *t, poolLayer *pl);
 void poolLayer_backward(FloatTensor *dout, poolLayer *pl);
+void set_pooling_strategy(poolLayer *pl, int strategy);
 
 
 #ifdef __cplusplus

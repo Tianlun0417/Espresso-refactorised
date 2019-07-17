@@ -1,6 +1,7 @@
 #include "FloatTypeEspresso/ESP_RE.h"
 #include "FloatTypeEspresso/Cifar10Loader.h"
 
+
 const char * image_path = "/home/tianlun/codes/espresso-refactorised/data/test_batch.bin";
 
 int main(){
@@ -17,7 +18,7 @@ int main(){
 
     poolLayer maxPool_layer = poolLayer_init(3, 3, 2, 2); // kernel x, kernel y, stride x, stride y
 
-    denseLayer dense_layer_1 = denseLayer_init(4096, 9216);
+    denseLayer dense_layer_1 = denseLayer_init(4096, 1024);
     denseLayer dense_layer_2 = denseLayer_init(4096, 4096);
     denseLayer dense_layer_3 = denseLayer_init(10, 4096);
 
@@ -28,7 +29,7 @@ int main(){
     init_conv_layer(&conv_layer_4, 256, 3, 3, 384);
     init_conv_layer(&conv_layer_5, 256, 3, 3, 256);
 
-    init_dense_layer(&dense_layer_1, 4096, 9216);
+    init_dense_layer(&dense_layer_1, 4096, 1024);
     init_dense_layer(&dense_layer_2, 4096, 4096);
     init_dense_layer(&dense_layer_3, 10, 4096);
     /*------------------------Initialise each layer------------------------*/

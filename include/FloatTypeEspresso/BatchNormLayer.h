@@ -2,13 +2,11 @@
 #define BATCHNORMLAYER_H
 #include "FloatTensor.h"
 
-#define BNORML_INIT(bnl) {                                       \
+#define BNORML_INIT(bnl) {                                      \
           bnl.N=0; bnl.ug=0;                                    \
           bnl.mean. data=NULL; bnl.istd  .data=NULL;            \
-          bnl.gmean.data=NULL; bnl.gistd .data=NULL;            \
           bnl.beta .data=NULL; bnl.gamma .data=NULL;            \
-          bnl.dbeta.data=NULL; bnl.dgamma.data=NULL;            \
-          bnl.in.   data=NULL; bnl.tmp.   data=NULL;            \
+          bnl.in.   data=NULL;                                  \
      }
 
 
@@ -18,9 +16,9 @@ extern "C" {
 
 typedef struct {
     int N, ug;
-    FloatTensor mean,  istd, gmean,  gistd;
-    FloatTensor gamma, beta, dgamma, dbeta;
-    FloatTensor in, tmp;
+    FloatTensor mean,  istd;
+    FloatTensor gamma, beta;
+    FloatTensor in;
 } bnormLayer;
 
 

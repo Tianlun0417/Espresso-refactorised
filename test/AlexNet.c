@@ -16,18 +16,18 @@ int main() {
     convLayer conv_layer_4 = convLayer_init(1, 1, 1);
     convLayer conv_layer_5 = convLayer_init(1, 1, 1);
 
-    poolLayer maxPool_layer = poolLayer_init(3, 3, 2, 2); // kernel x, kernel y, stride x, stride y
+    poolLayer maxPool_layer = poolLayer_init(3, 3, 2, 2, MAXPOOL); // kernel x, kernel y, stride x, stride y
 
     denseLayer dense_layer_1 = denseLayer_init(4096, 1024);
     denseLayer dense_layer_2 = denseLayer_init(4096, 4096);
     denseLayer dense_layer_3 = denseLayer_init(10, 4096);
 
     /*------------------------Initialise each layer------------------------*/
-    init_conv_layer(&conv_layer_1, 64, 11, 11, 3);
-    init_conv_layer(&conv_layer_2, 192, 5, 5, 64);
-    init_conv_layer(&conv_layer_3, 384, 3, 3, 192);
-    init_conv_layer(&conv_layer_4, 256, 3, 3, 384);
-    init_conv_layer(&conv_layer_5, 256, 3, 3, 256);
+    init_conv_layer(&conv_layer_1, 3,   64,  11, 11);
+    init_conv_layer(&conv_layer_2, 64,  192, 5,  5);
+    init_conv_layer(&conv_layer_3, 192, 384, 3,  3);
+    init_conv_layer(&conv_layer_4, 384, 256, 3,  3);
+    init_conv_layer(&conv_layer_5, 256, 256, 3,  3);
 
     init_dense_layer(&dense_layer_1, 4096, 1024);
     init_dense_layer(&dense_layer_2, 4096, 4096);

@@ -23,6 +23,8 @@ typedef struct {
 
 convLayer convLayer_init(int Sm, int Sn, int padding);
 
+convLayer * new_conv_layer(int L, int D, int M, int N, int Stride_m, int Stride_n, int padding);
+
 void convLayer_print_shape(convLayer *cl);
 
 void convLayer_free(convLayer *cl);

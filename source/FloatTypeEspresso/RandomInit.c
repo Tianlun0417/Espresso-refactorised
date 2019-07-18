@@ -36,10 +36,10 @@ void init_batchnorm_layer(bnormLayer *bnorm_layer, size_t layer_size) {
 }
 
 void init_conv_layer(convLayer *conv_layer, int L, int D, int M, int N) {
+    // L - no input channels
     // D - no output channels
     // M - kernel height
     // N - kernel width
-    // L - no input channels
 
     float *conv_w_arr = (float *) calloc(D * M * N * L, sizeof(float));
     random_init_arr(conv_w_arr, D * M * N * L);

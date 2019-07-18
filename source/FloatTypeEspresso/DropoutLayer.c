@@ -1,9 +1,9 @@
 #include "FloatTypeEspresso/DropoutLayer.h"
 
 
-dropoutLayer dropoutLayer_init(float dropout_rate) {
-    dropoutLayer dropout_layer;
-    dropout_layer.dropout_rate = dropout_rate;
+dropoutLayer * new_dropout_layer(float dropout_rate) {
+    dropoutLayer * dropout_layer = (dropoutLayer*) malloc(sizeof(dropoutLayer));
+    dropout_layer->dropout_rate = dropout_rate;
     return dropout_layer;
 }
 

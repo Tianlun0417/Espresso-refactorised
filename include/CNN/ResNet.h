@@ -6,6 +6,7 @@
 #include <stdbool.h>
 
 #define SAVE 1
+#define LOAD_PRETRAINED_WEIGHT 0
 
 typedef FloatTensor Tensor;
 
@@ -69,13 +70,10 @@ typedef struct resnet {
 
 ResNet *ResNet_init(BlockType block_type, int num_layers[4], int num_classes);
 
-//ResNetBlock * build_ResNet_block(ResNet * resnet, int planes, int num_blocks, int stride);
+//ResNetBlock * new_ResNet_block(ResNet *resnet, int planes, int num_blocks, int stride);
 //BasicBlock * new_basicblock(int inplanes, int planes, int stride, Downsample * downsample);
 //Bottleneck * new_bottleneck(int inplanes, int planes, int stride, Downsample * downsample);
-//convLayer * new_conv_layer(int D, int M, int N, int L, int Stride_m, int Stride_n, int padding);
-//bnormLayer * new_bn_layer(int size);
-//poolLayer * new_pool_layer(int M, int N, int Stride_m, int Stride_n, poolingStrategy strategy);
-//denseLayer * new_dense_layer(int M, int N);
+
 //void downsample_forward(Tensor * input, Downsample * downsample);
 //void basicblock_forward(Tensor * input, BasicBlock * basicblock);
 //void bottleneck_forward(Tensor * input, Bottleneck * bottleneck);

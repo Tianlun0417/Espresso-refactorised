@@ -13,6 +13,23 @@ denseLayer denseLayer_init(int M, int N) {
 }
 
 
+denseLayer *new_dense_layer(int M, int N) {
+    denseLayer *dense_layer_ptr = (denseLayer *) malloc(sizeof(denseLayer));
+
+    dense_layer_ptr->M = M;
+    dense_layer_ptr->N = N;
+    dense_layer_ptr->W.data = NULL;
+    dense_layer_ptr->b.data = NULL;
+    dense_layer_ptr->in.data = NULL;
+    dense_layer_ptr->out.data = NULL;
+
+    //init_dense_layer(dense_layer_ptr, M, N);
+
+    return dense_layer_ptr;
+}
+
+
+
 void denseLayer_free(denseLayer *dl) {
     tensor_free(&dl->W);
     tensor_free(&dl->b);

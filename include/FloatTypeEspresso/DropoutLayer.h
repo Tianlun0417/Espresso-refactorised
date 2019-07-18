@@ -8,7 +8,7 @@ typedef struct {
     float dropout_rate;
 } dropoutLayer;
 
-dropoutLayer dropoutLayer_init(float dropout_rate);
+dropoutLayer * new_dropout_layer(float dropout_rate);
 
 void dropoutLayer_forward(FloatTensor *input_tensor, dropoutLayer *dropout_layer);
 

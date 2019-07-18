@@ -14,6 +14,30 @@ convLayer convLayer_init(int Sm, int Sn, int padding) {
 }
 
 
+convLayer *new_conv_layer(int L, int D, int M, int N,
+                          int Stride_m, int Stride_n, int padding) {
+    // L - no input channels
+    // D - no output channels
+    // M - kernel height
+    // N - kernel width
+
+    convLayer *conv_layer_ptr = (convLayer *) malloc(sizeof(convLayer));
+    conv_layer_ptr->D = D;
+    conv_layer_ptr->M = M;
+    conv_layer_ptr->N = N;
+    conv_layer_ptr->L = L;
+    conv_layer_ptr->Stride_m = Stride_m;
+    conv_layer_ptr->Stride_n = Stride_n;
+    conv_layer_ptr->padding = padding;
+    conv_layer_ptr->W.data = NULL;
+    conv_layer_ptr->b.data = NULL;
+    conv_layer_ptr->in.data = NULL;
+    conv_layer_ptr->out.data = NULL;
+
+    return conv_layer_ptr;
+}
+
+
 void convLayer_free(convLayer *cl) {
     tensor_free(&cl->W);
     tensor_free(&cl->b);
@@ -69,13 +93,13 @@ void convLayer_forward(FloatTensor *input_t, convLayer *cl, int save) {
     FloatTensor padded_input, tmp;
     int D = input_t->D, Ms = input_t->M, Ns = input_t->N, Ls = input_t->L;
 
-    // D - no images
+    // D - num output channels
     // M - height
     // N - width
-    // L - depth (no channels)
+    // L - num input channels
 
-    //int F=cl->D, W=cl->M, H=cl->N, L=cl->L;
-    int F = cl->D, H = cl->M, W = cl->N, L = cl->L;
+    int F = cl->D, W = cl->M, H = cl->N, L = cl->L;
+    //int F = cl->D, H = cl->M, W = cl->N, L = cl->L;
     int p = cl->padding, Sy = cl->Stride_m, Sx = cl->Stride_n;
     ASSERT(input_t->L == cl->L, "err: conv shape\n");
 

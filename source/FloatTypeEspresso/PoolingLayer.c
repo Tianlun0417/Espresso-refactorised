@@ -9,6 +9,21 @@ poolLayer poolLayer_init(int M, int N, int Sm, int Sn, poolingStrategy strategy)
 }
 
 
+poolLayer *new_pool_layer(int M, int N, int Stride_m,
+                          int Stride_n, poolingStrategy strategy) {
+    poolLayer *pool_layer_ptr = (poolLayer *) malloc(sizeof(poolLayer));
+    pool_layer_ptr->M = M;
+    pool_layer_ptr->N = N;
+    pool_layer_ptr->Stride_m = Stride_m;
+    pool_layer_ptr->Stride_n = Stride_n;
+    pool_layer_ptr->strategy = strategy;
+    pool_layer_ptr->out.data = NULL;
+    pool_layer_ptr->mask.data = NULL;
+
+    return pool_layer_ptr;
+}
+
+
 void poolLayer_free(poolLayer *pl) {
     tensor_free(&pl->out);
     tensor_free(&pl->mask);
@@ -26,7 +41,7 @@ void poolLayer_forward(FloatTensor *t, poolLayer *pl) {
     if (pl->strategy == MAXPOOL)
         tensor_maxpool(t, &pl->out, W, H, Sx, Sy);
     else
-        exit(-3);
+        tensor_avgpool(t, &pl->out, W, H, Sx, Sy);
 }
 
 

@@ -7,6 +7,10 @@ FloatTensor tensor_init(int D, int M, int N, int L) {
     FloatTensor t = {D, M, N, L, M * N * L, BYTES(float, D * M * N * L)};
     t.data = MALLOC(float, D * M * N * L);
     ASSERT(t.data, "err: FloatTensor malloc");
+    //float * tmp_ptr = t.data + D * M * N * L;
+    //printf("The dim of malloc tensor is %d, %d, %d, %d.\n", D, M, N, L);
+    //printf("The pointer value is %p. The total size is %d.\n", t.data, D * M * N * L);
+    //printf("The end value of allocated memory chunk should be: %p.\n\n", tmp_ptr);
 
     return t;
 }
@@ -163,6 +167,30 @@ void tensor_maxpool(FloatTensor *src, FloatTensor *dst, int W, int H,
 }
 
 
+void tensor_avgpool(FloatTensor *src, FloatTensor *dst, int W, int H,
+                    int Sx, int Sy){
+    const int D = src->D, L = src->L;
+    const int Ms = src->M, Ns = src->N;
+    const int Md = dst->M, Nd = dst->N;
+    ASSERT(D == dst->D && L == dst->L, "err: pool shape\n");
+    float *d = dst->data;
+    int n = 0;
+    for (int w = 0; w < D; w++) {
+        float *s = src->data + w * src->MNL;
+        for (int i = 0; i < Ms; i += Sy)
+            for (int j = 0; j < Ns; j += Sx)
+                for (int k = 0; k < L; k++) {
+                    float sum = 0;
+                    for (int y = 0; y < H; y++)
+                        for (int x = 0; x < W; x++) {
+                            sum += s[ID3(i + y, j + x, k, Ns, L)];
+                        }
+                    d[n++] = sum / (H * W);
+                }
+    }
+}
+
+
 FloatTensor tensor_copy_pad(FloatTensor *t, int p) {
     const int Ms = t->M, Ns = t->N, L = t->L, D = t->D;
     const int Md = PAD(Ms, p), Nd = PAD(Ns, p);
@@ -198,6 +226,64 @@ void tensor_pad(FloatTensor *src, FloatTensor *dst, int p) {
         s += src->MNL;
         d += dst->MNL;
     }
+}
+
+FloatTensor *tensor_cat(FloatTensor *tensor_a, FloatTensor *tensor_b, int dim) {
+    FloatTensor *result = (FloatTensor*) malloc(sizeof(FloatTensor));
+
+    if(dim == 0){
+        if((tensor_a->M != tensor_b->M)
+        || (tensor_a->N != tensor_b->N)
+        || (tensor_a->L != tensor_b->L))
+            fprintf(stderr, "Dimension doesn't match\n");
+        result->D = tensor_a->D + tensor_b->D;
+        result->M = tensor_a->M;
+        result->N = tensor_a->N;
+        result->L = tensor_a->L;
+        result->MNL = tensor_a->MNL;
+    }else if(dim == 1){
+        if((tensor_a->D != tensor_b->D)
+        || (tensor_a->N != tensor_b->N)
+        || (tensor_a->L != tensor_b->L))
+            fprintf(stderr, "Dimension doesn't match\n");
+        result->D = tensor_a->D;
+        result->M = tensor_a->M + tensor_b->M;
+        result->N = tensor_a->N;
+        result->L = tensor_a->L;
+        result->MNL = tensor_a->MNL;
+    }else if(dim == 2){
+        if((tensor_a->D != tensor_b->D)
+        || (tensor_a->M != tensor_b->M)
+        || (tensor_a->L != tensor_b->L))
+            fprintf(stderr, "Dimension doesn't match\n");
+        result->D = tensor_a->D;
+        result->M = tensor_a->M;
+        result->N = tensor_a->N + tensor_b->N;
+        result->L = tensor_a->L;
+        result->MNL = tensor_a->MNL;
+    }else if(dim == 3){
+        if((tensor_a->D != tensor_b->D)
+        || (tensor_a->N != tensor_b->N)
+        || (tensor_a->M != tensor_b->M))
+            fprintf(stderr, "Dimension doesn't match\n");
+        result->D = tensor_a->D;
+        result->M = tensor_a->M;
+        result->N = tensor_a->N;
+        result->L = tensor_a->L + tensor_b->L;
+        result->MNL = tensor_a->MNL;
+    }
+
+    result->bytes = BYTES(float, result->D * result->M * result->N * result->L);
+    result->data = (float*) malloc(result->bytes);
+
+    for(int idx = 0; idx < tensor_len(tensor_a); idx++){
+        result->data[idx] = tensor_a->data[idx];
+    }
+    for(int idx = 0; idx < tensor_len(tensor_b); idx++){
+        result->data[tensor_len(tensor_a) + idx] = tensor_a->data[idx];
+    }
+
+    return result;
 }
 
 void tensor_print(FloatTensor *t, const char *fmt) {

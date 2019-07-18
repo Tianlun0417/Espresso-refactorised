@@ -30,6 +30,8 @@ FloatTensor tensor_copy_pad(FloatTensor *t, int p);
 FloatTensor tensor_from_ptr(int D, int M, int N, int L, float *ptr);
 //FloatTensor tensor_from_file(int D, int M, int N, int L, FILE *pf);
 
+FloatTensor * tensor_cat(FloatTensor *tensor_a, FloatTensor *tensor_b, int dim);
+
 //FloatTensor tensor_copy_tch(FloatTensor *a);
 void tensor_tch(FloatTensor *a, FloatTensor *b);
 
@@ -39,6 +41,8 @@ void tensor_clear(FloatTensor *t);
 void tensor_pad(FloatTensor *src, FloatTensor *dst, int p);
 
 void tensor_maxpool(FloatTensor *src, FloatTensor *dst, int W, int H,
+                    int Sx, int Sy);
+void tensor_avgpool(FloatTensor *src, FloatTensor *dst, int W, int H,
                     int Sx, int Sy);
 
 void tensor_lower(FloatTensor *src, FloatTensor *dst,

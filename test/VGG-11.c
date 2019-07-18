@@ -20,7 +20,7 @@ int main() {
     convLayer conv_layer_7 = convLayer_init(1, 1, 1);
     convLayer conv_layer_8 = convLayer_init(1, 1, 1);
 
-    poolLayer maxPool_layer = poolLayer_init(2, 2, 2, 2);
+    poolLayer maxPool_layer = poolLayer_init(2, 2, 2, 2, MAXPOOL);
 
     dropoutLayer dropout_layer = dropoutLayer_init(0.5);
 
@@ -65,7 +65,7 @@ int main() {
 
     int save = 0;
 
-    for (int idx = 0; idx < TEST_IMG; idx++) {
+    for (int idx = 0; idx < 1; idx++) {
         cifar10_load(image_path, idx, 1, &cifar_image, &cifar_label);
 
         inputLayer_load(&cifar_image, &input_layer);

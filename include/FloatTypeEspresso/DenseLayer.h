@@ -22,6 +22,8 @@ typedef struct {
 
 denseLayer denseLayer_init(int M, int N);
 
+denseLayer * new_dense_layer(int M, int N);
+
 void denseLayer_print_shape(denseLayer *dl);
 
 void denseLayer_free(denseLayer *dl);

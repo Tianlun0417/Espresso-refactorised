@@ -1,12 +1,12 @@
 #include "FloatTypeEspresso/RandomInit.h"
 
 
-void init_dense_layer(denseLayer *den_layer, int M, int N) {
-    float *arr_weight = (float *) calloc(M * N, sizeof(float));
+void init_dense_layer(denseLayer *den_layer) {
+    float *arr_weight = (float *) malloc(den_layer->M * den_layer->N * sizeof(float));
 
-    random_init_arr(arr_weight, M * N);
+    random_init_arr(arr_weight, den_layer->M * den_layer->N);
 
-    FloatTensor dense_weight = tensor_from_ptr(1, M, N, 1, arr_weight);
+    FloatTensor dense_weight = tensor_from_ptr(1, den_layer->M, den_layer->N, 1, arr_weight);
     denseLayer_set(&dense_weight, den_layer);
 
     free(arr_weight);
@@ -35,15 +35,17 @@ void init_batchnorm_layer(bnormLayer *bnorm_layer, size_t layer_size) {
     free(arr_bnorm_beta);
 }
 
-void init_conv_layer(convLayer *conv_layer, int L, int D, int M, int N) {
+void init_conv_layer(convLayer *conv_layer) {
     // L - no input channels
     // D - no output channels
     // M - kernel height
     // N - kernel width
 
-    float *conv_w_arr = (float *) calloc(D * M * N * L, sizeof(float));
-    random_init_arr(conv_w_arr, D * M * N * L);
-    FloatTensor conv_w = tensor_from_ptr(D, M, N, L, conv_w_arr);
+    float *conv_w_arr = (float *)
+            malloc(conv_layer->D * conv_layer->M * conv_layer->N * conv_layer->L * sizeof(float));
+    random_init_arr(conv_w_arr, conv_layer->D * conv_layer->M * conv_layer->N * conv_layer->L);
+    FloatTensor conv_w =
+            tensor_from_ptr(conv_layer->D, conv_layer->M, conv_layer->N, conv_layer->L, conv_w_arr);
     convLayer_set(&conv_w, conv_layer);
 
     free(conv_w_arr);

@@ -1,0 +1,8 @@
+//
+// Created by tianlun on 19/07/19.
+//
+
+#ifndef ESPRESSO_REFACTORISED_VGG_H
+#define ESPRESSO_REFACTORISED_VGG_H
+
+#endif //ESPRESSO_REFACTORISED_VGG_H

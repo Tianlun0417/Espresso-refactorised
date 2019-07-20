@@ -146,7 +146,7 @@ void convLayer_update(convLayer *cl) {
 
 void print_tensor(FloatTensor *tensor) {
     int count = 0;
-    // printf("The shape of the tensor is: %d x %d\n", tensor->M, tensor->N);
+    printf("The shape of the tensor is: %d x %d\n", tensor->M, tensor->N);
     for (int i = 0; i < tensor->M; i++) {
         for (int j = 0; j < tensor->N; j++) {
             printf("%.2f, ", tensor->data[i * tensor->M + j]);

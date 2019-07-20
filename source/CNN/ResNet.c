@@ -13,9 +13,9 @@ BasicBlock *new_basicblock(int inplanes, int planes, int stride, Downsample *dow
     basicblock->downsample = downsample;
 
     if(!LOAD_PRETRAINED_WEIGHT){
-        init_conv_layer(basicblock->conv1, inplanes, planes, 3, 3);
+        init_conv_layer(basicblock->conv1);
         init_batchnorm_layer(basicblock->bn1, planes);
-        init_conv_layer(basicblock->conv2, planes, planes, 3, 3);
+        init_conv_layer(basicblock->conv2);
         init_batchnorm_layer(basicblock->bn2, planes);
     }
 
@@ -36,11 +36,11 @@ Bottleneck *new_bottleneck(int inplanes, int planes, int stride, Downsample *dow
     bottleneck->downsample = downsample;
 
     if(!LOAD_PRETRAINED_WEIGHT){
-        init_conv_layer(bottleneck->conv1, inplanes, planes, 1, 1);
+        init_conv_layer(bottleneck->conv1);
         init_batchnorm_layer(bottleneck->bn1, planes);
-        init_conv_layer(bottleneck->conv2, planes, planes, 3, 3);
+        init_conv_layer(bottleneck->conv2);
         init_batchnorm_layer(bottleneck->bn2, planes);
-        init_conv_layer(bottleneck->conv3, planes, planes * 4, 3, 3);
+        init_conv_layer(bottleneck->conv3);
         init_batchnorm_layer(bottleneck->bn3, planes * 4);
     }
 
@@ -62,7 +62,7 @@ ResNetBlock *new_ResNet_block(ResNet *resnet, int planes, int num_blocks, int st
         downsample_ptr->bn = new_bn_layer(planes * expansion);
 
         if(!LOAD_PRETRAINED_WEIGHT){
-            init_conv_layer(downsample_ptr->conv, resnet->inplanes, planes, 1, 1);
+            init_conv_layer(downsample_ptr->conv);
             init_batchnorm_layer(downsample_ptr->bn, planes * expansion);
         }
     }
@@ -111,9 +111,9 @@ ResNet *ResNet_init(BlockType block_type, int num_layers[4], int num_classes) {
     ResNetInstance->output = NULL;
 
     if(!LOAD_PRETRAINED_WEIGHT){
-        init_conv_layer(ResNetInstance->conv1, 3, 64, 7, 7);
+        init_conv_layer(ResNetInstance->conv1);
         init_batchnorm_layer(ResNetInstance->bn1, 64);
-        init_dense_layer(ResNetInstance->fc, 512 * (block_type == UseBasicBlock ? 1 : 4), num_classes);
+        init_dense_layer(ResNetInstance->fc);
     }
 
     return ResNetInstance;

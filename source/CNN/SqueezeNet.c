@@ -9,32 +9,35 @@ Fire *new_fire_module(int inplanes, int squeeze_planes, int expand1x1_planes, in
     fire_ptr->expand3x3 = new_conv_layer(squeeze_planes, expand3x3_planes, 3, 3, 1, 1, 1);
 
     if(!LOAD_PRETRAINED_WEIGHT){
-        init_conv_layer(fire_ptr->squeeze, inplanes, squeeze_planes, 1, 1);
-        init_conv_layer(fire_ptr->expand1x1, squeeze_planes, expand1x1_planes, 1, 1);
-        init_conv_layer(fire_ptr->expand3x3, squeeze_planes, expand3x3_planes, 3, 3);
+        init_conv_layer(fire_ptr->squeeze);
+        init_conv_layer(fire_ptr->expand1x1);
+        init_conv_layer(fire_ptr->expand3x3);
     }
     fire_ptr->output = NULL;
 
     return fire_ptr;
 }
 
-FeaturesSequential *new_features_sequential(float version) {
+FeaturesSequential *new_features_sequential(SqueezeNetVersion version) {
     FeaturesSequential *features_ptr = (FeaturesSequential*) malloc(sizeof(FeaturesSequential));
 
     features_ptr->version = version;
-    if(features_ptr->version == 1.0){
+    if(features_ptr->version == Version1_0){
+
         features_ptr->conv = new_conv_layer(3, 96, 7, 7, 2, 2, 0);
         features_ptr->fire_list[0] = new_fire_module(96,  16, 64,  64);
 
-        if(!LOAD_PRETRAINED_WEIGHT) init_conv_layer(features_ptr->conv, 3, 96, 7, 7);
+        if(!LOAD_PRETRAINED_WEIGHT) init_conv_layer(features_ptr->conv);
 
-    }else if(features_ptr->version == 1.1){
+    }else if(features_ptr->version == Version1_1){
+
         features_ptr->conv = new_conv_layer(3, 64, 3, 3, 2, 2, 0);
         features_ptr->fire_list[0] = new_fire_module(64,  16, 64,  64);
 
-        if(!LOAD_PRETRAINED_WEIGHT) init_conv_layer(features_ptr->conv, 3, 64, 7, 7);
+        if(!LOAD_PRETRAINED_WEIGHT) init_conv_layer(features_ptr->conv);
+
     }else{
-        printf("Unsupported SqueezeNet version: %f\n 1.0 or 1.1 expected.", version);
+        printf("Unsupported SqueezeNet version: %d\n 1.0 or 1.1 expected.", version);
         exit(-1);
     }
 
@@ -66,7 +69,7 @@ ClassifierSequential *new_classifier_sequential(int num_classes) {
     return classifier_ptr;
 }
 
-SqueezeNet *SqueezeNet_init(float version, int num_classes) {
+SqueezeNet *SqueezeNet_init(SqueezeNetVersion version, int num_classes) {
     SqueezeNet *squeeze_net = (SqueezeNet*) malloc(sizeof(SqueezeNet));
 
     squeeze_net->version     = version;
@@ -97,7 +100,7 @@ void features_forward(Tensor *input, FeaturesSequential *features) {
     fire_forward(&(features->maxpool_list[0]->out), features->fire_list[0]);
     fire_forward(features->fire_list[0]->output, features->fire_list[1]);
 
-    if(features->version == 1.0){
+    if(features->version == Version1_0){
         fire_forward(features->fire_list[1]->output, features->fire_list[2]);
         poolLayer_forward(features->fire_list[2]->output, features->maxpool_list[1]);
         fire_forward(&(features->maxpool_list[1]->out), features->fire_list[3]);
@@ -106,7 +109,7 @@ void features_forward(Tensor *input, FeaturesSequential *features) {
         fire_forward(features->fire_list[5]->output, features->fire_list[6]);
         poolLayer_forward(features->fire_list[6]->output, features->maxpool_list[2]);
         fire_forward(&(features->maxpool_list[2]->out), features->fire_list[7]);
-    }else if(features->version == 1.1){
+    }else if(features->version == Version1_1){
         poolLayer_forward(features->fire_list[1]->output, features->maxpool_list[1]);
         fire_forward(&(features->maxpool_list[1]->out), features->fire_list[2]);
         fire_forward(features->fire_list[2]->output, features->fire_list[3]);

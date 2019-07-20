@@ -7,6 +7,11 @@
 
 typedef FloatTensor Tensor;
 
+typedef enum version{
+    Version1_0,
+    Version1_1
+}SqueezeNetVersion;
+
 typedef struct fire{
     int inplanes;
     convLayer * squeeze;
@@ -16,7 +21,7 @@ typedef struct fire{
 }Fire;
 
 typedef struct featuresSequential{
-    float version;
+    SqueezeNetVersion version;
     convLayer * conv;
     Fire      * fire_list[8];
     poolLayer * maxpool_list[3];
@@ -32,7 +37,7 @@ typedef struct classifierSequential{
 }ClassifierSequential;
 
 typedef struct squeezeNet{
-    float version;
+    SqueezeNetVersion version;
     int num_classes;
     FeaturesSequential   * features;
     ClassifierSequential * classifier;
@@ -41,9 +46,9 @@ typedef struct squeezeNet{
 
 Fire * new_fire_module(int inplanes, int squeeze_planes,
         int expand1x1_planes, int expand3x3_planes);
-FeaturesSequential * new_features_sequential(float version);
+FeaturesSequential * new_features_sequential(SqueezeNetVersion version);
 ClassifierSequential * new_classifier_sequential(int num_classes);
-SqueezeNet * SqueezeNet_init(float version, int num_classes);
+SqueezeNet * SqueezeNet_init(SqueezeNetVersion version, int num_classes);
 
 void fire_forward(Tensor * input, Fire * fire);
 void features_forward(Tensor * input, FeaturesSequential * features);

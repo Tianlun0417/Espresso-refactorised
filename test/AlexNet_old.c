@@ -23,15 +23,15 @@ int main() {
     denseLayer dense_layer_3 = denseLayer_init(10, 4096);
 
     /*------------------------Initialise each layer------------------------*/
-    init_conv_layer(&conv_layer_1, 3,   64,  11, 11);
-    init_conv_layer(&conv_layer_2, 64,  192, 5,  5);
-    init_conv_layer(&conv_layer_3, 192, 384, 3,  3);
-    init_conv_layer(&conv_layer_4, 384, 256, 3,  3);
-    init_conv_layer(&conv_layer_5, 256, 256, 3,  3);
+    init_conv_layer(&conv_layer_1);
+    init_conv_layer(&conv_layer_2);
+    init_conv_layer(&conv_layer_3);
+    init_conv_layer(&conv_layer_4);
+    init_conv_layer(&conv_layer_5);
 
-    init_dense_layer(&dense_layer_1, 4096, 1024);
-    init_dense_layer(&dense_layer_2, 4096, 4096);
-    init_dense_layer(&dense_layer_3, 10, 4096);
+    init_dense_layer(&dense_layer_1);
+    init_dense_layer(&dense_layer_2);
+    init_dense_layer(&dense_layer_3);
     /*------------------------Initialise each layer------------------------*/
 
     int save = 1;

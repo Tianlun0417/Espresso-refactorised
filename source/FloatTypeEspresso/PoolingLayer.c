@@ -10,13 +10,14 @@ poolLayer poolLayer_init(int M, int N, int Sm, int Sn, poolingStrategy strategy)
 
 
 poolLayer *new_pool_layer(int M, int N, int Stride_m,
-                          int Stride_n, poolingStrategy strategy) {
+                          int Stride_n, int padding, poolingStrategy strategy) {
     poolLayer *pool_layer_ptr = (poolLayer *) malloc(sizeof(poolLayer));
     pool_layer_ptr->M = M;
     pool_layer_ptr->N = N;
     pool_layer_ptr->Stride_m = Stride_m;
     pool_layer_ptr->Stride_n = Stride_n;
     pool_layer_ptr->strategy = strategy;
+    pool_layer_ptr->padding  = padding;
     pool_layer_ptr->out.data = NULL;
     pool_layer_ptr->mask.data = NULL;
 

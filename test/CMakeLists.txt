@@ -19,14 +19,14 @@ set(ESP_RE_LIBS espresso_refactorised m ${BLAS_LIBRARIES})
 #add_executable(espresso_refactorised_main int_tensor_test.c)
 #target_link_libraries(espresso_refactorised_main ${ESP_RE_LIBS} cblas)
 
-#add_executable(espresso_refactorised_main ConvLayer_test.c)
-#target_link_libraries(espresso_refactorised_main ${ESP_RE_LIBS} cblas)
+add_executable(espresso_refactorised_main ConvLayer_test.c)
+target_link_libraries(espresso_refactorised_main ${ESP_RE_LIBS} cblas)
 
 #add_executable(espresso_refactorised_main AlexNet_test.c)
 #target_link_libraries(espresso_refactorised_main ${ESP_RE_LIBS} cblas)
 
-add_executable(espresso_refactorised_main AlexNet_old.c)
-target_link_libraries(espresso_refactorised_main ${ESP_RE_LIBS} cblas)
+#add_executable(espresso_refactorised_main AlexNet_old.c)
+#target_link_libraries(espresso_refactorised_main ${ESP_RE_LIBS} cblas)
 
 #add_executable(espresso_refactorised_main ResNet_test.c)
 #target_link_libraries(espresso_refactorised_main ${ESP_RE_LIBS} cblas)

@@ -50,7 +50,7 @@ FeaturesSequential *new_features_sequential(SqueezeNetVersion version) {
     features_ptr->fire_list[7] = new_fire_module(512, 64, 256, 256);
 
     for(int maxpool_idx = 0; maxpool_idx < 3; maxpool_idx++){
-        features_ptr->maxpool_list[maxpool_idx] = new_pool_layer(3, 3, 2, 2, MAXPOOL);
+        features_ptr->maxpool_list[maxpool_idx] = new_pool_layer(3, 3, 2, 2, 0, MAXPOOL);
     }
     features_ptr->output = NULL;
 
@@ -63,7 +63,7 @@ ClassifierSequential *new_classifier_sequential(int num_classes) {
     classifier_ptr->num_classes = num_classes;
     classifier_ptr->dropout     = new_dropout_layer(0.5);
     classifier_ptr->final_conv  = new_conv_layer(512, num_classes, 1, 1, 1, 1, 0);
-    classifier_ptr->avgpool     = new_pool_layer(13, 13, 1, 1, AVGPOOL);
+    classifier_ptr->avgpool     = new_pool_layer(13, 13, 1, 1, 0, AVGPOOL);
     classifier_ptr->output      = NULL;
 
     return classifier_ptr;

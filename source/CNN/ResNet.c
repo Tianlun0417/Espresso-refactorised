@@ -101,12 +101,12 @@ ResNet *ResNet_init(BlockType block_type, int num_layers[4], int num_classes) {
     ResNetInstance->inplanes = 64;
      ResNetInstance->conv1 = new_conv_layer(3, 64, 7, 7, 2, 2, 3);
     ResNetInstance->bn1 = new_bn_layer(64);
-    ResNetInstance->pool1 = new_pool_layer(3, 3, 2, 2, MAXPOOL);
+    ResNetInstance->pool1 = new_pool_layer(3, 3, 2, 2, 0, MAXPOOL);
     ResNetInstance->block1 = new_ResNet_block(ResNetInstance, 64, num_layers[0], 1);
     ResNetInstance->block2 = new_ResNet_block(ResNetInstance, 128, num_layers[1], 2);
     ResNetInstance->block3 = new_ResNet_block(ResNetInstance, 256, num_layers[2], 2);
     ResNetInstance->block4 = new_ResNet_block(ResNetInstance, 512, num_layers[3], 1);
-    ResNetInstance->pool2 = new_pool_layer(7, 7, 1, 1, AVGPOOL);
+    ResNetInstance->pool2 = new_pool_layer(7, 7, 1, 1, 0, AVGPOOL);
     ResNetInstance->fc = new_dense_layer(512 * (block_type == UseBasicBlock ? 1 : 4), num_classes);
     ResNetInstance->output = NULL;
 

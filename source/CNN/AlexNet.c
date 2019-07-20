@@ -17,9 +17,9 @@ Features *new_features() {
         init_conv_layer(features->conv5);
     }
 
-    features->maxpool1 = new_pool_layer(3, 3, 2, 2, MAXPOOL);
-    features->maxpool2 = new_pool_layer(3, 3, 2, 2, MAXPOOL);
-    features->maxpool3 = new_pool_layer(3, 3, 2, 2, MAXPOOL);
+    features->maxpool1 = new_pool_layer(3, 3, 2, 2, 0, MAXPOOL);
+    features->maxpool2 = new_pool_layer(3, 3, 2, 2, 0, MAXPOOL);
+    features->maxpool3 = new_pool_layer(3, 3, 2, 2, 0, MAXPOOL);
     features->output = NULL;
 
     return features;

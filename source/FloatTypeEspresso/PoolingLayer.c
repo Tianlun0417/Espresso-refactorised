@@ -1,17 +1,17 @@
 #include "FloatTypeEspresso/PoolingLayer.h"
 
 
-poolLayer poolLayer_init(int M, int N, int Sm, int Sn, poolingStrategy strategy) {
-    poolLayer pl = {M, N, Sm, Sn, strategy};
+PoolLayer poolLayer_init(int M, int N, int Sm, int Sn, poolingStrategy strategy) {
+    PoolLayer pl = {M, N, Sm, Sn, strategy};
     pl.out.data = NULL;
     pl.mask.data = NULL;
     return pl;
 }
 
 
-poolLayer *new_pool_layer(int M, int N, int Stride_m,
+PoolLayer *new_pool_layer(int M, int N, int Stride_m,
                           int Stride_n, int padding, poolingStrategy strategy) {
-    poolLayer *pool_layer_ptr = (poolLayer *) malloc(sizeof(poolLayer));
+    PoolLayer *pool_layer_ptr = (PoolLayer *) malloc(sizeof(PoolLayer));
     pool_layer_ptr->M = M;
     pool_layer_ptr->N = N;
     pool_layer_ptr->Stride_m = Stride_m;
@@ -25,17 +25,17 @@ poolLayer *new_pool_layer(int M, int N, int Stride_m,
 }
 
 
-void poolLayer_free(poolLayer *pl) {
+void poolLayer_free(PoolLayer *pl) {
     tensor_free(&pl->out);
     tensor_free(&pl->mask);
 }
 
 
-void poolLayer_forward(FloatTensor *t, poolLayer *pl) {
+void pool_layer_forward(FloatTensor *t, PoolLayer *pl) {
     const int W = pl->M, H = pl->N, Sy = pl->Stride_m, Sx = pl->Stride_n;
     const int D = t->D, L = t->L, Ms = t->M, Ns = t->N;
-    const int Md = OUT_LEN(Ms, W, Sy);
-    const int Nd = OUT_LEN(Ns, H, Sx);
+    const int Md = OUT_LEN(Ms, W, Sy) <= 0 ? 1 : OUT_LEN(Ms, W, Sy);
+    const int Nd = OUT_LEN(Ns, H, Sx) <= 0 ? 1 : OUT_LEN(Ms, H, Sx);
 
     if (!pl->out.data) pl->out = tensor_init(D, Md, Nd, L);
 
@@ -46,10 +46,10 @@ void poolLayer_forward(FloatTensor *t, poolLayer *pl) {
 }
 
 
-void poolLayer_backward(FloatTensor *dout, poolLayer *pl) {
+void poolLayer_backward(FloatTensor *dout, PoolLayer *pl) {
     exit(-2);
 }
 
-void set_pooling_strategy(poolLayer *pl, int strategy) {
+void set_pooling_strategy(PoolLayer *pl, int strategy) {
     pl->strategy = strategy;
 }

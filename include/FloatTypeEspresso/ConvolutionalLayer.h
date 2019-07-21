@@ -19,21 +19,19 @@ typedef struct {
     int D, M, N, L, Stride_m, Stride_n, padding;
     FloatTensor W, b, out, in;
     /*FloatTensor dW, db;*/ // we don't need the gradients for inference
-} convLayer;
+} ConvLayer;
 
-convLayer convLayer_init(int Sm, int Sn, int padding);
+ConvLayer convLayer_init(int Sm, int Sn, int padding);
 
-convLayer * new_conv_layer(int L, int D, int M, int N, int Stride_m, int Stride_n, int padding);
+ConvLayer * new_conv_layer(int L, int D, int M, int N, int Stride_m, int Stride_n, int padding);
 
-void convLayer_print_shape(convLayer *cl);
+void convLayer_print_shape(ConvLayer *cl);
 
-void convLayer_free(convLayer *cl);
+void convLayer_free(ConvLayer *cl);
 
-void convLayer_set(FloatTensor *W, convLayer *cl);
+void convLayer_set(FloatTensor *W, ConvLayer *cl);
 
-void convLayer_forward(FloatTensor *input_t, convLayer *cl, int save);
-
-void print_tensor(FloatTensor *tensor);
+void conv_layer_forward(FloatTensor *input_t, ConvLayer *cl, int save);
 
 #ifdef __cplusplus
 }

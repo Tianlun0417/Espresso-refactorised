@@ -16,20 +16,20 @@ typedef struct {
     int M, N, Stride_m, Stride_n, padding;
     poolingStrategy strategy;
     FloatTensor out, mask;
-} poolLayer;
+} PoolLayer;
 
 
-poolLayer poolLayer_init(int M, int N, int Sm, int Sn, poolingStrategy strategy);
+PoolLayer poolLayer_init(int M, int N, int Sm, int Sn, poolingStrategy strategy);
 
-poolLayer * new_pool_layer(int M, int N, int Stride_m, int Stride_n, int padding, poolingStrategy strategy);
+PoolLayer *new_pool_layer(int M, int N, int Stride_m, int Stride_n, int padding, poolingStrategy strategy);
 
-void poolLayer_free(poolLayer *pl);
+void poolLayer_free(PoolLayer *pl);
 
-void poolLayer_forward(FloatTensor *t, poolLayer *pl);
+void pool_layer_forward(FloatTensor *t, PoolLayer *pl);
 
-void poolLayer_backward(FloatTensor *dout, poolLayer *pl);
+void poolLayer_backward(FloatTensor *dout, PoolLayer *pl);
 
-void set_pooling_strategy(poolLayer *pl, int strategy);
+void set_pooling_strategy(PoolLayer *pl, int strategy);
 
 
 #ifdef __cplusplus

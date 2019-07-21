@@ -14,25 +14,25 @@ typedef enum version{
 
 typedef struct fire{
     int inplanes;
-    convLayer * squeeze;
-    convLayer * expand1x1;
-    convLayer * expand3x3;
+    ConvLayer * squeeze;
+    ConvLayer * expand1x1;
+    ConvLayer * expand3x3;
     Tensor    * output;
 }Fire;
 
 typedef struct featuresSequential{
     SqueezeNetVersion version;
-    convLayer * conv;
+    ConvLayer * conv;
     Fire      * fire_list[8];
-    poolLayer * maxpool_list[3];
+    PoolLayer * maxpool_list[3];
     Tensor * output;
 }FeaturesSequential;
 
 typedef struct classifierSequential{
     int num_classes;
     dropoutLayer * dropout;
-    convLayer    * final_conv;
-    poolLayer    * avgpool;
+    ConvLayer    * final_conv;
+    PoolLayer    * avgpool;
     Tensor * output;
 }ClassifierSequential;
 

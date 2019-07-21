@@ -1,7 +1,7 @@
 #include "FloatTypeEspresso/ActivationFunctions.h"
 
 
-void reluAct_forward(FloatTensor *t) {
+void relu_forward(FloatTensor *t) {
     const int len = tensor_len(t);
     for (int i = 0; i < len; i++)
         t->data[i] = MAX(0, t->data[i]);

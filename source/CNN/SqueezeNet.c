@@ -82,38 +82,38 @@ SqueezeNet *SqueezeNet_init(SqueezeNetVersion version, int num_classes) {
 }
 
 void fire_forward(Tensor *input, Fire *fire) {
-    convLayer_forward(input, fire->squeeze, SAVE);
-    reluAct_forward(&(fire->squeeze->out));
+    conv_layer_forward(input, fire->squeeze, SAVE);
+    relu_forward(&(fire->squeeze->out));
 
-    convLayer_forward(&(fire->squeeze->out), fire->expand1x1, SAVE);
-    reluAct_forward(&(fire->expand1x1->out));
-    convLayer_forward(&(fire->squeeze->out), fire->expand3x3, SAVE);
-    reluAct_forward(&(fire->expand3x3->out));
+    conv_layer_forward(&(fire->squeeze->out), fire->expand1x1, SAVE);
+    relu_forward(&(fire->expand1x1->out));
+    conv_layer_forward(&(fire->squeeze->out), fire->expand3x3, SAVE);
+    relu_forward(&(fire->expand3x3->out));
 
     fire->output = tensor_cat(&(fire->expand1x1->out), &(fire->expand3x3->out), 3);
 }
 
 void features_forward(Tensor *input, FeaturesSequential *features) {
-    convLayer_forward(input, features->conv, SAVE);
-    reluAct_forward(&(features->conv->out));
-    poolLayer_forward(&(features->conv->out), features->maxpool_list[0]);
+    conv_layer_forward(input, features->conv, SAVE);
+    relu_forward(&(features->conv->out));
+    pool_layer_forward(&(features->conv->out), features->maxpool_list[0]);
     fire_forward(&(features->maxpool_list[0]->out), features->fire_list[0]);
     fire_forward(features->fire_list[0]->output, features->fire_list[1]);
 
     if(features->version == Version1_0){
         fire_forward(features->fire_list[1]->output, features->fire_list[2]);
-        poolLayer_forward(features->fire_list[2]->output, features->maxpool_list[1]);
+        pool_layer_forward(features->fire_list[2]->output, features->maxpool_list[1]);
         fire_forward(&(features->maxpool_list[1]->out), features->fire_list[3]);
         fire_forward(features->fire_list[3]->output, features->fire_list[4]);
         fire_forward(features->fire_list[4]->output, features->fire_list[5]);
         fire_forward(features->fire_list[5]->output, features->fire_list[6]);
-        poolLayer_forward(features->fire_list[6]->output, features->maxpool_list[2]);
+        pool_layer_forward(features->fire_list[6]->output, features->maxpool_list[2]);
         fire_forward(&(features->maxpool_list[2]->out), features->fire_list[7]);
     }else if(features->version == Version1_1){
-        poolLayer_forward(features->fire_list[1]->output, features->maxpool_list[1]);
+        pool_layer_forward(features->fire_list[1]->output, features->maxpool_list[1]);
         fire_forward(&(features->maxpool_list[1]->out), features->fire_list[2]);
         fire_forward(features->fire_list[2]->output, features->fire_list[3]);
-        poolLayer_forward(features->fire_list[3]->output, features->maxpool_list[2]);
+        pool_layer_forward(features->fire_list[3]->output, features->maxpool_list[2]);
         fire_forward(&(features->maxpool_list[2]->out), features->fire_list[4]);
         fire_forward(features->fire_list[4]->output, features->fire_list[5]);
         fire_forward(features->fire_list[5]->output, features->fire_list[6]);
@@ -127,9 +127,9 @@ void features_forward(Tensor *input, FeaturesSequential *features) {
 
 void classification_forward(Tensor *input, ClassifierSequential *classifier) {
     dropoutLayer_forward(input, classifier->dropout);
-    convLayer_forward(input, classifier->final_conv, SAVE);
-    reluAct_forward(&(classifier->final_conv->out));
-    poolLayer_forward(&(classifier->final_conv->out), classifier->avgpool);
+    conv_layer_forward(input, classifier->final_conv, SAVE);
+    relu_forward(&(classifier->final_conv->out));
+    pool_layer_forward(&(classifier->final_conv->out), classifier->avgpool);
 
     classifier->output = &(classifier->avgpool->out);
 }

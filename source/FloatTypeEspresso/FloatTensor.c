@@ -7,11 +7,6 @@ FloatTensor tensor_init(int D, int M, int N, int L) {
     FloatTensor t = {D, M, N, L, M * N * L, BYTES(float, D * M * N * L)};
     t.data = MALLOC(float, D * M * N * L);
     ASSERT(t.data, "err: FloatTensor malloc");
-    //float * tmp_ptr = t.data + D * M * N * L;
-    //printf("The dim of malloc tensor is %d, %d, %d, %d.\n", D, M, N, L);
-    //printf("The pointer value is %p. The total size is %d.\n", t.data, D * M * N * L);
-    //printf("The end value of allocated memory chunk should be: %p.\n\n", tmp_ptr);
-
     return t;
 }
 
@@ -123,6 +118,8 @@ void tensor_tch(FloatTensor *a, FloatTensor *b) {
 
 void tensor_lower(FloatTensor *src, FloatTensor *dst,
                   int W, int H, int Sx, int Sy) {
+    int outbound_count = 0;
+    int loop_count = 0;
     const int D = src->D;
     const int Ms = src->M, Ns = src->N, Ls = src->L;
     const int Md = dst->M, Nd = dst->N, Ld = src->L;
@@ -135,58 +132,123 @@ void tensor_lower(FloatTensor *src, FloatTensor *dst,
             for (int j = 0; j < Nd; j++)
                 for (int y = 0; y < H; y++)
                     for (int x = 0; x < W; x++)
-                        for (int k = 0; k < Ld; k++)
+                        for (int k = 0; k < Ld; k++){
+                            int id3 = ID3(i * Sy + y, j * Sx + x, k, Ns, Ls);
+                            loop_count++;
+                            if(id3 >= (src->MNL * src->D)){
+                                outbound_count++;
+                                fprintf(stderr, "Tensor Lower: Index outbund!\n");
+                            }
                             d[n++] =
                                     s[ID3(i * Sy + y, j * Sx + x, k, Ns, Ls)];
+                        }
+
     }
 }
 
 
-void tensor_maxpool(FloatTensor *src, FloatTensor *dst, int W, int H,
+void tensor_maxpool(FloatTensor *input, FloatTensor *output, int pool_kernel_w, int pool_kernel_h,
                     int Sx, int Sy) {
-    const int D = src->D, L = src->L;
-    const int Ms = src->M, Ns = src->N;
-    const int Md = dst->M, Nd = dst->N;
-    ASSERT(D == dst->D && L == dst->L, "err: pool shape\n");
-    float *d = dst->data;
+    int batch = input->D, kernel_h = input->M, kernel_w = input->N, channel = input->L;
+    int output_h = output->M, output_w = output->N;
+    int channel_size = input->MNL;
+    int input_kernel_size = kernel_h * kernel_w;
     int n = 0;
-    for (int w = 0; w < D; w++) {
-        float *s = src->data + w * src->MNL;
-        for (int i = 0; i < Ms; i += Sy)
-            for (int j = 0; j < Ns; j += Sx)
-                for (int k = 0; k < L; k++) {
-                    float v, max = FLT_MIN;
-                    for (int y = 0; y < H; y++)
-                        for (int x = 0; x < W; x++) {
-                            v = s[ID3(i + y, j + x, k, Ns, L)];
-                            if (v > max) max = v;
+    int outbound_count = 0, loop_count = 0;
+
+    for (int idx_b = 0; idx_b < batch; idx_b++){
+        for (int idx_c = 0; idx_c < channel; idx_c++){
+            int kernel_loc = idx_b * channel_size + idx_c * input_kernel_size;
+            for (size_t output_idx_h = 0; output_idx_h < output_h; output_idx_h++){
+                for (size_t output_idx_w = 0; output_idx_w < output_w; output_idx_w++){
+                    float value, max = FLT_MIN;
+                    for (size_t i = 0; i < pool_kernel_h; i++){
+                        const size_t s = output_idx_h * Sy + i;
+                        if (s < kernel_h){
+                            for (size_t j = 0; j < pool_kernel_w; j++){
+                                const size_t t = output_idx_w * Sx + j;
+                                if (t < kernel_w){
+                                    value = input->data[kernel_loc + s + t];
+                                    if (value > max) max = value;
+                                }
+                            }
                         }
-                    d[n++] = max;
+                    }
+                    output->data[n] = max;
+                    n++;
                 }
+            }
+        }
     }
+//    for (int pool_kernel_h_idx = 0;
+//         Sx * (pool_kernel_h_idx + 1) <= kernel_h;
+//         pool_kernel_h_idx++){
+//        for (int pool_kernel_w_idx = 0;
+//             Sx * (pool_kernel_w_idx + 1) <= kernel_w;
+//             pool_kernel_w_idx++){
+//            int kernel_vertex =
+//                    kernel_loc +
+//                    pool_kernel_h_idx * pool_kernel_w * Sy +
+//                    pool_kernel_w_idx * Sx;
+//            if(kernel_vertex >= (input->MNL * input->D)){
+//                outbound_count++;
+//                fprintf(stderr, "Maxpool: Index outbund!\n");
+//            }else{
+//                for (int h = 0; h < pool_kernel_h; h++){
+//                    for (int w = 0; w < pool_kernel_h; w++){
+//                        value = input->data[kernel_vertex + h * pool_kernel_h + w];
+//                        if (value > max) max = value;
+//                    }
+//                }
+//                loop_count++;
+//                if (loop_count > output->MNL)
+//                    fprintf(stderr, "Maxpool: Output data index outbund!\n");
+//                else
+//                    output->data[loop_count] = max;
+//            }
+//        }
+//    }
 }
 
 
-void tensor_avgpool(FloatTensor *src, FloatTensor *dst, int W, int H,
+void tensor_avgpool(FloatTensor *input, FloatTensor *output, int pool_kernel_w, int pool_kernel_h,
                     int Sx, int Sy){
-    const int D = src->D, L = src->L;
-    const int Ms = src->M, Ns = src->N;
-    const int Md = dst->M, Nd = dst->N;
-    ASSERT(D == dst->D && L == dst->L, "err: pool shape\n");
-    float *d = dst->data;
+    int batch = input->D, kernel_h = input->M, kernel_w = input->N, channel = input->L;
+    int channel_size = input->MNL;
+    int input_kernel_size = kernel_h * kernel_w;
+    int pool_kernel_size = pool_kernel_w * pool_kernel_h;
     int n = 0;
-    for (int w = 0; w < D; w++) {
-        float *s = src->data + w * src->MNL;
-        for (int i = 0; i < Ms; i += Sy)
-            for (int j = 0; j < Ns; j += Sx)
-                for (int k = 0; k < L; k++) {
-                    float sum = 0;
-                    for (int y = 0; y < H; y++)
-                        for (int x = 0; x < W; x++) {
-                            sum += s[ID3(i + y, j + x, k, Ns, L)];
+    int outbound_count = 0, loop_count = 0;
+
+    for (int idx_b = 0; idx_b < batch; idx_b++){
+        for (int idx_c = 0; idx_c < channel; idx_c++){
+            float value = 0;
+            int kernel_loc = idx_b * channel_size + idx_c * input_kernel_size;
+            for (int pool_kernel_h_idx = 0;
+                 Sx * (pool_kernel_h_idx + 1) <= kernel_h;
+                 pool_kernel_h_idx++){
+                for (int pool_kernel_w_idx = 0;
+                     Sx * (pool_kernel_w_idx + 1) <= kernel_w;
+                     pool_kernel_w_idx++){
+                    int kernel_vertex =
+                            kernel_loc +
+                            pool_kernel_h_idx * pool_kernel_w * Sy +
+                            pool_kernel_w_idx * Sx;
+                    if(kernel_vertex >= (input->MNL * input->D)){
+                        outbound_count++;
+                        fprintf(stderr, "Avgpool: Index outbund!\n");
+                    }else{
+                        for (int h = 0; h < pool_kernel_h; h++){
+                            for (int w = 0; w < pool_kernel_h; w++){
+                                value += input->data[kernel_vertex + h * pool_kernel_h + w];
+                            }
                         }
-                    d[n++] = sum / (H * W);
+                        output->data[loop_count] = value / pool_kernel_size;
+                        loop_count++;
+                    }
                 }
+            }
+        }
     }
 }
 
@@ -324,5 +386,17 @@ void tensor_print_ch(FloatTensor *t, int w, int k, int ii, int jj,
             printf(fmt, ptr[ID3(i, j, k, N, L)]);
         }
         NL;
+    }
+}
+
+void print_tensor(FloatTensor *tensor) {
+    printf("The shape of the tensor is: %d x %d x %d x %d\n", tensor->D, tensor->M, tensor->N, tensor->L);
+    for (int ch = 0; ch < tensor->L; ch++){
+        for (int i = 0; i < tensor->M; i++) {
+            for (int j = 0; j < tensor->N; j++) {
+                printf("%.2f, ", tensor->data[ch * tensor->M * tensor->N + i * tensor->M + j]);
+            }
+            puts("");
+        }
     }
 }

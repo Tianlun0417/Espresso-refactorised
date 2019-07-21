@@ -4,8 +4,8 @@
 #include "IntTypeEspresso/Utilities.h"
 
 
-denseLayer denseLayer_init(int M, int N) {
-    denseLayer dl;
+DenseLayer denseLayer_init(int M, int N) {
+    DenseLayer dl;
     DENSEL_INIT(dl);
     dl.M = M;
     dl.N = N;
@@ -13,7 +13,7 @@ denseLayer denseLayer_init(int M, int N) {
 }
 
 
-void denseLayer_free(denseLayer *dl) {
+void denseLayer_free(DenseLayer *dl) {
     tensor_free(&dl->W);
     tensor_free(&dl->b);
     tensor_free(&dl->out);
@@ -21,12 +21,12 @@ void denseLayer_free(denseLayer *dl) {
 }
 
 
-void denseLayer_print_shape(denseLayer *dl) {
+void denseLayer_print_shape(DenseLayer *dl) {
     printf("dense: %d %d\n", dl->M, dl->N);
 }
 
 
-void denseLayer_set(IntTensor *W, denseLayer *dl) {
+void denseLayer_set(IntTensor *W, DenseLayer *dl) {
     const int M = W->M, N = W->N;
     ASSERT(W->D == 1 && W->L == 1, "err: dense shape\n");
     tensor_free(&dl->W);
@@ -36,7 +36,7 @@ void denseLayer_set(IntTensor *W, denseLayer *dl) {
 }
 
 
-void denseLayer_forward(IntTensor *input_tensor, denseLayer *dense_layer, int save) {
+void denseLayer_forward(IntTensor *input_tensor, DenseLayer *dense_layer, int save) {
     const int D = input_tensor->D, M = dense_layer->M, N = dense_layer->N;
     ASSERT(input_tensor->MNL == dense_layer->N, "err: dense shape\n");
 

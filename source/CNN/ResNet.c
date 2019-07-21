@@ -99,7 +99,7 @@ ResNet *ResNet_init(BlockType block_type, int num_layers[4], int num_classes) {
     ResNet *ResNetInstance = (ResNet *) malloc(sizeof(ResNet));
     ResNetInstance->block_type = block_type;
     ResNetInstance->inplanes = 64;
-     ResNetInstance->conv1 = new_conv_layer(3, 64, 7, 7, 2, 2, 3);
+    ResNetInstance->conv1 = new_conv_layer(3, 64, 7, 7, 2, 2, 3);
     ResNetInstance->bn1 = new_bn_layer(64);
     ResNetInstance->pool1 = new_pool_layer(3, 3, 2, 2, 0, MAXPOOL);
     ResNetInstance->block1 = new_ResNet_block(ResNetInstance, 64, num_layers[0], 1);
@@ -107,7 +107,7 @@ ResNet *ResNet_init(BlockType block_type, int num_layers[4], int num_classes) {
     ResNetInstance->block3 = new_ResNet_block(ResNetInstance, 256, num_layers[2], 2);
     ResNetInstance->block4 = new_ResNet_block(ResNetInstance, 512, num_layers[3], 1);
     ResNetInstance->pool2 = new_pool_layer(7, 7, 1, 1, 0, AVGPOOL);
-    ResNetInstance->fc = new_dense_layer(512 * (block_type == UseBasicBlock ? 1 : 4), num_classes);
+    ResNetInstance->fc = new_dense_layer(num_classes, 512 * (block_type == UseBasicBlock ? 1 : 4));
     ResNetInstance->output = NULL;
 
     if(!LOAD_PRETRAINED_WEIGHT){
@@ -120,7 +120,7 @@ ResNet *ResNet_init(BlockType block_type, int num_layers[4], int num_classes) {
 }
 
 void downsample_forward(Tensor *input, Downsample *downsample) {
-    convLayer_forward(input, downsample->conv, SAVE);
+    conv_layer_forward(input, downsample->conv, SAVE);
     bnormLayer_forward(&(downsample->conv->out), downsample->bn, SAVE);
 
     downsample->output = &(downsample->conv->out);
@@ -128,11 +128,11 @@ void downsample_forward(Tensor *input, Downsample *downsample) {
 
 void basicblock_forward(Tensor *input, BasicBlock *basicblock) {
     Tensor *residual = input;
-    convLayer_forward(input, basicblock->conv1, SAVE);
+    conv_layer_forward(input, basicblock->conv1, SAVE);
     bnormLayer_forward(&(basicblock->conv1->out), basicblock->bn1, SAVE);
-    reluAct_forward(&(basicblock->conv1->out));
+    relu_forward(&(basicblock->conv1->out));
 
-    convLayer_forward(&(basicblock->conv1->out), basicblock->conv2, SAVE);
+    conv_layer_forward(&(basicblock->conv1->out), basicblock->conv2, SAVE);
     bnormLayer_forward(&(basicblock->conv2->out), basicblock->bn2, SAVE);
 
     if (basicblock->downsample) {
@@ -143,22 +143,22 @@ void basicblock_forward(Tensor *input, BasicBlock *basicblock) {
     for (int idx = 0; idx < tensor_len(&(basicblock->conv2->out)); idx++) {
         basicblock->conv2->out.data[idx] += residual->data[idx];
     }
-    reluAct_forward(&(basicblock->conv2->out));
+    relu_forward(&(basicblock->conv2->out));
 
     basicblock->output = &(basicblock->conv2->out);
 }
 
 void bottleneck_forward(Tensor *input, Bottleneck *bottleneck) {
     Tensor *residual = input;
-    convLayer_forward(input, bottleneck->conv1, SAVE);
+    conv_layer_forward(input, bottleneck->conv1, SAVE);
     bnormLayer_forward(&(bottleneck->conv1->out), bottleneck->bn1, SAVE);
-    reluAct_forward(&(bottleneck->conv1->out));
+    relu_forward(&(bottleneck->conv1->out));
 
-    convLayer_forward(&(bottleneck->conv1->out), bottleneck->conv2, SAVE);
+    conv_layer_forward(&(bottleneck->conv1->out), bottleneck->conv2, SAVE);
     bnormLayer_forward(&(bottleneck->conv2->out), bottleneck->bn2, SAVE);
-    reluAct_forward(&(bottleneck->conv2->out));
+    relu_forward(&(bottleneck->conv2->out));
 
-    convLayer_forward(&(bottleneck->conv2->out), bottleneck->conv3, SAVE);
+    conv_layer_forward(&(bottleneck->conv2->out), bottleneck->conv3, SAVE);
     bnormLayer_forward(&(bottleneck->conv3->out), bottleneck->bn3, SAVE);
 
     if (bottleneck->downsample) {
@@ -169,7 +169,7 @@ void bottleneck_forward(Tensor *input, Bottleneck *bottleneck) {
     for (int idx = 0; idx < tensor_len(&(bottleneck->conv3->out)); idx++) {
         bottleneck->conv3->out.data[idx] += residual->data[idx];
     }
-    reluAct_forward(&(bottleneck->conv3->out));
+    relu_forward(&(bottleneck->conv3->out));
 
     bottleneck->output = &(bottleneck->conv3->out);
 }
@@ -195,61 +195,20 @@ void resnet_block_forward(Tensor *input, ResNetBlock *block) {
 }
 
 void resnet_forward(Tensor *image_tensor, ResNet *resnet) {
-    convLayer_forward(image_tensor, resnet->conv1, SAVE);
+    conv_layer_forward(image_tensor, resnet->conv1, SAVE);
     bnormLayer_forward(&(resnet->conv1->out), resnet->bn1, SAVE);
-    reluAct_forward(&(resnet->conv1->out));
-    poolLayer_forward(&(resnet->conv1->out), resnet->pool1);
+    relu_forward(&(resnet->conv1->out));
+    pool_layer_forward(&(resnet->conv1->out), resnet->pool1);
 
     resnet_block_forward(&(resnet->pool1->out), resnet->block1);
     resnet_block_forward(resnet->block1->output, resnet->block2);
     resnet_block_forward(resnet->block2->output, resnet->block3);
     resnet_block_forward(resnet->block3->output, resnet->block4);
 
-    poolLayer_forward(resnet->block4->output, resnet->pool2);
-    denseLayer_forward(&(resnet->pool2->out), resnet->fc, SAVE);
+    pool_layer_forward(resnet->block4->output, resnet->pool2);
+    dense_layer_forward(&(resnet->pool2->out), resnet->fc, SAVE);
 
     resnet->output = &(resnet->fc->out);
-//    if(resnet->block1->block_type == UseBasicBlock){
-//        // forward passing of 4 blocks
-//        /*----------------------------------Block 1----------------------------------*/
-//        basicblock_forward(&(resnet->pool1->out), resnet->block1->basicblocks[0]);
-//        for(int block_idx = 1; block_idx < resnet->block1->num_blocks; block_idx++)
-//            basicblock_forward(
-//                    resnet->block1->basicblocks[block_idx-1]->output,
-//                    resnet->block1->basicblocks[block_idx]
-//                    );
-//        /*----------------------------------Block 1----------------------------------*/
-//
-//        /*----------------------------------Block 2----------------------------------*/
-//        basicblock_forward(resnet->block1->basicblocks[resnet->block1->num_blocks-1]->output,
-//                resnet->block2->basicblocks[0]);
-//        for(int block_idx = 1; block_idx < resnet->block2->num_blocks; block_idx++)
-//            basicblock_forward(
-//                    resnet->block2->basicblocks[block_idx-1]->output,
-//                    resnet->block2->basicblocks[block_idx]
-//            );
-//        /*----------------------------------Block 2----------------------------------*/
-//
-//        /*----------------------------------Block 3----------------------------------*/
-//        basicblock_forward(resnet->block2->basicblocks[resnet->block2->num_blocks-1]->output,
-//                           resnet->block3->basicblocks[0]);
-//        for(int block_idx = 1; block_idx < resnet->block3->num_blocks; block_idx++)
-//            basicblock_forward(
-//                    resnet->block3->basicblocks[block_idx-1]->output,
-//                    resnet->block3->basicblocks[block_idx]
-//            );
-//        /*----------------------------------Block 3----------------------------------*/
-//
-//        /*----------------------------------Block 4----------------------------------*/
-//        basicblock_forward(resnet->block3->basicblocks[resnet->block3->num_blocks-1]->output,
-//                           resnet->block4->basicblocks[0]);
-//        for(int block_idx = 1; block_idx < resnet->block4->num_blocks; block_idx++)
-//            basicblock_forward(
-//                    resnet->block4->basicblocks[block_idx-1]->output,
-//                    resnet->block4->basicblocks[block_idx]
-//            );
-//        /*----------------------------------Block 4----------------------------------*/
-//    }
 }
 
 

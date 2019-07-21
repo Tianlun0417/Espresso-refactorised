@@ -18,21 +18,21 @@ typedef struct {
     int M, N;
     FloatTensor W, b;
     FloatTensor in, out;
-} denseLayer;
+} DenseLayer;
 
-denseLayer denseLayer_init(int M, int N);
+DenseLayer denseLayer_init(int M, int N);
 
-denseLayer * new_dense_layer(int M, int N);
+DenseLayer * new_dense_layer(int M, int N);
 
-void denseLayer_print_shape(denseLayer *dl);
+void denseLayer_print_shape(DenseLayer *dl);
 
-void denseLayer_free(denseLayer *dl);
+void denseLayer_free(DenseLayer *dl);
 
-void denseLayer_set(FloatTensor *W, denseLayer *dl);
+void denseLayer_set(FloatTensor *W, DenseLayer *dl);
 
-void denseLayer_forward(FloatTensor *input_tensor, denseLayer *dense_layer, int cpy);
+void dense_layer_forward(FloatTensor *input_tensor, DenseLayer *dense_layer, int cpy);
 
-void denseLayer_backward(FloatTensor *dt, denseLayer *dl);
+void denseLayer_backward(FloatTensor *dt, DenseLayer *dl);
 
 
 #ifdef __cplusplus

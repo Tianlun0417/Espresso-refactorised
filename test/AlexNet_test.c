@@ -8,15 +8,15 @@ int main() {
     FloatTensor cifar_image = tensor_init(1, CIFAR_IMAGE_W, CIFAR_IMAGE_H, CIFAR_CHANNEL);
     FloatTensor cifar_label = tensor_init(1, 1, 1, 1);
 
-    inputLayer input_layer;
+    InputLayer input_layer;
 
     AlexNet *alex_net = AlexNet_init(10);
     
     for (int idx = 0; idx < TEST_IMG; idx++) {
         cifar10_load(image_path, idx, 1, &cifar_image, &cifar_label);
 
-        inputLayer_load(&cifar_image, &input_layer);
-        inputLayer_forward(&input_layer);
+        input_layer_load(&cifar_image, &input_layer);
+        input_layer_forward(&input_layer);
 
         alexnet_forward(&(input_layer.out), alex_net);
 

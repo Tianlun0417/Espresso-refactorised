@@ -30,9 +30,9 @@ Classifier *new_classifier(int num_classes) {
 
     classifier->num_classes = num_classes;
     classifier->dropout = new_dropout_layer(0.5);
-    classifier->dense1  = new_dense_layer(256*6*6, 4096);
+    classifier->dense1  = new_dense_layer(4096, 256);
     classifier->dense2  = new_dense_layer(4096, 4096);
-    classifier->dense3  = new_dense_layer(4096, classifier->num_classes);
+    classifier->dense3  = new_dense_layer(classifier->num_classes, 4096);
 
     if(!LOAD_PRETRAINED_WEIGHT){
         init_dense_layer(classifier->dense1);
@@ -57,32 +57,34 @@ AlexNet *AlexNet_init(int num_classes) {
 }
 
 void features_forward(Tensor *input, Features *features) {
-    convLayer_forward(input, features->conv1, SAVE);
-    reluAct_forward(&(features->conv1->out));
-    poolLayer_forward(&(features->conv1->out), features->maxpool1);
-    convLayer_forward(&(features->maxpool1->out), features->conv2, SAVE);
-    reluAct_forward(&(features->conv2->out));
-    poolLayer_forward(&(features->conv2->out), features->maxpool2);
+    conv_layer_forward(input, features->conv1, SAVE);
+    relu_forward(&(features->conv1->out));
+    pool_layer_forward(&(features->conv1->out), features->maxpool1);
+    conv_layer_forward(&(features->maxpool1->out), features->conv2, SAVE);
+    relu_forward(&(features->conv2->out));
+    pool_layer_forward(&(features->conv2->out), features->maxpool2);
 
-    convLayer_forward(&(features->maxpool2->out), features->conv3, SAVE);
-    reluAct_forward(&(features->conv3->out));
-    convLayer_forward(&(features->conv3->out), features->conv4, SAVE);
-    reluAct_forward(&(features->conv4->out));
-    convLayer_forward(&(features->conv4->out), features->conv5, SAVE);
-    reluAct_forward(&(features->conv5->out));
-    poolLayer_forward(&(features->conv5->out), features->maxpool3);
+    conv_layer_forward(&(features->maxpool2->out), features->conv3, SAVE);
+    relu_forward(&(features->conv3->out));
+    conv_layer_forward(&(features->conv3->out), features->conv4, SAVE);
+    relu_forward(&(features->conv4->out));
+    conv_layer_forward(&(features->conv4->out), features->conv5, SAVE);
+    relu_forward(&(features->conv5->out));
+    //print_tensor(&(features->conv5->out));
+    //pool_layer_forward(&(features->conv5->out), features->maxpool3);
 
-    features->output = &(features->maxpool3->out);
+    features->output = &(features->conv5->out);
+    //print_tensor(features->output);
 }
 
 void classifier_forward(Tensor *input, Classifier *classifier) {
     dropoutLayer_forward(input, classifier->dropout);
-    denseLayer_forward(input, classifier->dense1, SAVE);
-    reluAct_forward(&(classifier->dense1->out));
+    dense_layer_forward(input, classifier->dense1, SAVE);
+    relu_forward(&(classifier->dense1->out));
     dropoutLayer_forward(&(classifier->dense1->out), classifier->dropout);
-    denseLayer_forward(&(classifier->dense1->out), classifier->dense2, SAVE);
-    reluAct_forward(&(classifier->dense2->out));
-    denseLayer_forward(&(classifier->dense2->out), classifier->dense3, SAVE);
+    dense_layer_forward(&(classifier->dense1->out), classifier->dense2, SAVE);
+    relu_forward(&(classifier->dense2->out));
+    dense_layer_forward(&(classifier->dense2->out), classifier->dense3, SAVE);
 
     classifier->output = &(classifier->dense3->out);
 }

@@ -4,8 +4,8 @@
 #include "FloatTypeEspresso/Utilities.h"
 
 
-denseLayer denseLayer_init(int M, int N) {
-    denseLayer dl;
+DenseLayer denseLayer_init(int M, int N) {
+    DenseLayer dl;
     DENSEL_INIT(dl);
     dl.M = M;
     dl.N = N;
@@ -13,8 +13,8 @@ denseLayer denseLayer_init(int M, int N) {
 }
 
 
-denseLayer *new_dense_layer(int M, int N) {
-    denseLayer *dense_layer_ptr = (denseLayer *) malloc(sizeof(denseLayer));
+DenseLayer *new_dense_layer(int M, int N) {
+    DenseLayer *dense_layer_ptr = (DenseLayer *) malloc(sizeof(DenseLayer));
 
     dense_layer_ptr->M = M;
     dense_layer_ptr->N = N;
@@ -30,7 +30,7 @@ denseLayer *new_dense_layer(int M, int N) {
 
 
 
-void denseLayer_free(denseLayer *dl) {
+void denseLayer_free(DenseLayer *dl) {
     tensor_free(&dl->W);
     tensor_free(&dl->b);
     //ftens_free(&dl->dW);  tensor_free(&dl->db);
@@ -39,12 +39,12 @@ void denseLayer_free(denseLayer *dl) {
 }
 
 
-void denseLayer_print_shape(denseLayer *dl) {
+void denseLayer_print_shape(DenseLayer *dl) {
     printf("dense: %d %d\n", dl->M, dl->N);
 }
 
 
-void denseLayer_set(FloatTensor *W, denseLayer *dl) {
+void denseLayer_set(FloatTensor *W, DenseLayer *dl) {
     const int M = W->M, N = W->N;
     ASSERT(W->D == 1 && W->L == 1, "err: dense shape\n");
     tensor_free(&dl->W);
@@ -54,11 +54,11 @@ void denseLayer_set(FloatTensor *W, denseLayer *dl) {
 }
 
 
-void denseLayer_forward(FloatTensor *input_tensor, denseLayer *dense_layer, int save) {
+void dense_layer_forward(FloatTensor *input_tensor, DenseLayer *dense_layer, int cpy) {
     const int D = input_tensor->D, M = dense_layer->M, N = dense_layer->N;
     ASSERT(input_tensor->MNL == dense_layer->N, "err: dense shape\n");
 
-    if (save) {
+    if (cpy) {
         int M = input_tensor->M, N = input_tensor->N, L = input_tensor->L;
         if (!dense_layer->in.data) dense_layer->in = tensor_init(D, M, N, L);
         memcpy(dense_layer->in.data, input_tensor->data, input_tensor->bytes);
@@ -74,7 +74,7 @@ void denseLayer_forward(FloatTensor *input_tensor, denseLayer *dense_layer, int 
 }
 
 
-void denseLayer_backward(FloatTensor *dout, denseLayer *dl) {
+void denseLayer_backward(FloatTensor *dout, DenseLayer *dl) {
     fprintf(stderr, "not implemented yet\n");
     exit(-2);
 }

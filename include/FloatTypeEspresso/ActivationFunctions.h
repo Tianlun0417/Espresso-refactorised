@@ -12,7 +12,7 @@ void signAct_forward(FloatTensor *t);
 
 void signAct_backward(FloatTensor *dout);
 
-void reluAct_forward(FloatTensor *t);
+void relu_forward(FloatTensor *t);
 
 void reluAct_backward(FloatTensor *dout);
 

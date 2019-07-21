@@ -9,15 +9,15 @@ extern "C" {
 
 typedef struct {
     IntTensor out;
-} inputLayer;
+} InputLayer;
 
-void inputLayer_load(IntTensor *in, inputLayer *il);
+void inputLayer_load(IntTensor *in, InputLayer *il);
 
-void inputLayer_free(inputLayer *il);
+void inputLayer_free(InputLayer *il);
 
-void inputLayer_forward(inputLayer *il);
+void inputLayer_forward(InputLayer *il);
 
-void inputLayer_pad(inputLayer *il, int p);
+void inputLayer_pad(InputLayer *il, int p);
 
 
 #ifdef __cplusplus

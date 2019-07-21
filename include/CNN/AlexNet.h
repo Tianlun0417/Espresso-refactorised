@@ -9,23 +9,23 @@
 typedef FloatTensor Tensor;
 
 typedef struct features{
-    convLayer * conv1;
-    convLayer * conv2;
-    convLayer * conv3;
-    convLayer * conv4;
-    convLayer * conv5;
-    poolLayer * maxpool1;
-    poolLayer * maxpool2;
-    poolLayer * maxpool3;
+    ConvLayer * conv1;
+    ConvLayer * conv2;
+    ConvLayer * conv3;
+    ConvLayer * conv4;
+    ConvLayer * conv5;
+    PoolLayer * maxpool1;
+    PoolLayer * maxpool2;
+    PoolLayer * maxpool3;
     Tensor    * output;
 }Features;
 
 typedef struct classifier{
     int num_classes;
     dropoutLayer * dropout;
-    denseLayer   * dense1;
-    denseLayer   * dense2;
-    denseLayer   * dense3;
+    DenseLayer   * dense1;
+    DenseLayer   * dense2;
+    DenseLayer   * dense3;
     Tensor       * output;
 }Classifier;
 

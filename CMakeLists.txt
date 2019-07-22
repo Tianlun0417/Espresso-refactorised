@@ -17,4 +17,4 @@ link_directories("/home/linuxbrew/.linuxbrew/lib")
 
 add_subdirectory("source")
 add_subdirectory("test")
-#add_subdirectory("CNNs")
+add_subdirectory("demo")

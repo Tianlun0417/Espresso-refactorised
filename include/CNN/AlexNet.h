@@ -22,7 +22,7 @@ typedef struct features{
 
 typedef struct classifier{
     int num_classes;
-    dropoutLayer * dropout;
+    DropoutLayer * dropout;
     DenseLayer   * dense1;
     DenseLayer   * dense2;
     DenseLayer   * dense3;
@@ -36,9 +36,9 @@ typedef struct alexnet{
     Tensor     * output;
 }AlexNet;
 
-Features * new_features();
-Classifier* new_classifier(int num_classes);
-AlexNet * AlexNet_init(int num_classes);
+void new_features(Features *features);
+void new_classifier(Classifier *classifier, int num_classes);
+void AlexNet_init(AlexNet *alex_net, int num_classes);
 
 void features_forward(Tensor *input, Features *features);
 void classifier_forward(Tensor *input, Classifier *classifier);

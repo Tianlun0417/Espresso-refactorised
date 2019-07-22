@@ -1,33 +1,36 @@
 #include "CNN/AlexNet.h"
 
-Features *new_features() {
-    Features *features = (Features*) malloc(sizeof(Features));
+void new_features(Features *features) {
+    features->conv1 = malloc(sizeof(ConvLayer));
+    features->conv2 = malloc(sizeof(ConvLayer));
+    features->conv3 = malloc(sizeof(ConvLayer));
+    features->conv4 = malloc(sizeof(ConvLayer));
+    features->conv5 = malloc(sizeof(ConvLayer));
 
-    features->conv1 = new_conv_layer(3,   64,  11, 11, 4, 4, 2);
-    features->conv2 = new_conv_layer(64,  192, 5,  5,  1, 1, 2);
-    features->conv3 = new_conv_layer(192, 384, 3,  3,  1, 1, 1);
-    features->conv4 = new_conv_layer(384, 256, 3,  3,  1, 1, 1);
-    features->conv5 = new_conv_layer(256, 256, 3,  3,  1, 1, 1);
+    conv_layer_init(features->conv1, 3,   64,  11, 11, 4, 4, 2);
+    conv_layer_init(features->conv2, 64,  192, 5,  5,  1, 1, 2);
+    conv_layer_init(features->conv3, 192, 384, 3,  3,  1, 1, 1);
+    conv_layer_init(features->conv4, 384, 256, 3,  3,  1, 1, 1);
+    conv_layer_init(features->conv5, 256, 256, 3,  3,  1, 1, 1);
 
     if(!LOAD_PRETRAINED_WEIGHT){
-        init_conv_layer(features->conv1);
-        init_conv_layer(features->conv2);
-        init_conv_layer(features->conv3);
-        init_conv_layer(features->conv4);
-        init_conv_layer(features->conv5);
+        conv_layer_rand_weight(features->conv1);
+        conv_layer_rand_weight(features->conv2);
+        conv_layer_rand_weight(features->conv3);
+        conv_layer_rand_weight(features->conv4);
+        conv_layer_rand_weight(features->conv5);
     }
 
-    features->maxpool1 = new_pool_layer(3, 3, 2, 2, 0, MAXPOOL);
-    features->maxpool2 = new_pool_layer(3, 3, 2, 2, 0, MAXPOOL);
-    features->maxpool3 = new_pool_layer(3, 3, 2, 2, 0, MAXPOOL);
+    features->maxpool1 = malloc(sizeof(PoolLayer));
+    features->maxpool2 = malloc(sizeof(PoolLayer));
+    features->maxpool3 = malloc(sizeof(PoolLayer));
+    new_pool_layer(features->maxpool1, 3, 3, 2, 2, 0, MAXPOOL);
+    new_pool_layer(features->maxpool2, 3, 3, 2, 2, 0, MAXPOOL);
+    new_pool_layer(features->maxpool3, 3, 3, 2, 2, 0, MAXPOOL);
     features->output = NULL;
-
-    return features;
 }
 
-Classifier *new_classifier(int num_classes) {
-    Classifier *classifier = (Classifier*) malloc(sizeof(Classifier));
-
+void new_classifier(Classifier *classifier, int num_classes) {
     classifier->num_classes = num_classes;
     classifier->dropout = new_dropout_layer(0.5);
     classifier->dense1  = new_dense_layer(4096, 256);
@@ -35,25 +38,22 @@ Classifier *new_classifier(int num_classes) {
     classifier->dense3  = new_dense_layer(classifier->num_classes, 4096);
 
     if(!LOAD_PRETRAINED_WEIGHT){
-        init_dense_layer(classifier->dense1);
-        init_dense_layer(classifier->dense2);
-        init_dense_layer(classifier->dense3);
+        dense_layer_rand_weight(classifier->dense1);
+        dense_layer_rand_weight(classifier->dense2);
+        dense_layer_rand_weight(classifier->dense3);
     }
 
     classifier->output  = NULL;
-
-    return classifier;
 }
 
-AlexNet *AlexNet_init(int num_classes) {
-    AlexNet *alex_net = (AlexNet*) malloc(sizeof(AlexNet));
-
+void AlexNet_init(AlexNet *alex_net, int num_classes) {
     alex_net->num_classes = num_classes;
-    alex_net->features = new_features();
-    alex_net->classifier = new_classifier(alex_net->num_classes);
+    alex_net->features = malloc(sizeof(Features));
+    alex_net->classifier = malloc(sizeof(Classifier));
     alex_net->output = NULL;
 
-    return alex_net;
+    new_features(alex_net->features);
+    new_classifier(alex_net->classifier, alex_net->num_classes);
 }
 
 void features_forward(Tensor *input, Features *features) {
@@ -70,18 +70,15 @@ void features_forward(Tensor *input, Features *features) {
     relu_forward(&(features->conv4->out));
     conv_layer_forward(&(features->conv4->out), features->conv5, SAVE);
     relu_forward(&(features->conv5->out));
-    //print_tensor(&(features->conv5->out));
-    //pool_layer_forward(&(features->conv5->out), features->maxpool3);
 
     features->output = &(features->conv5->out);
-    //print_tensor(features->output);
 }
 
 void classifier_forward(Tensor *input, Classifier *classifier) {
-    dropoutLayer_forward(input, classifier->dropout);
+    dropout_layer_forward(input, classifier->dropout);
     dense_layer_forward(input, classifier->dense1, SAVE);
     relu_forward(&(classifier->dense1->out));
-    dropoutLayer_forward(&(classifier->dense1->out), classifier->dropout);
+    dropout_layer_forward(&(classifier->dense1->out), classifier->dropout);
     dense_layer_forward(&(classifier->dense1->out), classifier->dense2, SAVE);
     relu_forward(&(classifier->dense2->out));
     dense_layer_forward(&(classifier->dense2->out), classifier->dense3, SAVE);

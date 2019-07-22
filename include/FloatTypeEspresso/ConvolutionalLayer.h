@@ -23,11 +23,11 @@ typedef struct {
 
 ConvLayer convLayer_init(int Sm, int Sn, int padding);
 
-ConvLayer * new_conv_layer(int L, int D, int M, int N, int Stride_m, int Stride_n, int padding);
+void conv_layer_init(ConvLayer *conv_layer_ptr, int L, int D, int M, int N, int Stride_m, int Stride_n, int padding);
 
 void convLayer_print_shape(ConvLayer *cl);
 
-void convLayer_free(ConvLayer *cl);
+void conv_layer_free(ConvLayer *cl);
 
 void convLayer_set(FloatTensor *W, ConvLayer *cl);
 

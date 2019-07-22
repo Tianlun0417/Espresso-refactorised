@@ -9,9 +9,8 @@ PoolLayer poolLayer_init(int M, int N, int Sm, int Sn, poolingStrategy strategy)
 }
 
 
-PoolLayer *new_pool_layer(int M, int N, int Stride_m,
+void new_pool_layer(PoolLayer *pool_layer_ptr, int M, int N, int Stride_m,
                           int Stride_n, int padding, poolingStrategy strategy) {
-    PoolLayer *pool_layer_ptr = (PoolLayer *) malloc(sizeof(PoolLayer));
     pool_layer_ptr->M = M;
     pool_layer_ptr->N = N;
     pool_layer_ptr->Stride_m = Stride_m;
@@ -20,8 +19,6 @@ PoolLayer *new_pool_layer(int M, int N, int Stride_m,
     pool_layer_ptr->padding  = padding;
     pool_layer_ptr->out.data = NULL;
     pool_layer_ptr->mask.data = NULL;
-
-    return pool_layer_ptr;
 }
 
 
@@ -34,8 +31,8 @@ void poolLayer_free(PoolLayer *pl) {
 void pool_layer_forward(FloatTensor *t, PoolLayer *pl) {
     const int W = pl->M, H = pl->N, Sy = pl->Stride_m, Sx = pl->Stride_n;
     const int D = t->D, L = t->L, Ms = t->M, Ns = t->N;
-    const int Md = OUT_LEN(Ms, W, Sy) <= 0 ? 1 : OUT_LEN(Ms, W, Sy);
-    const int Nd = OUT_LEN(Ns, H, Sx) <= 0 ? 1 : OUT_LEN(Ms, H, Sx);
+    const int Md = PADDING_OUT_LEN(Ms, W, Sy) <= 0 ? 1 : PADDING_OUT_LEN(Ms, W, Sy);
+    const int Nd = PADDING_OUT_LEN(Ns, H, Sx) <= 0 ? 1 : PADDING_OUT_LEN(Ms, H, Sx);
 
     if (!pl->out.data) pl->out = tensor_init(D, Md, Nd, L);
 

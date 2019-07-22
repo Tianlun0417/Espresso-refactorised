@@ -25,15 +25,15 @@ typedef struct featuresSequential{
     ConvLayer * conv;
     Fire      * fire_list[8];
     PoolLayer * maxpool_list[3];
-    Tensor * output;
+    Tensor output;
 }FeaturesSequential;
 
 typedef struct classifierSequential{
     int num_classes;
-    dropoutLayer * dropout;
+    DropoutLayer * dropout;
     ConvLayer    * final_conv;
     PoolLayer    * avgpool;
-    Tensor * output;
+    Tensor output;
 }ClassifierSequential;
 
 typedef struct squeezeNet{
@@ -41,18 +41,20 @@ typedef struct squeezeNet{
     int num_classes;
     FeaturesSequential   * features;
     ClassifierSequential * classifier;
-    Tensor * output;
+    Tensor output;
 }SqueezeNet;
 
-Fire * new_fire_module(int inplanes, int squeeze_planes,
-        int expand1x1_planes, int expand3x3_planes);
-FeaturesSequential * new_features_sequential(SqueezeNetVersion version);
-ClassifierSequential * new_classifier_sequential(int num_classes);
-SqueezeNet * SqueezeNet_init(SqueezeNetVersion version, int num_classes);
+void fire_module_init(Fire *fire_ptr, int inplanes, int squeeze_planes,
+                      int expand1x1_planes, int expand3x3_planes);
+void features_sequential_init(FeaturesSequential *features_ptr, SqueezeNetVersion version);
+void classifier_sequential_init(ClassifierSequential *classifier_ptr, int num_classes);
+void SqueezeNet_init(SqueezeNet *squeeze_net_ptr, SqueezeNetVersion version, int num_classes);
 
-void fire_forward(Tensor * input, Fire * fire);
+void fire_forward(Tensor *input, Fire *fire);
 void features_forward(Tensor * input, FeaturesSequential * features);
 void classification_forward(Tensor * input, ClassifierSequential * classifier);
 void squeezenet_forward(Tensor * input, SqueezeNet * squeeze_net);
+
+void Squeezenet_free(SqueezeNet *squeeze_net);
 
 #endif //ESPRESSO_REFACTORISED_SQUEEZENET_H

@@ -14,14 +14,14 @@ ConvLayer convLayer_init(int Sm, int Sn, int padding) {
 }
 
 
-ConvLayer *new_conv_layer(int L, int D, int M, int N,
-                          int Stride_m, int Stride_n, int padding) {
+void conv_layer_init(ConvLayer *conv_layer_ptr, int L, int D, int M, int N,
+                     int Stride_m, int Stride_n, int padding) {
     // L - no input channels
     // D - no output channels
     // M - kernel height
     // N - kernel width
 
-    ConvLayer *conv_layer_ptr = (ConvLayer *) malloc(sizeof(ConvLayer));
+//    conv_layer_ptr = (ConvLayer*) malloc(sizeof(ConvLayer));
     conv_layer_ptr->D = D;
     conv_layer_ptr->M = M;
     conv_layer_ptr->N = N;
@@ -34,14 +34,13 @@ ConvLayer *new_conv_layer(int L, int D, int M, int N,
     conv_layer_ptr->in.data = NULL;
     conv_layer_ptr->out.data = NULL;
 
-    return conv_layer_ptr;
+//    return conv_layer_ptr;
 }
 
 
-void convLayer_free(ConvLayer *cl) {
+void conv_layer_free(ConvLayer *cl) {
     tensor_free(&cl->W);
     tensor_free(&cl->b);
-    //ftens_free(&cl->dW);  tensor_free(&cl->db);
     tensor_free(&cl->out);
     tensor_free(&cl->in);
 }
@@ -55,8 +54,8 @@ void convLayer_print_shape(ConvLayer *cl) {
 
 void convLayer_set(FloatTensor *W, ConvLayer *cl) {
     int D = W->D, M = W->M, N = W->N, L = W->L;
-//    if(cl->W.data != NULL)
-    tensor_free(&cl->W);
+    if(cl->W.data != NULL)
+        tensor_free(&cl->W);
     cl->D = D;
     cl->M = M;
     cl->N = N;
@@ -90,17 +89,16 @@ FloatTensor convLayer_pad_input(FloatTensor *t, float *scr,
 
 
 void conv_layer_forward(FloatTensor *input_t, ConvLayer *cl, int save) {
-    float *scr = scratch;
-    FloatTensor padded_input, tmp;
-    int D = input_t->D, Ms = input_t->M, Ns = input_t->N, Ls = input_t->L;
 
     // D - num output channels
     // M - height
     // N - width
     // L - num input channels
 
+    float *scr = scratch;
+    FloatTensor padded_input, tmp;
+    int D = input_t->D, Ms = input_t->M, Ns = input_t->N, Ls = input_t->L;
     int F = cl->D, W = cl->M, H = cl->N, L = cl->L;
-    //int F = cl->D, H = cl->M, W = cl->N, L = cl->L;
     int p = cl->padding, Sy = cl->Stride_m, Sx = cl->Stride_n;
     ASSERT(input_t->L == cl->L, "err: conv shape\n");
 
@@ -108,11 +106,8 @@ void conv_layer_forward(FloatTensor *input_t, ConvLayer *cl, int save) {
     if (p) padded_input = convLayer_pad_input(input_t, scr, &Ms, &Ns, p);
 
     // lower
-    //const int Md = OUT_LEN(Ms, H, Sy);
-    //const int Nd = OUT_LEN(Ns, W, Sx);
-
-    const int Md = OUT_LEN(Ms, H, Sy);
-    const int Nd = OUT_LEN(Ns, W, Sx);
+    const int Md = LOWER_OUT_LEN(Ms, H, Sy);
+    const int Nd = LOWER_OUT_LEN(Ns, W, Sx);
 
     const int Ld = W * H * L;
     if (!scratch) tmp = tensor_init(D, Md, Nd, Ld);

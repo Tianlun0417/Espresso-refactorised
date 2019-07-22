@@ -11,7 +11,8 @@ int main() {
     InputLayer input_layer;
     int blocks[4] = {2, 2, 2, 2};
 
-    ResNet *resnet = ResNet_init(UseBasicBlock, blocks, 10);
+    ResNet *resnet = malloc(sizeof(ResNet));
+    ResNet_init(resnet, UseBasicBlock, blocks, 10);
 
     for (int idx = 0; idx < TEST_IMG; idx++) {
         cifar10_load(image_path, idx, 1, &cifar_image, &cifar_label);

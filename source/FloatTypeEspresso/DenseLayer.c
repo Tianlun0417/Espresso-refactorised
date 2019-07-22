@@ -23,7 +23,7 @@ DenseLayer *new_dense_layer(int M, int N) {
     dense_layer_ptr->in.data = NULL;
     dense_layer_ptr->out.data = NULL;
 
-    //init_dense_layer(dense_layer_ptr, M, N);
+    //dense_layer_rand_weight(dense_layer_ptr, M, N);
 
     return dense_layer_ptr;
 }

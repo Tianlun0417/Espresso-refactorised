@@ -25,7 +25,8 @@ extern "C" {
 #define ROUND_UP(x, y)      (CEIL(x, y) * (y))
 #define MAX(x, y)           ((x) > (y) ? (x) : (y))
 #define MIN(x, y)           ((x) < (y) ? (x) : (y))
-#define OUT_LEN(x, y, z)    ((((x) - (y)) / (z)) + 1)
+#define PADDING_OUT_LEN(x, y, z)    ((((x) - (y)) / (z)) + 1)
+#define LOWER_OUT_LEN(x, y, z) (ceilf(((x) - (y) + 1) / (float)z))
 
 #define SP                  printf(" ");
 #define NL                  printf("\n");

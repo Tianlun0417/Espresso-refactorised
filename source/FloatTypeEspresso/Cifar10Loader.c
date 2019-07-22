@@ -17,7 +17,7 @@ void cifar10_load(const char *tf, int start, int num,
         float *outy = label->data + i * label->MNL;
         fread(&y_buff, sizeof(uint8_t), 1, pf);
         fread(X_buff, sizeof(uint8_t), CIFAR_IMAGE_SIZE, pf);
-        outy[y_buff] = 1.0f;
+        outy[i] = y_buff;
         for (int j = 0; j < CIFAR_IMAGE_SIZE; j++)
             outX[j] = (float) X_buff[j];
     }

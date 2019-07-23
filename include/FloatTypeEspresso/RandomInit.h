@@ -6,12 +6,12 @@
 #include "BatchNormLayer.h"
 #include "ConvolutionalLayer.h"
 
-#define THRESHOLD 0.5
+#define THRESHOLD 0.6
 
 
 void dense_layer_rand_weight(DenseLayer *den_layer);
 
-void batchnorm_layer_rand_weight(bnormLayer *bnorm_layer, size_t layer_size);
+void batchnorm_layer_rand_weight(bnormLayer *bnorm_layer);
 
 void conv_layer_rand_weight(ConvLayer *conv_layer);
 

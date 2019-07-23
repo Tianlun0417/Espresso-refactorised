@@ -20,9 +20,9 @@ typedef struct {
     FloatTensor in, out;
 } DenseLayer;
 
-DenseLayer denseLayer_init(int M, int N);
+//DenseLayer denseLayer_init(int M, int N);
 
-DenseLayer * new_dense_layer(int M, int N);
+void dense_layer_init(DenseLayer *dense_layer_ptr, int M, int N);
 
 void denseLayer_print_shape(DenseLayer *dl);
 

@@ -13,19 +13,13 @@ DenseLayer denseLayer_init(int M, int N) {
 }
 
 
-DenseLayer *new_dense_layer(int M, int N) {
-    DenseLayer *dense_layer_ptr = (DenseLayer *) malloc(sizeof(DenseLayer));
-
+void dense_layer_init(DenseLayer *dense_layer_ptr, int M, int N) {
     dense_layer_ptr->M = M;
     dense_layer_ptr->N = N;
     dense_layer_ptr->W.data = NULL;
     dense_layer_ptr->b.data = NULL;
     dense_layer_ptr->in.data = NULL;
     dense_layer_ptr->out.data = NULL;
-
-    //dense_layer_rand_weight(dense_layer_ptr, M, N);
-
-    return dense_layer_ptr;
 }
 
 

@@ -21,7 +21,7 @@ typedef struct {
     /*FloatTensor dW, db;*/ // we don't need the gradients for inference
 } ConvLayer;
 
-ConvLayer convLayer_init(int Sm, int Sn, int padding);
+//ConvLayer convLayer_init(int Sm, int Sn, int padding);
 
 void conv_layer_init(ConvLayer *conv_layer_ptr, int L, int D, int M, int N, int Stride_m, int Stride_n, int padding);
 

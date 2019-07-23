@@ -68,13 +68,14 @@ void features_sequential_init(FeaturesSequential *features_ptr, SqueezeNetVersio
 
 void classifier_sequential_init(ClassifierSequential *classifier_ptr, int num_classes) {
     classifier_ptr->num_classes = num_classes;
-    classifier_ptr->dropout     = new_dropout_layer(0.5);
+    classifier_ptr->dropout     = malloc(sizeof(DropoutLayer));
     classifier_ptr->final_conv  = malloc(sizeof(ConvLayer));
     classifier_ptr->avgpool     = malloc(sizeof(PoolLayer));
 //    classifier_ptr->output      = malloc(sizeof(Tensor));
 
     new_pool_layer(classifier_ptr->avgpool, 13, 13, 1, 1, 0, AVGPOOL);
     conv_layer_init(classifier_ptr->final_conv, 512, num_classes, 1, 1, 1, 1, 0);
+    dropout_layer_init(classifier_ptr->dropout, 0.5);
 
     if(!LOAD_PRETRAINED_WEIGHT) conv_layer_rand_weight(classifier_ptr->final_conv);
 }

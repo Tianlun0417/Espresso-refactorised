@@ -31,10 +31,15 @@ void new_features(Features *features) {
 
 void new_classifier(Classifier *classifier, int num_classes) {
     classifier->num_classes = num_classes;
-    classifier->dropout = new_dropout_layer(0.5);
-    classifier->dense1  = new_dense_layer(4096, 256);
-    classifier->dense2  = new_dense_layer(4096, 4096);
-    classifier->dense3  = new_dense_layer(classifier->num_classes, 4096);
+    classifier->dropout = malloc(sizeof(DropoutLayer));
+    classifier->dense1  = malloc(sizeof(DenseLayer));
+    classifier->dense2  = malloc(sizeof(DenseLayer));
+    classifier->dense3  = malloc(sizeof(DenseLayer));
+
+    dropout_layer_init(classifier->dropout, 0.5);
+    dense_layer_init(classifier->dense1, 4096, 256);
+    dense_layer_init(classifier->dense2, 4096, 4096);
+    dense_layer_init(classifier->dense3, classifier->num_classes, 4096);
 
     if(!LOAD_PRETRAINED_WEIGHT){
         dense_layer_rand_weight(classifier->dense1);

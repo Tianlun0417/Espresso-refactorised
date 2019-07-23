@@ -9,17 +9,14 @@ bnormLayer bnormLayer_init(int use_global) {
     return bnl;
 }
 
-bnormLayer *new_bn_layer(int size) {
-    bnormLayer *bn_layer_ptr = (bnormLayer *) malloc(sizeof(bnormLayer));
-    bn_layer_ptr->N = 0;
+void bn_layer_init(bnormLayer *bn_layer_ptr, size_t size) {
+    bn_layer_ptr->N = size;
     bn_layer_ptr->ug = 0;
     bn_layer_ptr->mean.data = NULL;
     bn_layer_ptr->istd.data = NULL;
     bn_layer_ptr->beta.data = NULL;
     bn_layer_ptr->gamma.data = NULL;
     bn_layer_ptr->in.data = NULL;
-
-    return bn_layer_ptr;
 }
 
 void bnormLayer_free(bnormLayer *bnl) {

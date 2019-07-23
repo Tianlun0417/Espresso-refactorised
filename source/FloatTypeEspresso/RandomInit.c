@@ -7,17 +7,16 @@ void dense_layer_rand_weight(DenseLayer *den_layer) {
     random_init_arr(den_layer->W.data, den_layer->M * den_layer->N);
 }
 
-void batchnorm_layer_rand_weight(bnormLayer *bnorm_layer, size_t layer_size) {
+void batchnorm_layer_rand_weight(bnormLayer *bnorm_layer) {
     bnormLayer_free(bnorm_layer);
-    bnorm_layer->N = layer_size;
-    bnorm_layer->mean.data  = malloc(layer_size * sizeof(float));
-    bnorm_layer->istd.data  = malloc(layer_size * sizeof(float));
-    bnorm_layer->gamma.data = malloc(layer_size * sizeof(float));
-    bnorm_layer->beta.data  = malloc(layer_size * sizeof(float));
-    random_init_arr(bnorm_layer->mean.data, layer_size);
-    random_init_arr(bnorm_layer->istd.data, layer_size);
-    random_init_arr(bnorm_layer->gamma.data, layer_size);
-    random_init_arr(bnorm_layer->beta.data, layer_size);
+    bnorm_layer->mean.data  = malloc(bnorm_layer->N * sizeof(float));
+    bnorm_layer->istd.data  = malloc(bnorm_layer->N * sizeof(float));
+    bnorm_layer->gamma.data = malloc(bnorm_layer->N * sizeof(float));
+    bnorm_layer->beta.data  = malloc(bnorm_layer->N * sizeof(float));
+    random_init_arr(bnorm_layer->mean.data, bnorm_layer->N);
+    random_init_arr(bnorm_layer->istd.data, bnorm_layer->N);
+    random_init_arr(bnorm_layer->gamma.data, bnorm_layer->N);
+    random_init_arr(bnorm_layer->beta.data, bnorm_layer->N);
 }
 
 void conv_layer_rand_weight(ConvLayer *conv_layer) {
@@ -42,6 +41,9 @@ void random_init_arr(float *arr, size_t arr_length) {
     //srand(0);
     for (int i = 0; i < arr_length; i++) {
         if ((float) rand() / (float) (RAND_MAX) > THRESHOLD) arr[i] = 1.0f;
+        else if((float) rand() / (float) (RAND_MAX) < THRESHOLD &&
+        (float) rand() / (float) (RAND_MAX) > 0.3)
+            arr[i] = -1.0f;
         else arr[i] = 0.0f;
     }
 }

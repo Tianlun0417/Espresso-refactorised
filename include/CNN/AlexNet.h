@@ -17,7 +17,7 @@ typedef struct features{
     PoolLayer * maxpool1;
     PoolLayer * maxpool2;
     PoolLayer * maxpool3;
-    Tensor    * output;
+    Tensor      output;
 }Features;
 
 typedef struct classifier{
@@ -26,14 +26,14 @@ typedef struct classifier{
     DenseLayer   * dense1;
     DenseLayer   * dense2;
     DenseLayer   * dense3;
-    Tensor       * output;
+    Tensor         output;
 }Classifier;
 
 typedef struct alexnet{
     int num_classes;
     Features   * features;
     Classifier * classifier;
-    Tensor     * output;
+    Tensor       output;
 }AlexNet;
 
 void new_features(Features *features);
@@ -43,5 +43,7 @@ void AlexNet_init(AlexNet *alex_net, int num_classes);
 void features_forward(Tensor *input, Features *features);
 void classifier_forward(Tensor *input, Classifier *classifier);
 void alexnet_forward(Tensor *input, AlexNet *alex_net);
+
+void AlexNet_free(AlexNet *alexnet);
 
 #endif //ESPRESSO_REFACTORISED_ALEXNET_H

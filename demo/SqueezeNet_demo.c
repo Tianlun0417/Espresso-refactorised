@@ -15,7 +15,7 @@ int main(){
     SqueezeNet *squeeze_net = malloc(sizeof(SqueezeNet));
     SqueezeNet_init(squeeze_net, Version1_1, num_classes);
 
-    for (int idx = 0; idx < 100; idx++) {
+    for (int idx = 0; idx < 10; idx++) {
         cifar10_load(image_path, idx, 1, &cifar_image, &cifar_label);
 
         input_layer_load(&cifar_image, &input_layer);
@@ -27,9 +27,9 @@ int main(){
         print_tensor(&(squeeze_net->output));
     }
 
-    tensor_free(&cifar_image);
+    //tensor_free(&cifar_image);
     tensor_free(&cifar_label);
     input_layer_free(&input_layer);
-    Squeezenet_free(squeeze_net);
+    SqueezeNet_free(squeeze_net);
     free(squeeze_net);
 }

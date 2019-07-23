@@ -71,25 +71,23 @@ void ResNet_block_init(ResNetBlock *block_ptr, ResNet *resnet_ptr, int planes,
     if (resnet_ptr->block_type == UseBasicBlock) {
         block_ptr->bottlenecks = NULL;
         // Init the memory for basic blocks
-        block_ptr->basicblocks =
-                (BasicBlock**) malloc((num_blocks + 1) * sizeof(BasicBlock*));
+        block_ptr->basicblocks = (BasicBlock**) malloc((num_blocks) * sizeof(BasicBlock*));
         // Init each basic block
         block_ptr->basicblocks[0] = malloc(sizeof(BasicBlock));
         basicblock_init(block_ptr->basicblocks[0], resnet_ptr->inplanes, planes, stride, downsample_ptr);
         resnet_ptr->inplanes = planes * 1;
-        for (int block_idx = 1; block_idx < num_blocks + 1; block_idx++) {
+        for (int block_idx = 1; block_idx < num_blocks; block_idx++) {
             block_ptr->basicblocks[block_idx] = malloc(sizeof(BasicBlock));
             basicblock_init(block_ptr->basicblocks[block_idx], resnet_ptr->inplanes, planes, 1, NULL);
         }
     } else if (resnet_ptr->block_type == UseBottleneck) {
         block_ptr->basicblocks = NULL;
-        block_ptr->bottlenecks =
-                (Bottleneck**) malloc((num_blocks + 1) * sizeof(BasicBlock*));
-        block_ptr->bottlenecks[0] = malloc(sizeof(BasicBlock));
+        block_ptr->bottlenecks = (Bottleneck**) malloc((num_blocks) * sizeof(Bottleneck*));
+        block_ptr->bottlenecks[0] = malloc(sizeof(Bottleneck));
         bottleneck_init(block_ptr->bottlenecks[0], resnet_ptr->inplanes, planes, stride, downsample_ptr);
         resnet_ptr->inplanes = planes * 4;
-        for (int block_idx = 1; block_idx < num_blocks + 1; block_idx++) {
-            block_ptr->bottlenecks[block_idx] = malloc(sizeof(BasicBlock));
+        for (int block_idx = 1; block_idx < num_blocks; block_idx++) {
+            block_ptr->bottlenecks[block_idx] = malloc(sizeof(Bottleneck));
             bottleneck_init(block_ptr->bottlenecks[block_idx], resnet_ptr->inplanes, planes, 1, NULL);
         }
     } else {
@@ -111,7 +109,6 @@ void ResNet_init(ResNet *ResNetInstance, BlockType block_type, int num_layers[4]
     ResNetInstance->block4 = malloc(sizeof(ResNetBlock));
     ResNetInstance->pool2  = malloc(sizeof(PoolLayer));
     ResNetInstance->fc = new_dense_layer(num_classes, 512 * (block_type == UseBasicBlock ? 1 : 4));
-    ResNetInstance->output = NULL;
 
     ResNet_block_init(ResNetInstance->block1, ResNetInstance, 64, num_layers[0], 1);
     ResNet_block_init(ResNetInstance->block2, ResNetInstance, 128, num_layers[1], 2);
@@ -133,11 +130,12 @@ void downsample_forward(Tensor *input, Downsample *downsample) {
     conv_layer_forward(input, downsample->conv, SAVE);
     bnormLayer_forward(&(downsample->conv->out), downsample->bn, SAVE);
 
-    downsample->output = &(downsample->conv->out);
+    if (downsample->output.data != NULL)
+        free(downsample->output.data);
+    downsample->output = tensor_copy(&(downsample->conv->out));
 }
 
 void basicblock_forward(Tensor *input, BasicBlock *basicblock) {
-    Tensor *residual = input;
     conv_layer_forward(input, basicblock->conv1, SAVE);
     bnormLayer_forward(&(basicblock->conv1->out), basicblock->bn1, SAVE);
     relu_forward(&(basicblock->conv1->out));
@@ -145,21 +143,27 @@ void basicblock_forward(Tensor *input, BasicBlock *basicblock) {
     conv_layer_forward(&(basicblock->conv1->out), basicblock->conv2, SAVE);
     bnormLayer_forward(&(basicblock->conv2->out), basicblock->bn2, SAVE);
 
+    if (basicblock->residual.data != NULL)
+        free(basicblock->residual.data);
+
     if (basicblock->downsample) {
         downsample_forward(input, basicblock->downsample);
-        residual = basicblock->downsample->output;
+        basicblock->residual = tensor_copy(&(basicblock->downsample->output));
+    }else{
+        basicblock->residual = tensor_copy(input);
     }
 
     for (int idx = 0; idx < tensor_len(&(basicblock->conv2->out)); idx++) {
-        basicblock->conv2->out.data[idx] += residual->data[idx];
+        basicblock->conv2->out.data[idx] += basicblock->residual.data[idx];
     }
     relu_forward(&(basicblock->conv2->out));
 
-    basicblock->output = &(basicblock->conv2->out);
+    if (basicblock->output.data != NULL)
+        free(basicblock->output.data);
+    basicblock->output = tensor_copy(&(basicblock->conv2->out));
 }
 
 void bottleneck_forward(Tensor *input, Bottleneck *bottleneck) {
-    Tensor *residual = input;
     conv_layer_forward(input, bottleneck->conv1, SAVE);
     bnormLayer_forward(&(bottleneck->conv1->out), bottleneck->bn1, SAVE);
     relu_forward(&(bottleneck->conv1->out));
@@ -171,17 +175,24 @@ void bottleneck_forward(Tensor *input, Bottleneck *bottleneck) {
     conv_layer_forward(&(bottleneck->conv2->out), bottleneck->conv3, SAVE);
     bnormLayer_forward(&(bottleneck->conv3->out), bottleneck->bn3, SAVE);
 
+    if (bottleneck->residual.data != NULL)
+        free(bottleneck->residual.data);
+
     if (bottleneck->downsample) {
         downsample_forward(input, bottleneck->downsample);
-        residual = bottleneck->downsample->output;
+        bottleneck->residual = tensor_copy(&(bottleneck->downsample->output));
+    }else{
+        bottleneck->residual = tensor_copy(input);
     }
 
     for (int idx = 0; idx < tensor_len(&(bottleneck->conv3->out)); idx++) {
-        bottleneck->conv3->out.data[idx] += residual->data[idx];
+        bottleneck->conv3->out.data[idx] += bottleneck->residual.data[idx];
     }
     relu_forward(&(bottleneck->conv3->out));
 
-    bottleneck->output = &(bottleneck->conv3->out);
+    if (bottleneck->output.data != NULL)
+        free(bottleneck->output.data);
+    bottleneck->output = tensor_copy(&(bottleneck->conv3->out));
 }
 
 void resnet_block_forward(Tensor *input, ResNetBlock *block) {
@@ -189,18 +200,22 @@ void resnet_block_forward(Tensor *input, ResNetBlock *block) {
         basicblock_forward(input, block->basicblocks[0]);
         for (int block_idx = 1; block_idx < block->num_blocks; block_idx++)
             basicblock_forward(
-                    block->basicblocks[block_idx - 1]->output,
+                    &(block->basicblocks[block_idx - 1]->output),
                     block->basicblocks[block_idx]
             );
-        block->output = block->basicblocks[block->num_blocks - 1]->output;
+        if (block->output.data != NULL)
+            free(block->output.data);
+        block->output = tensor_copy(&(block->basicblocks[block->num_blocks - 1]->output));
     } else if (block->block_type == UseBottleneck) {
         bottleneck_forward(input, block->bottlenecks[0]);
         for (int block_idx = 1; block_idx < block->num_blocks; block_idx++)
             bottleneck_forward(
-                    block->bottlenecks[block_idx - 1]->output,
+                    &(block->bottlenecks[block_idx - 1]->output),
                     block->bottlenecks[block_idx]
             );
-        block->output = block->bottlenecks[block->num_blocks - 1]->output;
+        if (block->output.data != NULL)
+            free(block->output.data);
+        block->output = tensor_copy(&(block->bottlenecks[block->num_blocks - 1]->output));
     }
 }
 
@@ -211,14 +226,106 @@ void resnet_forward(Tensor *image_tensor, ResNet *resnet) {
     pool_layer_forward(&(resnet->conv1->out), resnet->pool1);
 
     resnet_block_forward(&(resnet->pool1->out), resnet->block1);
-    resnet_block_forward(resnet->block1->output, resnet->block2);
-    resnet_block_forward(resnet->block2->output, resnet->block3);
-    resnet_block_forward(resnet->block3->output, resnet->block4);
+    resnet_block_forward(&(resnet->block1->output), resnet->block2);
+    resnet_block_forward(&(resnet->block2->output), resnet->block3);
+    resnet_block_forward(&(resnet->block3->output), resnet->block4);
 
-    pool_layer_forward(resnet->block4->output, resnet->pool2);
+    pool_layer_forward(&(resnet->block4->output), resnet->pool2);
     dense_layer_forward(&(resnet->pool2->out), resnet->fc, SAVE);
 
-    resnet->output = &(resnet->fc->out);
+    if (resnet->output.data != NULL)
+        free(resnet->output.data);
+    resnet->output = tensor_copy(&(resnet->fc->out));
+}
+
+void downsample_free(Downsample *downsample){
+    conv_layer_free(downsample->conv);
+    bnormLayer_free(downsample->bn);
+    tensor_free(&(downsample->output));
+
+    free(downsample->conv);
+    free(downsample->bn);
+}
+
+void basicblock_free(BasicBlock *basicblock){
+    conv_layer_free(basicblock->conv1);
+    conv_layer_free(basicblock->conv2);
+    bnormLayer_free(basicblock->bn1);
+    bnormLayer_free(basicblock->bn2);
+    if (basicblock->downsample != NULL) {
+        downsample_free(basicblock->downsample);
+        free(basicblock->downsample);
+    }
+    tensor_free(&(basicblock->residual));
+    tensor_free(&(basicblock->output));
+
+    free(basicblock->conv1);
+    free(basicblock->conv2);
+    free(basicblock->bn1);
+    free(basicblock->bn2);
+}
+
+void bottleneck_free(Bottleneck *bottleneck){
+    conv_layer_free(bottleneck->conv1);
+    conv_layer_free(bottleneck->conv2);
+    conv_layer_free(bottleneck->conv3);
+    bnormLayer_free(bottleneck->bn1);
+    bnormLayer_free(bottleneck->bn2);
+    bnormLayer_free(bottleneck->bn3);
+    if (bottleneck->downsample != NULL) {
+        downsample_free(bottleneck->downsample);
+        free(bottleneck->downsample);
+    }
+    tensor_free(&(bottleneck->residual));
+    tensor_free(&(bottleneck->output));
+
+    free(bottleneck->conv1);
+    free(bottleneck->conv2);
+    free(bottleneck->conv3);
+    free(bottleneck->bn1);
+    free(bottleneck->bn2);
+    free(bottleneck->bn3);
+    free(bottleneck->downsample);
+}
+
+void resnet_block_free(ResNetBlock *block){
+    if (block->block_type == UseBasicBlock){
+        for (int i = 0; i < block->num_blocks; i++){
+            basicblock_free(block->basicblocks[i]);
+            free(block->basicblocks[i]);
+        }
+    }else{
+        for (int i = 0; i < block->num_blocks; i++){
+            bottleneck_free(block->bottlenecks[i]);
+            free(block->bottlenecks[i]);
+        }
+    }
+    tensor_free(&(block->output));
+    free(block->basicblocks);
+    free(block->bottlenecks);
+}
+
+void ResNet_free(ResNet *resnet) {
+    conv_layer_free(resnet->conv1);
+    bnormLayer_free(resnet->bn1);
+    poolLayer_free(resnet->pool1);
+    resnet_block_free(resnet->block1);
+    resnet_block_free(resnet->block2);
+    resnet_block_free(resnet->block3);
+    resnet_block_free(resnet->block4);
+    poolLayer_free(resnet->pool2);
+    denseLayer_free(resnet->fc);
+    tensor_free(&(resnet->output));
+
+    free(resnet->conv1);
+    free(resnet->bn1);
+    free(resnet->pool1);
+    free(resnet->block1);
+    free(resnet->block2);
+    free(resnet->block3);
+    free(resnet->block4);
+    free(resnet->pool2);
+    free(resnet->fc);
 }
 
 

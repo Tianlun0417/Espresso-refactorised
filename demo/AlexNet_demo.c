@@ -13,7 +13,7 @@ int main() {
     AlexNet *alex_net = malloc(sizeof(AlexNet));
     AlexNet_init(alex_net, 10);
     
-    for (int idx = 0; idx < TEST_IMG; idx++) {
+    for (int idx = 0; idx < 10; idx++) {
         cifar10_load(image_path, idx, 1, &cifar_image, &cifar_label);
 
         input_layer_load(&cifar_image, &input_layer);
@@ -22,6 +22,11 @@ int main() {
         alexnet_forward(&(input_layer.out), alex_net);
 
         printf("NO.%d ", idx);
-        print_tensor(alex_net->output);
+        print_tensor(&(alex_net->output));
     }
+
+    tensor_free(&cifar_label);
+    input_layer_free(&input_layer);
+    AlexNet_free(alex_net);
+    free(alex_net);
 }

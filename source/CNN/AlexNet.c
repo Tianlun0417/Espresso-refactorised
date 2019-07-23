@@ -27,7 +27,6 @@ void new_features(Features *features) {
     new_pool_layer(features->maxpool1, 3, 3, 2, 2, 0, MAXPOOL);
     new_pool_layer(features->maxpool2, 3, 3, 2, 2, 0, MAXPOOL);
     new_pool_layer(features->maxpool3, 3, 3, 2, 2, 0, MAXPOOL);
-    features->output = NULL;
 }
 
 void new_classifier(Classifier *classifier, int num_classes) {
@@ -42,15 +41,12 @@ void new_classifier(Classifier *classifier, int num_classes) {
         dense_layer_rand_weight(classifier->dense2);
         dense_layer_rand_weight(classifier->dense3);
     }
-
-    classifier->output  = NULL;
 }
 
 void AlexNet_init(AlexNet *alex_net, int num_classes) {
     alex_net->num_classes = num_classes;
     alex_net->features = malloc(sizeof(Features));
     alex_net->classifier = malloc(sizeof(Classifier));
-    alex_net->output = NULL;
 
     new_features(alex_net->features);
     new_classifier(alex_net->classifier, alex_net->num_classes);
@@ -71,7 +67,9 @@ void features_forward(Tensor *input, Features *features) {
     conv_layer_forward(&(features->conv4->out), features->conv5, SAVE);
     relu_forward(&(features->conv5->out));
 
-    features->output = &(features->conv5->out);
+    if (features->output.data != NULL)
+        free(features->output.data);
+    features->output = tensor_copy(&(features->conv5->out));
 }
 
 void classifier_forward(Tensor *input, Classifier *classifier) {
@@ -83,13 +81,59 @@ void classifier_forward(Tensor *input, Classifier *classifier) {
     relu_forward(&(classifier->dense2->out));
     dense_layer_forward(&(classifier->dense2->out), classifier->dense3, SAVE);
 
-    classifier->output = &(classifier->dense3->out);
+    if (classifier->output.data != NULL)
+        free(classifier->output.data);
+    classifier->output = tensor_copy(&(classifier->dense3->out));
 }
 
 void alexnet_forward(Tensor *input, AlexNet *alex_net) {
     features_forward(input, alex_net->features);
-    classifier_forward(alex_net->features->output, alex_net->classifier);
-    alex_net->output = alex_net->classifier->output;
+    classifier_forward(&(alex_net->features->output), alex_net->classifier);
+    if (alex_net->output.data != NULL)
+        free(alex_net->output.data);
+    alex_net->output = tensor_copy(&(alex_net->classifier->output));
+}
+
+void features_free(Features *features){
+    conv_layer_free(features->conv1);
+    conv_layer_free(features->conv2);
+    conv_layer_free(features->conv3);
+    conv_layer_free(features->conv4);
+    conv_layer_free(features->conv5);
+    poolLayer_free(features->maxpool1);
+    poolLayer_free(features->maxpool2);
+    poolLayer_free(features->maxpool3);
+    tensor_free(&(features->output));
+
+    free(features->conv1);
+    free(features->conv2);
+    free(features->conv3);
+    free(features->conv4);
+    free(features->conv5);
+    free(features->maxpool1);
+    free(features->maxpool2);
+    free(features->maxpool3);
+}
+
+void classifier_free(Classifier *classifier){
+    denseLayer_free(classifier->dense1);
+    denseLayer_free(classifier->dense2);
+    denseLayer_free(classifier->dense3);
+    tensor_free(&(classifier->output));
+
+    free(classifier->dense1);
+    free(classifier->dense2);
+    free(classifier->dense3);
+    free(classifier->dropout);
+}
+
+void AlexNet_free(AlexNet *alexnet) {
+    features_free(alexnet->features);
+    classifier_free(alexnet->classifier);
+    tensor_free(&(alexnet->output));
+
+    free(alexnet->features);
+    free(alexnet->classifier);
 }
 
 

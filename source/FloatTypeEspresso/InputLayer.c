@@ -3,7 +3,10 @@
 
 
 void input_layer_load(FloatTensor *in, InputLayer *il) {
-    il->out = tensor_copy(in);
+    int D = in->D, M = in->M, N = in->N, L = in->L;
+    il->out = tensor_init(D, M, N, L);
+    free(il->out.data);
+    il->out.data = in->data;
 }
 
 

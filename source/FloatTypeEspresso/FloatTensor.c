@@ -200,7 +200,6 @@ void tensor_maxpool(FloatTensor *input, FloatTensor *output, int pool_kernel_w, 
     }
 }
 
-
 void tensor_avgpool(FloatTensor *input, FloatTensor *output, int pool_kernel_w, int pool_kernel_h,
                     int Sx, int Sy){
     int pool_kernel_size = pool_kernel_w * pool_kernel_h;
@@ -245,7 +244,6 @@ void tensor_avgpool(FloatTensor *input, FloatTensor *output, int pool_kernel_w, 
         }
     }
 }
-
 
 FloatTensor tensor_copy_pad(FloatTensor *t, int p) {
     const int Ms = t->M, Ns = t->N, L = t->L, D = t->D;

@@ -2,30 +2,22 @@
 
 
 void dense_layer_rand_weight(DenseLayer *den_layer) {
-    float *arr_weight = (float *) malloc(den_layer->M * den_layer->N * sizeof(float));
+    den_layer->W.data = (float *) malloc(den_layer->M * den_layer->N * sizeof(float));
 
-    random_init_arr(arr_weight, den_layer->M * den_layer->N);
-
-    FloatTensor dense_weight = tensor_from_ptr(1, den_layer->M, den_layer->N, 1, arr_weight);
-    denseLayer_set(&dense_weight, den_layer);
+    random_init_arr(den_layer->W.data, den_layer->M * den_layer->N);
 }
 
 void batchnorm_layer_rand_weight(bnormLayer *bnorm_layer, size_t layer_size) {
-    float *arr_bnorm_mean = (float *) calloc(layer_size, sizeof(float));
-    float *arr_bnorm_istd = (float *) calloc(layer_size, sizeof(float));
-    float *arr_bnorm_gamma = (float *) calloc(layer_size, sizeof(float));
-    float *arr_bnorm_beta = (float *) calloc(layer_size, sizeof(float));
-
-    random_init_arr(arr_bnorm_mean, layer_size);
-    random_init_arr(arr_bnorm_istd, layer_size);
-    random_init_arr(arr_bnorm_gamma, layer_size);
-    random_init_arr(arr_bnorm_beta, layer_size);
-
-    FloatTensor bnorm_mean = tensor_from_ptr(1, layer_size, 1, 1, arr_bnorm_mean);
-    FloatTensor bnorm_istd = tensor_from_ptr(1, layer_size, 1, 1, arr_bnorm_istd);
-    FloatTensor bnorm_gamma = tensor_from_ptr(1, layer_size, 1, 1, arr_bnorm_gamma);
-    FloatTensor bnorm_beta = tensor_from_ptr(1, layer_size, 1, 1, arr_bnorm_beta);
-    bnormLayer_set(&bnorm_mean, &bnorm_istd, &bnorm_gamma, &bnorm_beta, bnorm_layer);
+    bnormLayer_free(bnorm_layer);
+    bnorm_layer->N = layer_size;
+    bnorm_layer->mean.data  = malloc(layer_size * sizeof(float));
+    bnorm_layer->istd.data  = malloc(layer_size * sizeof(float));
+    bnorm_layer->gamma.data = malloc(layer_size * sizeof(float));
+    bnorm_layer->beta.data  = malloc(layer_size * sizeof(float));
+    random_init_arr(bnorm_layer->mean.data, layer_size);
+    random_init_arr(bnorm_layer->istd.data, layer_size);
+    random_init_arr(bnorm_layer->gamma.data, layer_size);
+    random_init_arr(bnorm_layer->beta.data, layer_size);
 }
 
 void conv_layer_rand_weight(ConvLayer *conv_layer) {

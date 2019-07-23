@@ -99,6 +99,8 @@ void fire_forward(Tensor *input, Fire *fire) {
     conv_layer_forward(&(fire->squeeze->out), fire->expand3x3, SAVE);
     relu_forward(&(fire->expand3x3->out));
 
+    if (fire->output->data != NULL)
+        free(fire->output->data);
     tensor_cat(&(fire->expand1x1->out), &(fire->expand3x3->out), fire->output, 3);
 }
 
@@ -131,6 +133,8 @@ void features_forward(Tensor *input, FeaturesSequential *features) {
         fprintf(stderr, "\nWrong version of Squeeze Net\n");
     }
 
+    if (features->output.data != NULL)
+        free(features->output.data);
     features->output = tensor_copy(features->fire_list[7]->output);
 }
 
@@ -140,6 +144,8 @@ void classification_forward(Tensor *input, ClassifierSequential *classifier) {
     relu_forward(&(classifier->final_conv->out));
     pool_layer_forward(&(classifier->final_conv->out), classifier->avgpool);
 
+    if (classifier->output.data != NULL)
+        free(classifier->output.data);
     classifier->output = tensor_copy(&(classifier->avgpool->out));
 }
 
@@ -185,10 +191,10 @@ void classifier_free(ClassifierSequential *classifier_ptr){
     tensor_free(&(classifier_ptr->output));
 }
 
-void Squeezenet_free(SqueezeNet *squeeze_net) {
+void SqueezeNet_free(SqueezeNet *squeeze_net) {
     features_free(squeeze_net->features);
     free(squeeze_net->features);
     classifier_free(squeeze_net->classifier);
     free(squeeze_net->classifier);
-    tensor_free(&(squeeze_net->output));
+    //tensor_free(&(squeeze_net->output));
 }

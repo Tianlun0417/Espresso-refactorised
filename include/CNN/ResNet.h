@@ -18,7 +18,7 @@ typedef enum BlockType {
 typedef struct down_sample {
     ConvLayer *conv;
     bnormLayer *bn;
-    Tensor *output;
+    Tensor output;
 } Downsample;
 
 typedef struct basic {
@@ -29,7 +29,8 @@ typedef struct basic {
     ConvLayer *conv2;
     bnormLayer *bn2;
     Downsample *downsample;
-    Tensor *output;
+    Tensor residual;
+    Tensor output;
 } BasicBlock;
 
 typedef struct bottleneck {
@@ -42,7 +43,8 @@ typedef struct bottleneck {
     ConvLayer *conv3;
     bnormLayer *bn3;
     Downsample *downsample;
-    Tensor *output;
+    Tensor residual;
+    Tensor output;
 } Bottleneck;
 
 typedef struct resnet_block {
@@ -50,7 +52,7 @@ typedef struct resnet_block {
     BlockType block_type;
     BasicBlock **basicblocks;
     Bottleneck **bottlenecks;
-    Tensor *output;
+    Tensor output;
 } ResNetBlock;
 
 typedef struct resnet {
@@ -65,7 +67,7 @@ typedef struct resnet {
     ResNetBlock *block4;
     PoolLayer *pool2;
     DenseLayer *fc;
-    Tensor *output;
+    Tensor output;
 } ResNet;
 
 void ResNet_init(ResNet *ResNetInstance, BlockType block_type, int num_layers[4],
@@ -83,4 +85,5 @@ void bottleneck_forward(Tensor * input, Bottleneck * bottleneck);
 void resnet_block_forward(Tensor * input, ResNetBlock * block);
 void resnet_forward(Tensor *image_tensor, ResNet *resnet);
 
+void ResNet_free(ResNet * resnet);
 #endif //ESPRESSO_REFACTORISED_RESNET_H

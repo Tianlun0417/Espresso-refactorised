@@ -55,6 +55,6 @@ void features_forward(Tensor * input, FeaturesSequential * features);
 void classification_forward(Tensor * input, ClassifierSequential * classifier);
 void squeezenet_forward(Tensor * input, SqueezeNet * squeeze_net);
 
-void Squeezenet_free(SqueezeNet *squeeze_net);
+void SqueezeNet_free(SqueezeNet *squeeze_net);
 
 #endif //ESPRESSO_REFACTORISED_SQUEEZENET_H

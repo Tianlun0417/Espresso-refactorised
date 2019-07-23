@@ -14,7 +14,7 @@ int main() {
     ResNet *resnet = malloc(sizeof(ResNet));
     ResNet_init(resnet, UseBasicBlock, blocks, 10);
 
-    for (int idx = 0; idx < TEST_IMG; idx++) {
+    for (int idx = 0; idx < 10; idx++) {
         cifar10_load(image_path, idx, 1, &cifar_image, &cifar_label);
 
         input_layer_load(&cifar_image, &input_layer);
@@ -22,6 +22,11 @@ int main() {
 
         resnet_forward(&(input_layer.out), resnet);
         printf("NO.%d ", idx);
-        print_tensor(resnet->output);
+        print_tensor(&resnet->output);
     }
+
+    tensor_free(&cifar_label);
+    input_layer_free(&input_layer);
+    ResNet_free(resnet);
+    free(resnet);
 }

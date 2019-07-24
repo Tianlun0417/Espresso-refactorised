@@ -62,7 +62,7 @@ void features_sequential_init(FeaturesSequential *features_ptr, SqueezeNetVersio
 
     for(int maxpool_idx = 0; maxpool_idx < 3; maxpool_idx++){
         features_ptr->maxpool_list[maxpool_idx] = malloc(sizeof(PoolLayer));
-        new_pool_layer(features_ptr->maxpool_list[maxpool_idx], 3, 3, 2, 2, 0, MAXPOOL);
+        pool_layer_init(features_ptr->maxpool_list[maxpool_idx], 3, 3, 2, 2, 0, MAXPOOL);
     }
 }
 
@@ -73,7 +73,7 @@ void classifier_sequential_init(ClassifierSequential *classifier_ptr, int num_cl
     classifier_ptr->avgpool     = malloc(sizeof(PoolLayer));
 //    classifier_ptr->output      = malloc(sizeof(Tensor));
 
-    new_pool_layer(classifier_ptr->avgpool, 13, 13, 1, 1, 0, AVGPOOL);
+    pool_layer_init(classifier_ptr->avgpool, 13, 13, 1, 1, 0, AVGPOOL);
     conv_layer_init(classifier_ptr->final_conv, 512, num_classes, 1, 1, 1, 1, 0);
     dropout_layer_init(classifier_ptr->dropout, 0.5);
 

@@ -25,7 +25,7 @@ typedef struct {
 
 //bnormLayer bnormLayer_init(int use_global);
 
-void bn_layer_init(bnormLayer *bn_layer_ptr, size_t size);
+void bnorm_layer_init(bnormLayer *bn_layer_ptr, size_t size);
 
 void bnormLayer_free(bnormLayer *bnl);
 

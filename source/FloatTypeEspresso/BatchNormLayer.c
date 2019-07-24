@@ -9,7 +9,7 @@ bnormLayer bnormLayer_init(int use_global) {
     return bnl;
 }
 
-void bn_layer_init(bnormLayer *bn_layer_ptr, size_t size) {
+void bnorm_layer_init(bnormLayer *bn_layer_ptr, size_t size) {
     bn_layer_ptr->N = size;
     bn_layer_ptr->ug = 0;
     bn_layer_ptr->mean.data = NULL;

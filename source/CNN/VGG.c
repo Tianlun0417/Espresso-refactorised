@@ -18,7 +18,7 @@ void layers_config_init(VGGFeatures *features, size_t len, const int *config){
         int v = config[i];
         if (v == M) {
             features->maxpool_list[maxpool_idx] = malloc(sizeof(PoolLayer));
-            new_pool_layer(features->maxpool_list[maxpool_idx], 2, 2, 2, 2, 0, MAXPOOL);
+            pool_layer_init(features->maxpool_list[maxpool_idx], 2, 2, 2, 2, 0, MAXPOOL);
             maxpool_idx++;
         } else {
             features->conv_list[features->conv_count] = malloc(sizeof(ConvLayer));
@@ -29,10 +29,10 @@ void layers_config_init(VGGFeatures *features, size_t len, const int *config){
 
             if (features->batch_norm) {
                 features->bnorm_list[features->conv_count] = malloc(sizeof(bnormLayer));
-                bn_layer_init(features->bnorm_list[features->conv_count], v);
+                bnorm_layer_init(features->bnorm_list[features->conv_count], v);
 
                 if(!LOAD_PRETRAINED_WEIGHT)
-                    batchnorm_layer_rand_weight(features->bnorm_list[features->conv_count]);
+                    bnorm_layer_rand_weight(features->bnorm_list[features->conv_count]);
             }
             if (features->conv_count >= len - 5)
                 fprintf(stderr, "Conv layer init index outbound!\n");

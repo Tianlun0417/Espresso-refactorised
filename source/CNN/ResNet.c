@@ -13,14 +13,14 @@ void basicblock_init(BasicBlock *basicblock, int inplanes, int planes,
 
     conv_layer_init(basicblock->conv1, inplanes, planes, 3, 3, stride, stride, 1);
     conv_layer_init(basicblock->conv2, planes, planes, 3, 3, stride, stride, 1);
-    bn_layer_init(basicblock->bn1, planes);
-    bn_layer_init(basicblock->bn2, planes);
+    bnorm_layer_init(basicblock->bn1, planes);
+    bnorm_layer_init(basicblock->bn2, planes);
 
     if(!LOAD_PRETRAINED_WEIGHT){
         conv_layer_rand_weight(basicblock->conv1);
-        batchnorm_layer_rand_weight(basicblock->bn1);
+        bnorm_layer_rand_weight(basicblock->bn1);
         conv_layer_rand_weight(basicblock->conv2);
-        batchnorm_layer_rand_weight(basicblock->bn2);
+        bnorm_layer_rand_weight(basicblock->bn2);
     }
 }
 
@@ -39,17 +39,17 @@ void bottleneck_init(Bottleneck *bottleneck, int inplanes, int planes,
     conv_layer_init(bottleneck->conv1, inplanes, planes, 1, 1, 1, 1, 0);
     conv_layer_init(bottleneck->conv2, planes, planes, 3, 3, stride, stride, 1);
     conv_layer_init(bottleneck->conv3, planes, planes * 4, 1, 1, 1, 1, 0);
-    bn_layer_init(bottleneck->bn1, planes);
-    bn_layer_init(bottleneck->bn2, planes);
-    bn_layer_init(bottleneck->bn3, planes * 4);
+    bnorm_layer_init(bottleneck->bn1, planes);
+    bnorm_layer_init(bottleneck->bn2, planes);
+    bnorm_layer_init(bottleneck->bn3, planes * 4);
 
     if(!LOAD_PRETRAINED_WEIGHT){
         conv_layer_rand_weight(bottleneck->conv1);
-        batchnorm_layer_rand_weight(bottleneck->bn1);
+        bnorm_layer_rand_weight(bottleneck->bn1);
         conv_layer_rand_weight(bottleneck->conv2);
-        batchnorm_layer_rand_weight(bottleneck->bn2);
+        bnorm_layer_rand_weight(bottleneck->bn2);
         conv_layer_rand_weight(bottleneck->conv3);
-        batchnorm_layer_rand_weight(bottleneck->bn3);
+        bnorm_layer_rand_weight(bottleneck->bn3);
     }
 }
 
@@ -66,11 +66,11 @@ void ResNet_block_init(ResNetBlock *block_ptr, ResNet *resnet_ptr, int planes,
         downsample_ptr->conv = malloc(sizeof(ConvLayer));
         conv_layer_init(downsample_ptr->conv, resnet_ptr->inplanes, planes, 1, 1, stride, stride, 0);
         downsample_ptr->bn = malloc(sizeof(bnormLayer));
-        bn_layer_init(downsample_ptr->bn, planes * expansion);
+        bnorm_layer_init(downsample_ptr->bn, planes * expansion);
 
         if(!LOAD_PRETRAINED_WEIGHT){
             conv_layer_rand_weight(downsample_ptr->conv);
-            batchnorm_layer_rand_weight(downsample_ptr->bn);
+            bnorm_layer_rand_weight(downsample_ptr->bn);
         }
     }
 
@@ -122,14 +122,14 @@ void ResNet_init(ResNet *ResNetInstance, BlockType block_type, int num_layers[4]
     ResNet_block_init(ResNetInstance->block4, ResNetInstance, 512, num_layers[3], 1);
 
     conv_layer_init(ResNetInstance->conv1, 3, 64, 7, 7, 2, 2, 3);
-    new_pool_layer(ResNetInstance->pool1, 3, 3, 2, 2, 0, MAXPOOL);
-    new_pool_layer(ResNetInstance->pool2, 7, 7, 1, 1, 0, AVGPOOL);
-    bn_layer_init(ResNetInstance->bn1, 64);
+    pool_layer_init(ResNetInstance->pool1, 3, 3, 2, 2, 0, MAXPOOL);
+    pool_layer_init(ResNetInstance->pool2, 7, 7, 1, 1, 0, AVGPOOL);
+    bnorm_layer_init(ResNetInstance->bn1, 64);
     dense_layer_init(ResNetInstance->fc, num_classes, 512 * (block_type == UseBasicBlock ? 1 : 4));
 
     if(!LOAD_PRETRAINED_WEIGHT){
         conv_layer_rand_weight(ResNetInstance->conv1);
-        batchnorm_layer_rand_weight(ResNetInstance->bn1);
+        bnorm_layer_rand_weight(ResNetInstance->bn1);
         dense_layer_rand_weight(ResNetInstance->fc);
     }
 }

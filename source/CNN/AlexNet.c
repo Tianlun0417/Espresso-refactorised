@@ -24,9 +24,9 @@ void new_features(Features *features) {
     features->maxpool1 = malloc(sizeof(PoolLayer));
     features->maxpool2 = malloc(sizeof(PoolLayer));
     features->maxpool3 = malloc(sizeof(PoolLayer));
-    new_pool_layer(features->maxpool1, 3, 3, 2, 2, 0, MAXPOOL);
-    new_pool_layer(features->maxpool2, 3, 3, 2, 2, 0, MAXPOOL);
-    new_pool_layer(features->maxpool3, 3, 3, 2, 2, 0, MAXPOOL);
+    pool_layer_init(features->maxpool1, 3, 3, 2, 2, 0, MAXPOOL);
+    pool_layer_init(features->maxpool2, 3, 3, 2, 2, 0, MAXPOOL);
+    pool_layer_init(features->maxpool3, 3, 3, 2, 2, 0, MAXPOOL);
 }
 
 void new_classifier(Classifier *classifier, int num_classes) {

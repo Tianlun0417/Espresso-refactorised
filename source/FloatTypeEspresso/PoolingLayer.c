@@ -9,8 +9,8 @@ PoolLayer poolLayer_init(int M, int N, int Sm, int Sn, poolingStrategy strategy)
 }
 
 
-void new_pool_layer(PoolLayer *pool_layer_ptr, int M, int N, int Stride_m,
-                          int Stride_n, int padding, poolingStrategy strategy) {
+void pool_layer_init(PoolLayer *pool_layer_ptr, int M, int N, int Stride_m,
+                     int Stride_n, int padding, poolingStrategy strategy) {
     pool_layer_ptr->M = M;
     pool_layer_ptr->N = N;
     pool_layer_ptr->Stride_m = Stride_m;

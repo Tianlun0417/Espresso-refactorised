@@ -10,19 +10,19 @@ extern "C" {
 
 typedef enum {
     MAXPOOL, AVGPOOL
-} poolingStrategy;
+} PoolingStrategy;
 
 typedef struct {
     int M, N, Stride_m, Stride_n, padding;
-    poolingStrategy strategy;
+    PoolingStrategy strategy;
     FloatTensor out, mask;
 } PoolLayer;
 
 
-//PoolLayer poolLayer_init(int M, int N, int Sm, int Sn, poolingStrategy strategy);
+//PoolLayer poolLayer_init(int M, int N, int Sm, int Sn, PoolingStrategy strategy);
 
 void pool_layer_init(PoolLayer *pool_layer_ptr, int M, int N, int Stride_m, int Stride_n, int padding,
-                     poolingStrategy strategy);
+                     PoolingStrategy strategy);
 
 void poolLayer_free(PoolLayer *pl);
 

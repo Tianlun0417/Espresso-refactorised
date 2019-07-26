@@ -177,7 +177,6 @@ void tensor_maxpool(FloatTensor *input, FloatTensor *output, int pool_kernel_w, 
                                     loop_count++;
                                     if(kernel_loc + s + t >= (input->MNL * input->D)){
                                         outbound_count++;
-                                        int xxx = kernel_loc + s + t;
                                         fprintf(stderr, "Input Maxpool: Index outbund!\n");
                                     }
                                     if (t < kernel_w){

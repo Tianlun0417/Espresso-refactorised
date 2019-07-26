@@ -6,7 +6,7 @@ project(espresso_refactorised C)
 option(USE_GEMMLOWP OFF)
 option(USE_CBLAS ON)
 
-#find_package(BLAS REQUIRED)
+find_package(BLAS REQUIRED)
 
 set(CMAKE_C_STANDARD 99)
 
@@ -16,5 +16,5 @@ include_directories("/home/linuxbrew/.linuxbrew/include")
 link_directories("/home/linuxbrew/.linuxbrew/lib")
 
 add_subdirectory("source")
-add_subdirectory("test")
+#add_subdirectory("test")
 add_subdirectory("demo")

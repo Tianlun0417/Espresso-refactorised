@@ -21,7 +21,6 @@ void conv_layer_init(ConvLayer *conv_layer_ptr, int L, int D, int M, int N,
     // M - kernel height
     // N - kernel width
 
-//    conv_layer_ptr = (ConvLayer*) malloc(sizeof(ConvLayer));
     conv_layer_ptr->D = D;
     conv_layer_ptr->M = M;
     conv_layer_ptr->N = N;
@@ -33,8 +32,6 @@ void conv_layer_init(ConvLayer *conv_layer_ptr, int L, int D, int M, int N,
     conv_layer_ptr->b.data = NULL;
     conv_layer_ptr->in.data = NULL;
     conv_layer_ptr->out.data = NULL;
-
-//    return conv_layer_ptr;
 }
 
 

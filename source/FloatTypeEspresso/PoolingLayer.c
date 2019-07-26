@@ -1,7 +1,7 @@
 #include "FloatTypeEspresso/PoolingLayer.h"
 
 
-PoolLayer poolLayer_init(int M, int N, int Sm, int Sn, poolingStrategy strategy) {
+PoolLayer poolLayer_init(int M, int N, int Sm, int Sn, PoolingStrategy strategy) {
     PoolLayer pl = {M, N, Sm, Sn, strategy};
     pl.out.data = NULL;
     pl.mask.data = NULL;
@@ -10,7 +10,7 @@ PoolLayer poolLayer_init(int M, int N, int Sm, int Sn, poolingStrategy strategy)
 
 
 void pool_layer_init(PoolLayer *pool_layer_ptr, int M, int N, int Stride_m,
-                     int Stride_n, int padding, poolingStrategy strategy) {
+                     int Stride_n, int padding, PoolingStrategy strategy) {
     pool_layer_ptr->M = M;
     pool_layer_ptr->N = N;
     pool_layer_ptr->Stride_m = Stride_m;

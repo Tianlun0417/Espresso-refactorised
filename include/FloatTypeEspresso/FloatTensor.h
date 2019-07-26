@@ -42,7 +42,7 @@ void tensor_pad(FloatTensor *src, FloatTensor *dst, int p);
 
 void tensor_maxpool(FloatTensor *input, FloatTensor *output, int pool_kernel_w, int pool_kernel_h,
                     int Sx, int Sy);
-void tensor_avgpool(FloatTensor *src, FloatTensor *dst, int W, int H,
+void tensor_avgpool(FloatTensor *input, FloatTensor *output, int pool_kernel_w, int pool_kernel_h,
                     int Sx, int Sy);
 
 void tensor_lower(FloatTensor *input, FloatTensor *output,

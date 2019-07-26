@@ -25,6 +25,9 @@ void input_layer_forward(InputLayer *il) {
 
     float *ptr = il->out.data;
     const int len = tensor_len(&il->out);
+//    for (int i = 0; i < len; i++)
+//        ptr[i] = ptr[i] / 255;
     for (int i = 0; i < len; i++)
-        ptr[i] = ptr[i] / 255;
+        if (ptr[i] / 255 > 0.5) ptr[i] = 1;
+        else ptr[i] = 0;
 }

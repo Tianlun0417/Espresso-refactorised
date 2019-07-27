@@ -1,4 +1,4 @@
-#include "FloatTypeEspresso/MnistLoader.h"
+#include "DataLoader/MnistLoader.h"
 #include <stdio.h>
 
 

@@ -1,4 +1,4 @@
-#include "FloatTypeEspresso/Cifar10Loader.h"
+#include "DataLoader/Cifar10Loader.h"
 
 
 void cifar10_load(const char *tf, int start, int num,
@@ -24,5 +24,16 @@ void cifar10_load(const char *tf, int start, int num,
 
     tensor_tch(&tmpX, pixel);
     tensor_free(&tmpX);
+}
+
+void cifar10_load_int(const char *tf, int start, int num,
+                      __uint8_t *pixel, __uint8_t *label){
+    FILE *pf = fopen(tf, "rb");
+    ASSERT(pf, "err: fopen \n");
+    fseek(pf, (CIFAR_IMAGE_SIZE + 1) * start, SEEK_SET);
+    for (int i = 0; i < num; i++) {
+        fread(label, sizeof(uint8_t), 1, pf);
+        fread(pixel, sizeof(uint8_t), CIFAR_IMAGE_SIZE, pf);
+    }
 }
 

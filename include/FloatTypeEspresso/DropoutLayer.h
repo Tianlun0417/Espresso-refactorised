@@ -4,6 +4,7 @@
 #include "FloatTensor.h"
 #include <stdlib.h>
 
+
 typedef struct {
     float dropout_rate;
 } DropoutLayer;

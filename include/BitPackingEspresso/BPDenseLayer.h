@@ -10,10 +10,10 @@ typedef struct {
     BPTensor in, out;
 } BPDenseLayer;
 
-void dense_layer_init(BPDenseLayer *dense_layer_ptr, int M, int N);
+void bp_dense_layer_init(BPDenseLayer *dense_layer_ptr, int M, int N);
 
-void denseLayer_free(BPDenseLayer *dl);
+void bp_denseLayer_free(BPDenseLayer *dl);
 
-void dense_layer_forward(BPTensor *input_tensor, BPDenseLayer *dense_layer, int cpy);
+void bp_dense_layer_forward(BPTensor *input_tensor, BPDenseLayer *dense_layer, int cpy);
 
 #endif //ESPRESSO_REFACTORISED_BPDENSELAYER_H

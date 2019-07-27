@@ -14,12 +14,12 @@ typedef struct {
     BPTensor out, mask;
 } BPPoolLayer;
 
-void pool_layer_init(BPPoolLayer *pool_layer_ptr, int M, int N, int Stride_m, int Stride_n,
-        int padding, BPPoolingStrategy strategy);
+void bp_pool_layer_init(BPPoolLayer *pool_layer_ptr, int M, int N, int Stride_m, int Stride_n,
+                        int padding, BPPoolingStrategy strategy);
 
-void poolLayer_free(BPPoolLayer *pl);
+void bp_poolLayer_free(BPPoolLayer *pl);
 
-void pool_layer_forward(BPTensor *t, BPPoolLayer *pl);
+void bp_pool_layer_forward(BPTensor *t, BPPoolLayer *pl);
 
 
 #endif //ESPRESSO_REFACTORISED_BPPOOLINGLAYER_H

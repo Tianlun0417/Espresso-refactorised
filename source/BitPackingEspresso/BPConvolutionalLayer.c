@@ -1,4 +1,5 @@
 #include "BitPackingEspresso/BPConvolutionalLayer.h"
+#include <cblas.h>
 
 __uint32_t *scratch = NULL;
 
@@ -81,8 +82,23 @@ void bp_conv_layer_forward(BPTensor *input_t, BPConvLayer *cl, int save) {
     if (!cl->out.data) cl->out = bp_tensor_init(D, Md, Nd, F);
     int M = Md * Nd, N = F, K = cl->W.MNL;
 
+//    float *tmp_data = malloc(tmp.packed_len * 32 * sizeof(float));
+//    float *cl_w_data = malloc(cl->W.packed_len * 32 * sizeof(float));
+//    float *cl_out_data = malloc(cl->out.packed_len * 32 * sizeof(float));
+//    bp_unpack_to_float(tmp_data, tmp.data, tmp.packed_len);
+//    bp_unpack_to_float(cl_w_data, cl->W.data, tmp.packed_len);
+//    bp_unpack_to_float(cl_out_data, cl->out.data, tmp.packed_len);
+
+    N /= 32;
     bitpacking_gemm(NoTrans, Trans, M, N, K, tmp.data,
             K, cl->W.data, K, cl->out.data, N);
+//    cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasTrans,
+//                M, N, K, 1, tmp_data, K, cl_w_data, K,
+//                0, cl_out_data, N);
+//
+//    bp_pack_from_float(tmp_data, tmp.data, tmp.packed_len);
+//    bp_pack_from_float(cl_w_data, cl->W.data, tmp.packed_len);
+//    bp_pack_from_float(cl_out_data, cl->out.data, tmp.packed_len);
 
     if (!scratch)
         bp_tensor_free(&tmp);

@@ -36,13 +36,13 @@ typedef struct alexnet{
     Tensor       output;
 }AlexNet;
 
-void new_features(Features *features);
-void new_classifier(Classifier *classifier, int num_classes);
+//void new_features(Features *features);
+//void new_classifier(Classifier *classifier, int num_classes);
 void AlexNet_init(AlexNet *alex_net, int num_classes);
 
-void features_forward(Tensor *input, Features *features);
-void classifier_forward(Tensor *input, Classifier *classifier);
-void alexnet_forward(Tensor *input, AlexNet *alex_net);
+//void features_forward(Tensor *input, Features *features);
+//void classifier_forward(Tensor *input, Classifier *classifier);
+void AlexNet_forward(Tensor *input, AlexNet *alex_net);
 
 void AlexNet_free(AlexNet *alexnet);
 

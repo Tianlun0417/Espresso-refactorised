@@ -1,5 +1,5 @@
 #include "FloatTypeEspresso/FLOAT_ESP.h"
-#include "FloatTypeEspresso/Cifar10Loader.h"
+#include "DataLoader/Cifar10Loader.h"
 #include "CNN/VGG.h"
 #include <stdbool.h>
 

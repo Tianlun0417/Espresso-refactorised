@@ -13,6 +13,7 @@ void bnorm_layer_rand_weight(bnormLayer *bnorm_layer) {
     bnorm_layer->istd.data  = malloc(bnorm_layer->N * sizeof(float));
     bnorm_layer->gamma.data = malloc(bnorm_layer->N * sizeof(float));
     bnorm_layer->beta.data  = malloc(bnorm_layer->N * sizeof(float));
+
     random_init_arr(bnorm_layer->mean.data, bnorm_layer->N);
     random_init_arr(bnorm_layer->istd.data, bnorm_layer->N);
     random_init_arr(bnorm_layer->gamma.data, bnorm_layer->N);

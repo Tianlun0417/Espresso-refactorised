@@ -12,10 +12,10 @@ bnormLayer bnormLayer_init(int use_global) {
 void bnorm_layer_init(bnormLayer *bn_layer_ptr, size_t size) {
     bn_layer_ptr->N = size;
     bn_layer_ptr->ug = 0;
-    bn_layer_ptr->mean.data = NULL;
-    bn_layer_ptr->istd.data = NULL;
-    bn_layer_ptr->beta.data = NULL;
-    bn_layer_ptr->gamma.data = NULL;
+    bn_layer_ptr->mean = tensor_init(1, 1, bn_layer_ptr->N, 1);
+    bn_layer_ptr->istd = tensor_init(1, 1, bn_layer_ptr->N, 1);
+    bn_layer_ptr->beta = tensor_init(1, 1, bn_layer_ptr->N, 1);
+    bn_layer_ptr->gamma = tensor_init(1, 1, bn_layer_ptr->N, 1);
     bn_layer_ptr->in.data = NULL;
 }
 

@@ -14,5 +14,6 @@
 #define TEST_IMG 10000
 
 void cifar10_load(const char *tf, int start, int num, FloatTensor *pixel, FloatTensor *label);
+void cifar10_load_int(const char *tf, int start, int num, __uint8_t *pixel, __uint8_t *label);
 
 #endif //CIFAR10LOADER_H

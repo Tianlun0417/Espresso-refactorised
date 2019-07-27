@@ -1,5 +1,5 @@
 #include "FloatTypeEspresso/InputLayer.h"
-#include "FloatTypeEspresso/Utilities.h"
+
 
 
 void input_layer_load(FloatTensor *in, InputLayer *il) {
@@ -8,7 +8,6 @@ void input_layer_load(FloatTensor *in, InputLayer *il) {
     free(il->out.data);
     il->out.data = in->data;
 }
-
 
 void input_layer_free(InputLayer *il) {
     tensor_free(&il->out);

@@ -91,7 +91,7 @@ void classifier_forward(Tensor *input, Classifier *classifier) {
     classifier->output = tensor_copy(&(classifier->dense3->out));
 }
 
-void alexnet_forward(Tensor *input, AlexNet *alex_net) {
+void AlexNet_forward(Tensor *input, AlexNet *alex_net) {
     features_forward(input, alex_net->features);
     classifier_forward(&(alex_net->features->output), alex_net->classifier);
     if (alex_net->output.data != NULL)

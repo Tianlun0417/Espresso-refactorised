@@ -2,6 +2,7 @@
 #define INPUTLAYER_H
 
 #include "FloatTensor.h"
+#include <stdlib.h>
 
 #ifdef __cplusplus
 extern "C" {

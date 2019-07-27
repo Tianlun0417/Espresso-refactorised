@@ -16,7 +16,7 @@ DenseLayer denseLayer_init(int M, int N) {
 void dense_layer_init(DenseLayer *dense_layer_ptr, int M, int N) {
     dense_layer_ptr->M = M;
     dense_layer_ptr->N = N;
-    dense_layer_ptr->W.data = NULL;
+    dense_layer_ptr->W = tensor_init(1, M, N, 1);
     dense_layer_ptr->b.data = NULL;
     dense_layer_ptr->in.data = NULL;
     dense_layer_ptr->out.data = NULL;

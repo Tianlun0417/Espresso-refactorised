@@ -1,5 +1,5 @@
 #include "CNN/AlexNet.h"
-#include "FloatTypeEspresso/Cifar10Loader.h"
+#include "DataLoader/Cifar10Loader.h"
 
 
 const char *image_path = "/home/tianlun/codes/espresso-refactorised/data/test_batch.bin";
@@ -19,7 +19,7 @@ int main() {
         input_layer_load(&cifar_image, &input_layer);
         input_layer_forward(&input_layer);
 
-        alexnet_forward(&(input_layer.out), alex_net);
+        AlexNet_forward(&(input_layer.out), alex_net);
 
         printf("NO.%d ", idx);
         print_tensor(&(alex_net->output));

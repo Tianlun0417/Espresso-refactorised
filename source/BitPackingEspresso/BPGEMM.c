@@ -5,7 +5,7 @@ void transpose_matrix(int len_row, int len_col,
     int mat_idx = 0;
     for (int i = 0; i < len_row; i++){
         for (int j = 0; j < len_col; j++){
-            if (mat_idx > len_row * len_col)
+            if (mat_idx >= len_row * len_col)
                 fprintf(stderr, "Matrix Transpose: Index Outbound!\n The index is: %d", mat_idx);
             output_mat[j * len_row + i] = input_mat[i * len_col + j];
             mat_idx++;
@@ -30,20 +30,20 @@ void bitpacking_gemm(BP_GEMM transpose_a, BP_GEMM transpose_b, int M, int N, int
         tmp_b = trans_b;
     }
 
-    int64_t sum = 0;
+    __uint32_t sum = 0;
     // multiplication of bit-packed matrix
-    for (int i = 0; i < M; i++){
-        for (int j = 0; j < N; j++){
+    for (int c_row_idx = 0; c_row_idx < M; c_row_idx++){
+        for (int c_col_idx = 0; c_col_idx < N; c_col_idx++){
             for (int p = 0; p < K; p++){
-                __uint32_t temp = ~(tmp_a[i*K+p] ^ tmp_b[p*N+j]);
+                __uint32_t temp = ~(tmp_a[c_row_idx*K+p] ^ tmp_b[p*N+c_col_idx]);
                 sum += ((__builtin_popcount(temp))<<1) - 32;
             }
-            mat_c[i*N+j] = sum;
+            mat_c[c_row_idx*N+c_col_idx] = sum;
             sum = 0;
         }
     }
-    if (transpose_a == Trans) free(trans_a);
-    if (transpose_b == Trans) free(trans_b);
+//    if (transpose_a == Trans) free(trans_a);
+//    if (transpose_b == Trans) free(trans_b);
 }
 
 void print_bits(size_t const size, void const *const ptr) {

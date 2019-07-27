@@ -9,7 +9,8 @@
 #include "FloatTypeEspresso/PoolingLayer.h"
 #include "FloatTypeEspresso/DropoutLayer.h"
 #include "FloatTypeEspresso/ActivationFunctions.h"
-#include "MnistLoader.h"
+#include "DataLoader/MnistLoader.h"
+#include "DataLoader/Cifar10Loader.h"
 
 #include "FloatTypeEspresso/RandomInit.h"
 

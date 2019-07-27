@@ -12,7 +12,6 @@ void bp_random_init_packed_arr(__uint32_t *arr, size_t arr_packed_len) {
 
 void bp_dense_layer_rand_weight(BPDenseLayer *den_layer) {
     size_t packed_len = (den_layer->M * den_layer->N) / 32;
-    den_layer->W.data = malloc(packed_len * sizeof(__uint32_t));
 
     bp_random_init_packed_arr(den_layer->W.data, packed_len);
 }
@@ -51,9 +50,7 @@ void bp_conv_layer_rand_weight(BPConvLayer *conv_layer) {
 }
 
 void bp_dense_output_layer_rand_weight(BPDenseOutputLayer *den_layer) {
-
     size_t packed_len = (den_layer->output_dim * den_layer->input_dim) / 32;
-    den_layer->W.data = malloc(packed_len * sizeof(__uint32_t));
 
     bp_random_init_packed_arr(den_layer->W.data, packed_len);
 }

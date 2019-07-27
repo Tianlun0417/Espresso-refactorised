@@ -25,8 +25,6 @@ BPTensor bp_tensor_copy_pad(BPTensor *t, int p);
 
 BPTensor bp_tensor_from_ptr(int D, int M, int N, int L, __uint32_t *ptr);
 
-size_t bp_tensor_packed_len(BPTensor *tensor);
-
 void bp_tensor_tch(BPTensor *a, BPTensor *b);
 
 void bp_tensor_clear(BPTensor *t);
@@ -41,7 +39,7 @@ void bp_tensor_avgpool(BPTensor *input, BPTensor *output, int pool_kernel_w, int
 void bp_tensor_lower(BPTensor *input, BPTensor *output,
                      int conv_kernel_w, int conv_kernel_h, int Sx, int Sy);
 
-void bp_unpack_to_float(float *arr_float, __uint32_t *arr_packed, size_t packed_size);
+void bp_unpack_to_float(float *arr_float, const __uint32_t *arr_packed, size_t packed_size);
 
 void bp_pack_from_float(const float *arr_float, __uint32_t *arr_packed, size_t packed_size);
 

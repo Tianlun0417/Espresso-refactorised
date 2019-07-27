@@ -133,4 +133,5 @@ void BPAlexNet_free(BPAlexNet *alexnet) {
 
     free(alexnet->features);
     free(alexnet->classifier);
+    free(alexnet->output);
 }

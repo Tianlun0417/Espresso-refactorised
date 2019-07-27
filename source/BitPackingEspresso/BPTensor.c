@@ -13,6 +13,7 @@ BPTensor bp_tensor_init(int D, int M, int N, int L) {
 
     BPTensor t = {D, M, N, L, M * N * L, sizeof(__uint32_t) * packed_size, packed_size};
     t.data = calloc(t.packed_len, sizeof(__uint32_t));
+    //t.data = malloc(t.packed_len * sizeof(__uint32_t));
     return t;
 }
 
@@ -33,15 +34,20 @@ BPTensor bp_tensor_copy(BPTensor *in) {
     return out;
 }
 
-void unpack_bp_tensor(__uint8_t *unpacked_tensor, BPTensor *t){
+void unpack_bp_tensor(__uint8_t *unpacked_tensor, const BPTensor *t){
+//    puts("\n=======================================================");
+
     for (int num_idx = 0; num_idx < t->packed_len; num_idx++){
         __uint32_t tmp = t->data[num_idx];
+//        printf("%u, ", t->data[num_idx]);
         for (int i = 31; i >= 0; i--){
             if (tmp & 0x01) unpacked_tensor[num_idx*32+i] = 1;
             else unpacked_tensor[num_idx*32+i] = 0;
             tmp = tmp>>1;
         }
     }
+//    puts("\n=======================================================");
+//    puts("");
 }
 
 void pack_array_into_bp_tensor(const __uint8_t *arr, BPTensor *tensor){
@@ -71,6 +77,7 @@ BPTensor bp_tensor_copy_pad(BPTensor *t, int p) {
     }
 
     pout -= out.MNL * D;
+    pin -= t->MNL * D;
     pack_array_into_bp_tensor(pout, &out);
     free(pin);
     free(pout);
@@ -117,7 +124,7 @@ void bp_tensor_pad(BPTensor *src, BPTensor *dst, int p) {
     __uint8_t *unpacked_src = malloc(sizeof(__uint8_t) * src->packed_len * 32);
     unpack_bp_tensor(unpacked_src, src);
     __uint8_t *unpacked_dst = malloc(sizeof(__uint8_t) * src->packed_len * 32);
-    unpack_bp_tensor(unpacked_src, src);
+    //unpack_bp_tensor(unpacked_dst, dst);
     __uint8_t *s = unpacked_src;
     __uint8_t *d = unpacked_dst;
     memset(d, 0, (dst->D * dst->MNL * sizeof(__uint8_t)));
@@ -147,7 +154,7 @@ void bp_tensor_maxpool(BPTensor *input, BPTensor *output, int pool_kernel_w, int
     __uint8_t *unpacked_input =  malloc(sizeof(__uint8_t) * input->packed_len * 32);
     unpack_bp_tensor(unpacked_input, input);
     __uint8_t *unpacked_output = malloc(sizeof(__uint8_t) * output->packed_len * 32);
-    unpack_bp_tensor(unpacked_output, output);
+    //unpack_bp_tensor(unpacked_output, output);
 
     if (input_kernel_size == 1){
         for (int i = 0; i < output->MNL; i++)
@@ -206,7 +213,7 @@ void bp_tensor_avgpool(BPTensor *input, BPTensor *output, int pool_kernel_w, int
     __uint8_t *unpacked_input = malloc(sizeof(__uint8_t) * input->packed_len * 32);
     unpack_bp_tensor(unpacked_input, input);
     __uint8_t *unpacked_output = malloc(sizeof(__uint8_t) * output->packed_len * 32);
-    unpack_bp_tensor(unpacked_output, output);
+    //unpack_bp_tensor(unpacked_output, output);
 
     if (input_kernel_size == 1){
         for (int i = 0; i < output->MNL; i++)
@@ -255,9 +262,9 @@ void bp_tensor_lower(BPTensor *input, BPTensor *output,
     ASSERT(output->D == D, "err: lowering shape\n")
 
     __uint8_t *unpacked_input = malloc(sizeof(__uint8_t) * input->packed_len * 32);
-            unpack_bp_tensor(unpacked_input, input);
+    unpack_bp_tensor(unpacked_input, input);
     __uint8_t *unpacked_output = malloc(sizeof(__uint8_t) * output->packed_len * 32);
-            unpack_bp_tensor(unpacked_output, output);
+    //unpack_bp_tensor(unpacked_output, output);
 
     __uint8_t *d = unpacked_output;
     int n = 0;
@@ -288,8 +295,8 @@ void bp_tensor_lower(BPTensor *input, BPTensor *output,
         }
     }
     pack_array_into_bp_tensor(unpacked_output, output);
-//    free(unpacked_input);
-//    free(unpacked_output);
+    free(unpacked_input);
+    free(unpacked_output);
 }
 
 void bp_tensor_free(BPTensor *t) {
@@ -300,7 +307,7 @@ void bp_tensor_free(BPTensor *t) {
 
 void bp_print_tensor(BPTensor *tensor) {
     __uint8_t *unpacked_tensor = malloc(sizeof(__uint8_t) * tensor->packed_len * 32);
-            unpack_bp_tensor(unpacked_tensor, tensor);
+    unpack_bp_tensor(unpacked_tensor, tensor);
     printf("The shape of the tensor is: %d x %d x %d x %d\n", tensor->D, tensor->M, tensor->N, tensor->L);
     for (int ch = 0; ch < tensor->L; ch++){
         for (int i = 0; i < tensor->M; i++) {
@@ -313,11 +320,8 @@ void bp_print_tensor(BPTensor *tensor) {
     free(unpacked_tensor);
 }
 
-size_t bp_tensor_packed_len(BPTensor *tensor) {
-    return (tensor->MNL * tensor->D) / 32;
-}
 
-void bp_unpack_to_float(float *arr_float, __uint32_t *arr_packed, size_t packed_size) {
+void bp_unpack_to_float(float *arr_float, const __uint32_t *arr_packed, size_t packed_size) {
     for (int num_idx = 0; num_idx < packed_size; num_idx++){
         __uint32_t tmp = arr_packed[num_idx];
         for (int i = 31; i >= 0; i--){

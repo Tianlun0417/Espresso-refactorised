@@ -88,6 +88,7 @@ void bp_conv_layer_forward(BPTensor *input_tensor, BPConvLayer *cl, int save) {
     int M = Md * Nd, N = F, K = cl->W.MNL;
 
     M /= 32;
+    N /= 32;
     if (M == 0) M = 1;
 //    M = ceil(M / 32) + 1;
     bitpacking_gemm(NoTrans, Trans, M, N, K, tmp.data,

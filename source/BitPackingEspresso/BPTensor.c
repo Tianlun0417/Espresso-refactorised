@@ -12,8 +12,8 @@ BPTensor bp_tensor_init(int D, int M, int N, int L) {
         packed_size /= 32;
 
     BPTensor t = {D, M, N, L, M * N * L, sizeof(__uint32_t) * packed_size, packed_size};
-    t.data = calloc(t.packed_len, sizeof(__uint32_t));
-    //t.data = malloc(t.packed_len * sizeof(__uint32_t));
+//    t.data = calloc(t.packed_len, sizeof(__uint32_t));
+    t.data = malloc(t.packed_len * sizeof(__uint32_t));
     return t;
 }
 
@@ -184,23 +184,23 @@ void bp_tensor_maxpool(BPTensor *input, BPTensor *output, int pool_kernel_w, int
     __uint8_t *unpacked_input = malloc(sizeof(__uint8_t) * input->packed_len * 32);
     unpack_bp_tensor(unpacked_input, input);
 
-    puts("The packed input of maxpool layer: ");
-    for (int i = 0; i < input->packed_len; i++){
-        //if ((i+1)%32==0) printf(" | ");
-        print_bits(&input->data[i]);
-//        __uint32_t num = input->data[i];
-//        for (int size = 0; size < 32; size++){
-//            num = num<<size;
-//            printf()
-//        }
-    }
+//    puts("The packed input of maxpool layer: ");
+//    for (int i = 0; i < input->packed_len; i++){
+//        //if ((i+1)%32==0) printf(" | ");
+//        print_bits(&input->data[i]);
+////        __uint32_t num = input->data[i];
+////        for (int size = 0; size < 32; size++){
+////            num = num<<size;
+////            printf()
+////        }
+//    }
 //        print_bits(&input->data[i]);
 
-    puts("\nThe unpacked input of maxpool layer: ");
-    for (int i = 0; i < input->packed_len * 32; i++){
-        printf("%u,", unpacked_input[i]);
-        if ((i+1)%32==0) printf(" | ");
-    }
+//    puts("\nThe unpacked input of maxpool layer: ");
+//    for (int i = 0; i < input->packed_len * 32; i++){
+//        printf("%u,", unpacked_input[i]);
+//        if ((i+1)%32==0) printf(" | ");
+//    }
 
     __uint8_t *unpacked_output = malloc(sizeof(__uint8_t) * output->packed_len * 32);
     //unpack_bp_tensor(unpacked_output, output);
@@ -439,13 +439,13 @@ void bp_tensor_cat(BPTensor *tensor_a, BPTensor *tensor_b, BPTensor *result, int
     }
 
     result->bytes = BYTES(__uint32_t , result->packed_len);
-    result->data  = malloc(result->bytes);
     result->packed_len = tensor_a->packed_len + tensor_b->packed_len;
+    result->data = malloc(result->packed_len * sizeof(__uint32_t));
 
     for(int idx = 0; idx < tensor_a->packed_len; idx++){
         result->data[idx] = tensor_a->data[idx];
     }
     for(int idx = 0; idx < tensor_b->packed_len; idx++){
-        result->data[tensor_a->packed_len + idx] = tensor_a->data[idx];
+        result->data[tensor_a->packed_len + idx] = tensor_b->data[idx];
     }
 }

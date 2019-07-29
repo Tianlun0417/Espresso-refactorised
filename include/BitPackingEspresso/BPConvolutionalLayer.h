@@ -13,7 +13,7 @@ void bp_conv_layer_init(BPConvLayer *conv_layer_ptr, int L, int D, int M, int N,
 
 void bp_conv_layer_free(BPConvLayer *cl);
 
-void bp_conv_layer_forward(BPTensor *input_t, BPConvLayer *cl, int save);
+void bp_conv_layer_forward(BPTensor *input_tensor, BPConvLayer *cl, int save);
 
 
 #endif //ESPRESSO_REFACTORISED_BPCONVOLUTIONALLAYER_H

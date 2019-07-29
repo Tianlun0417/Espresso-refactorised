@@ -24,6 +24,6 @@ void bitpacking_gemm(
         __uint32_t *mat_c, int ldc
 );
 
-void print_bits(size_t const size, void const * const ptr);
+void print_bits(void const * const ptr);
 
 #endif //ESPRESSO_REFACTORISED_BPGEMM_H

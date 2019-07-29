@@ -25,8 +25,14 @@ void bp_dense_output_layer_forward(BPTensor *input_tensor, BPDenseOutputLayer *d
         memcpy(dense_layer->in.data, input_tensor->data, input_tensor->bytes);
     }
 
-//    if (dense_layer->output_arr == NULL)
-//    dense_layer->output_arr = malloc(D * M * sizeof(float));
+//    for (int i = 0; i < input_tensor->packed_len; i++)
+//        printf("%u, ", input_tensor->data[i]);
+//    puts("");
+//
+//    for (int i = 0; i < dense_layer->W.packed_len; i++)
+//        printf("%u, ", dense_layer->W.data[i]);
+//    puts("");
+
     float *a = malloc(dense_layer->W.packed_len * 32 * sizeof(float));
     bp_unpack_to_float(a, dense_layer->W.data, dense_layer->W.packed_len);
     float *b = malloc(input_tensor->packed_len * 32 * sizeof(float));

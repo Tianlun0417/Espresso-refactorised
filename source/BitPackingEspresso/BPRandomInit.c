@@ -5,7 +5,7 @@ void bp_random_init_packed_arr(__uint32_t *arr, size_t arr_packed_len) {
         __uint32_t tmp = 0;
         for (int j = 0; j < 32; j++)
             if ((float) rand() / (float) (RAND_MAX) > THRESHOLD)
-                tmp = tmp | (1<<i);
+                tmp = tmp | (1<<j);
         arr[i] = tmp;
     }
 }
@@ -17,7 +17,7 @@ void bp_dense_layer_rand_weight(BPDenseLayer *den_layer) {
 }
 
 void bp_bnorm_layer_rand_weight(BPBnormLayer *bnorm_layer) {
-    bp_bnormLayer_free(bnorm_layer);
+    bp_bnorm_layer_free(bnorm_layer);
     bnorm_layer->mean.data  = malloc(bnorm_layer->N * sizeof(__uint32_t));
     bnorm_layer->istd.data  = malloc(bnorm_layer->N * sizeof(__uint32_t));
     bnorm_layer->gamma.data = malloc(bnorm_layer->N * sizeof(__uint32_t));

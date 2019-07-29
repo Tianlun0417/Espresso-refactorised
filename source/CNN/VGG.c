@@ -13,7 +13,7 @@ void layers_config_init(VGGFeatures *features, size_t len, const int *config){
 
     features->conv_list = malloc((len - 5) * sizeof(ConvLayer*));
     if (features->batch_norm)
-        features->bnorm_list = malloc((len - 5) * sizeof(bnormLayer*));
+        features->bnorm_list = malloc((len - 5) * sizeof(BnormLayer*));
     for (int i = 0; i < len; i++) {
         int v = config[i];
         if (v == M) {
@@ -28,7 +28,7 @@ void layers_config_init(VGGFeatures *features, size_t len, const int *config){
                 conv_layer_rand_weight(features->conv_list[features->conv_count]);
 
             if (features->batch_norm) {
-                features->bnorm_list[features->conv_count] = malloc(sizeof(bnormLayer));
+                features->bnorm_list[features->conv_count] = malloc(sizeof(BnormLayer));
                 bnorm_layer_init(features->bnorm_list[features->conv_count], v);
 
                 if(!LOAD_PRETRAINED_WEIGHT)

@@ -7,6 +7,7 @@
 #include <math.h>
 #include <assert.h>
 #include "FloatTypeEspresso/Utilities.h"
+#include "BPGEMM.h"
 
 typedef struct bit_packed_tensor {
     int D, M, N, L, MNL;
@@ -42,6 +43,8 @@ void bp_tensor_lower(BPTensor *input, BPTensor *output,
 void bp_unpack_to_float(float *arr_float, const __uint32_t *arr_packed, size_t packed_size);
 
 void bp_pack_from_float(const float *arr_float, __uint32_t *arr_packed, size_t packed_size);
+
+void bp_tensor_cat(BPTensor *tensor_a, BPTensor *tensor_b, BPTensor *result, int dim);
 
 void bp_tensor_free(BPTensor *t);
 

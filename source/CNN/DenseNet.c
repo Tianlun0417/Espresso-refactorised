@@ -3,9 +3,9 @@
 void densenet_layer_init(DenseNetLayer *layer, int num_input_features, int bn_size,
         int growth_rate, float drop_rate) {
     layer->drop_rate = drop_rate;
-    layer->bnorm1  = malloc(sizeof(bnormLayer));
+    layer->bnorm1  = malloc(sizeof(BnormLayer));
     layer->conv1   = malloc(sizeof(ConvLayer));
-    layer->bnorm2  = malloc(sizeof(bnormLayer));
+    layer->bnorm2  = malloc(sizeof(BnormLayer));
     layer->conv2   = malloc(sizeof(ConvLayer));
     layer->dropout = malloc(sizeof(DropoutLayer));
 
@@ -24,7 +24,7 @@ void densenet_layer_init(DenseNetLayer *layer, int num_input_features, int bn_si
 }
 
 void transition_init(Transition *transition, int num_input_faetures, int num_output_faetures) {
-    transition->bnorm = malloc(sizeof(bnormLayer));
+    transition->bnorm = malloc(sizeof(BnormLayer));
     transition->conv  = malloc(sizeof(ConvLayer));
     transition->pool  = malloc(sizeof(PoolLayer));
 
@@ -57,7 +57,7 @@ void densenet_block_init(DenseBlock *block, int num_layers, int num_input_featur
 void densenet_features_init(DenseNetFeatures *features, const int *block_config,
                             int num_init_features, int growth_rate, int bn_size, float drop_rate) {
     features->conv0  = malloc(sizeof(ConvLayer));
-    features->bnorm0 = malloc(sizeof(bnormLayer));
+    features->bnorm0 = malloc(sizeof(BnormLayer));
     features->pool0  = malloc(sizeof(PoolLayer));
     features->block_config = block_config;
     features->dense_block_list = malloc(4 * sizeof(DenseBlock*));
@@ -76,7 +76,7 @@ void densenet_features_init(DenseNetFeatures *features, const int *block_config,
         }
     }
 
-    features->bnorm5 = malloc(sizeof(bnormLayer));
+    features->bnorm5 = malloc(sizeof(BnormLayer));
 
     conv_layer_init(features->conv0, 3, num_init_features, 7, 7, 2, 2, 3);
     bnorm_layer_init(features->bnorm0, num_init_features);

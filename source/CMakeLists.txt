@@ -5,4 +5,4 @@ file(GLOB SRC
         CNN/*.c
         DataLoader/*.c)
 
-add_library(espresso_refactorised ${SRC} BitPackingEspresso/BPDenseOutputLayer.c ../include/BitPackingEspresso/BPDenseOutputLayer.h)
+add_library(espresso_refactorised ${SRC})

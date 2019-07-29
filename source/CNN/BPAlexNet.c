@@ -1,6 +1,6 @@
 #include "CNN/BPAlexNet.h"
 
-void new_features(Features *features) {
+void new_features(BPFeatures *features) {
     features->conv1 = malloc(sizeof(BPConvLayer));
     features->conv2 = malloc(sizeof(BPConvLayer));
     features->conv3 = malloc(sizeof(BPConvLayer));
@@ -29,7 +29,7 @@ void new_features(Features *features) {
     bp_pool_layer_init(features->maxpool3, 3, 3, 2, 2, 0, MAXPOOL);
 }
 
-void new_classifier(Classifier *classifier, int num_classes) {
+void new_classifier(BPClassifier *classifier, int num_classes) {
     classifier->num_classes = num_classes;
     classifier->dropout = malloc(sizeof(BPDropoutLayer));
     classifier->dense1  = malloc(sizeof(BPDenseLayer));
@@ -50,14 +50,14 @@ void new_classifier(Classifier *classifier, int num_classes) {
 
 void BPAlexNet_init(BPAlexNet *alex_net, int num_classes) {
     alex_net->num_classes = num_classes;
-    alex_net->features = malloc(sizeof(Features));
-    alex_net->classifier = malloc(sizeof(Classifier));
+    alex_net->features = malloc(sizeof(BPFeatures));
+    alex_net->classifier = malloc(sizeof(BPClassifier));
 
     new_features(alex_net->features);
     new_classifier(alex_net->classifier, alex_net->num_classes);
 }
 
-void features_forward(Tensor *input, Features *features) {
+void features_forward(Tensor *input, BPFeatures *features) {
     bp_conv_layer_forward(input, features->conv1, SAVE);
     //relu_forward(&(features->conv1->out));
     bp_pool_layer_forward(&(features->conv1->out), features->maxpool1);
@@ -77,7 +77,7 @@ void features_forward(Tensor *input, Features *features) {
     features->output = bp_tensor_copy(&(features->conv5->out));
 }
 
-void classifier_forward(Tensor *input, Classifier *classifier) {
+void classifier_forward(Tensor *input, BPClassifier *classifier) {
     bp_dropout_layer_forward(input, classifier->dropout);
     bp_dense_layer_forward(input, classifier->dense1, SAVE);
     //relu_forward(&(classifier->dense1->out));
@@ -95,7 +95,7 @@ void BPAlexNet_forward(Tensor *input, BPAlexNet *alex_net) {
     alex_net->output = alex_net->classifier->output;
 }
 
-void features_free(Features *features){
+void features_free(BPFeatures *features){
     bp_conv_layer_free(features->conv1);
     bp_conv_layer_free(features->conv2);
     bp_conv_layer_free(features->conv3);
@@ -116,7 +116,7 @@ void features_free(Features *features){
     free(features->maxpool3);
 }
 
-void classifier_free(Classifier *classifier){
+void classifier_free(BPClassifier *classifier){
     bp_denseLayer_free(classifier->dense1);
     bp_denseLayer_free(classifier->dense2);
     bp_dense_output_layer_free(classifier->dense3);

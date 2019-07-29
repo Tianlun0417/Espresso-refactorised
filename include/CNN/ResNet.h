@@ -17,7 +17,7 @@ typedef enum BlockType {
 
 typedef struct down_sample {
     ConvLayer *conv;
-    bnormLayer *bn;
+    BnormLayer *bn;
     Tensor output;
 } Downsample;
 
@@ -25,9 +25,9 @@ typedef struct basic {
     int expansion;
     int stride;
     ConvLayer *conv1;
-    bnormLayer *bn1;
+    BnormLayer *bn1;
     ConvLayer *conv2;
-    bnormLayer *bn2;
+    BnormLayer *bn2;
     Downsample *downsample;
     Tensor residual;
     Tensor output;
@@ -37,11 +37,11 @@ typedef struct bottleneck {
     int expansion;
     int stride;
     ConvLayer *conv1;
-    bnormLayer *bn1;
+    BnormLayer *bn1;
     ConvLayer *conv2;
-    bnormLayer *bn2;
+    BnormLayer *bn2;
     ConvLayer *conv3;
-    bnormLayer *bn3;
+    BnormLayer *bn3;
     Downsample *downsample;
     Tensor residual;
     Tensor output;
@@ -59,7 +59,7 @@ typedef struct resnet {
     int inplanes;
     BlockType block_type;
     ConvLayer *conv1;
-    bnormLayer *bn1;
+    BnormLayer *bn1;
     PoolLayer *pool1;
     ResNetBlock *block1;
     ResNetBlock *block2;

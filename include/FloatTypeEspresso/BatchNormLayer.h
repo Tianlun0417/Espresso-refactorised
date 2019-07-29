@@ -20,23 +20,23 @@ typedef struct {
     FloatTensor mean, istd;
     FloatTensor gamma, beta;
     FloatTensor in;
-} bnormLayer;
+} BnormLayer;
 
 
-//bnormLayer bnormLayer_init(int use_global);
+//BnormLayer bnormLayer_init(int use_global);
 
-void bnorm_layer_init(bnormLayer *bn_layer_ptr, size_t size);
+void bnorm_layer_init(BnormLayer *bn_layer_ptr, size_t size);
 
-void bnormLayer_free(bnormLayer *bnl);
+void bnormLayer_free(BnormLayer *bnl);
 
-void bnormLayer_forward(FloatTensor *input_tensor, bnormLayer *batchnorm_layer, int save);
+void bnormLayer_forward(FloatTensor *input_tensor, BnormLayer *batchnorm_layer, int save);
 
-void bnormLayer_backward(FloatTensor *dt, bnormLayer *bnl);
+void bnormLayer_backward(FloatTensor *dt, BnormLayer *bnl);
 
-void bnormLayer_update(bnormLayer *bnl);
+void bnormLayer_update(BnormLayer *bnl);
 
 void bnormLayer_set(FloatTensor *mean, FloatTensor *istd,
-                    FloatTensor *gamma, FloatTensor *beta, bnormLayer *bnl);
+                    FloatTensor *gamma, FloatTensor *beta, BnormLayer *bnl);
 
 
 #ifdef __cplusplus

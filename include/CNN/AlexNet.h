@@ -18,7 +18,7 @@ typedef struct features{
     PoolLayer * maxpool2;
     PoolLayer * maxpool3;
     Tensor      output;
-}Features;
+}BPFeatures;
 
 typedef struct classifier{
     int num_classes;
@@ -27,12 +27,12 @@ typedef struct classifier{
     DenseLayer   * dense2;
     DenseLayer   * dense3;
     Tensor         output;
-}Classifier;
+}BPClassifier;
 
 typedef struct alexnet{
     int num_classes;
-    Features   * features;
-    Classifier * classifier;
+    BPFeatures   * features;
+    BPClassifier * classifier;
     Tensor       output;
 }AlexNet;
 

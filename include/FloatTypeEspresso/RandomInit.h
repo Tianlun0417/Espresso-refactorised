@@ -11,7 +11,7 @@
 
 void dense_layer_rand_weight(DenseLayer *den_layer);
 
-void bnorm_layer_rand_weight(bnormLayer *bnorm_layer);
+void bnorm_layer_rand_weight(BnormLayer *bnorm_layer);
 
 void conv_layer_rand_weight(ConvLayer *conv_layer);
 

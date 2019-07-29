@@ -2,14 +2,14 @@
 #include "FloatTypeEspresso/Utilities.h"
 
 
-bnormLayer bnormLayer_init(int use_global) {
-    bnormLayer bnl;
+BnormLayer bnormLayer_init(int use_global) {
+    BnormLayer bnl;
     BNORML_INIT(bnl);
     bnl.ug = use_global;
     return bnl;
 }
 
-void bnorm_layer_init(bnormLayer *bn_layer_ptr, size_t size) {
+void bnorm_layer_init(BnormLayer *bn_layer_ptr, size_t size) {
     bn_layer_ptr->N = size;
     bn_layer_ptr->ug = 0;
     bn_layer_ptr->mean = tensor_init(1, 1, bn_layer_ptr->N, 1);
@@ -19,7 +19,7 @@ void bnorm_layer_init(bnormLayer *bn_layer_ptr, size_t size) {
     bn_layer_ptr->in.data = NULL;
 }
 
-void bnormLayer_free(bnormLayer *bnl) {
+void bnormLayer_free(BnormLayer *bnl) {
     tensor_free(&bnl->mean);
     tensor_free(&bnl->istd);
     tensor_free(&bnl->beta);
@@ -27,12 +27,12 @@ void bnormLayer_free(bnormLayer *bnl) {
     tensor_free(&bnl->in);
 }
 
-void bnormLayer_print_shape(bnormLayer *bnl) {
+void bnormLayer_print_shape(BnormLayer *bnl) {
     printf("bnorm: %d %d\n", bnl->N, bnl->ug);
 }
 
 void bnormLayer_set(FloatTensor *mean, FloatTensor *istd,
-                    FloatTensor *gamma, FloatTensor *beta, bnormLayer *bnl) {
+                    FloatTensor *gamma, FloatTensor *beta, BnormLayer *bnl) {
     const int N = tensor_len(mean);
     ASSERT(N == tensor_len(istd) &&
            N == tensor_len(beta) &&
@@ -58,7 +58,7 @@ void bnorm(const float *mean, const float *istd,
                  (beta[i % N]));
 }
 
-void bnormLayer_forward(FloatTensor *input_tensor, bnormLayer *batchnorm_layer, int save) {
+void bnormLayer_forward(FloatTensor *input_tensor, BnormLayer *batchnorm_layer, int save) {
     const int D = input_tensor->D, M = input_tensor->M, N = input_tensor->N, L = input_tensor->L;
     const int asd = L > 1 ? L : N * M;
     ASSERT(asd == batchnorm_layer->N, "err: bnorm shape\n")
@@ -85,13 +85,13 @@ void bnormLayer_forward(FloatTensor *input_tensor, bnormLayer *batchnorm_layer, 
 }
 
 
-void bnormLayer_backward(FloatTensor *dt, bnormLayer *bnl) {
+void bnormLayer_backward(FloatTensor *dt, BnormLayer *bnl) {
     fprintf(stderr, "not implemented\n");
     exit(-2);
 }
 
 
-void bnormLayer_update(bnormLayer *bnl) {
+void bnormLayer_update(BnormLayer *bnl) {
     fprintf(stderr, "not implemented\n");
     exit(-2);
 }

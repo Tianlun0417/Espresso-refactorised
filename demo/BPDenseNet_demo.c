@@ -1,26 +1,32 @@
-#include "CNN/BPAlexNet.h"
+#include "CNN/BPDenseNet.h"
 
 
 const char *image_path = "/home/tianlun/codes/espresso-refactorised/data/test_batch.bin";
 
 int main() {
+    int growth_rate = 32;
+    int block_config[4] = {6, 12, 24, 16};
+    int num_init_features = 64;
+    int bn_size = 4;
+    float drop_rate = 0.5;
     int num_classes = 10;
+
     __uint8_t *image = malloc(CIFAR_IMAGE_SIZE * sizeof(__uint8_t));
     __uint8_t *label = malloc(sizeof(__uint8_t));
 
-    BPAlexNet *alex_net = malloc(sizeof(BPAlexNet));
-    BPAlexNet_init(alex_net, num_classes);
+    BPDenseNet *dense_net = malloc(sizeof(BPDenseNet));
+    BPDenseNet_init(dense_net, block_config, num_init_features, growth_rate, bn_size, drop_rate, num_classes);
 
     for (int idx = 0; idx < 1; idx++) {
         cifar10_load_int(image_path, idx, 1, image, label);
         BPTensor image_tensor = bp_tensor_init(1, CIFAR_IMAGE_W, CIFAR_IMAGE_H, CIFAR_CHANNEL);
         bp_input_layer_forward(image, &image_tensor);
 
-        BPAlexNet_forward(&image_tensor, alex_net);
+        BPDenseNet_forward(&image_tensor, dense_net);
 
         printf("NO.%d ", idx);
         for (int i = 0; i < num_classes; i++)
-            printf(" %f", alex_net->output[i]);
+            printf(" %f", dense_net->output[i]);
         puts("");
 
         bp_tensor_free(&image_tensor);
@@ -28,6 +34,8 @@ int main() {
 
     free(image);
     free(label);
-    BPAlexNet_free(alex_net);
-    free(alex_net);
+    BPDenseNet_free(dense_net);
+    free(dense_net);
 }
+
+

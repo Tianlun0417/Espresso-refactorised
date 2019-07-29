@@ -13,8 +13,8 @@ typedef struct {
 
 void bp_bnorm_layer_init(BPBnormLayer *bn_layer, size_t size);
 
-void bp_bnormLayer_free(BPBnormLayer *bnl);
+void bp_bnorm_layer_free(BPBnormLayer *bnl);
 
-void bp_bnormLayer_forward(BPTensor *input_tensor, BPBnormLayer *batchnorm_layer, int save);
+void bp_bnorm_layer_forward(BPTensor *input_tensor, BPBnormLayer *batchnorm_layer, int save);
 
 #endif //ESPRESSO_REFACTORISED_BPBATCHNORMLAYER_H

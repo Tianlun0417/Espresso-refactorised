@@ -2,13 +2,14 @@
 #define BPALEXNET_H
 
 #include "BitPackingEspresso/BP_ESP.h"
+
 #define SAVE 1
 #define LOAD_PRETRAINED_WEIGHT 0
 
 
 typedef BPTensor Tensor;
 
-typedef struct features{
+typedef struct bpfeatures{
     BPConvLayer * conv1;
     BPConvLayer * conv2;
     BPConvLayer * conv3;
@@ -18,21 +19,21 @@ typedef struct features{
     BPPoolLayer * maxpool2;
     BPPoolLayer * maxpool3;
     Tensor      output;
-}Features;
+}BPFeatures;
 
-typedef struct classifier{
+typedef struct bpclassifier{
     int num_classes;
     BPDropoutLayer * dropout;
     BPDenseLayer   * dense1;
     BPDenseLayer   * dense2;
     BPDenseOutputLayer   * dense3;
     float* output;
-}Classifier;
+}BPClassifier;
 
-typedef struct alexnet{
+typedef struct bpalexnet{
     int num_classes;
-    Features   * features;
-    Classifier * classifier;
+    BPFeatures   * features;
+    BPClassifier * classifier;
     float*       output;
 }BPAlexNet;
 

@@ -23,7 +23,7 @@ typedef struct vgg_features{
     VGGConfig  config;
     ConvLayer  ** conv_list;
     PoolLayer  *  maxpool_list[5];
-    bnormLayer ** bnorm_list;
+    BnormLayer ** bnorm_list;
     Tensor       output;
 }VGGFeatures;
 

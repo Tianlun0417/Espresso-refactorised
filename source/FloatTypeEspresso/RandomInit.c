@@ -8,7 +8,7 @@ void dense_layer_rand_weight(DenseLayer *den_layer) {
 }
 
 void bnorm_layer_rand_weight(BnormLayer *bnorm_layer) {
-    bnormLayer_free(bnorm_layer);
+    bnorm_layer_free(bnorm_layer);
     bnorm_layer->mean.data  = malloc(bnorm_layer->N * sizeof(float));
     bnorm_layer->istd.data  = malloc(bnorm_layer->N * sizeof(float));
     bnorm_layer->gamma.data = malloc(bnorm_layer->N * sizeof(float));

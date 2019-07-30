@@ -53,7 +53,7 @@ void bottleneck_init(Bottleneck *bottleneck, int inplanes, int planes,
     }
 }
 
-void ResNet_block_init(ResNetBlock *block_ptr, ResNet *resnet_ptr, int planes,
+void resnet_block_init(ResNetBlock *block_ptr, ResNet *resnet_ptr, int planes,
                        int num_blocks, int stride) {
     block_ptr->num_blocks = num_blocks;
     block_ptr->block_type = resnet_ptr->block_type;
@@ -116,10 +116,10 @@ void ResNet_init(ResNet *ResNetInstance, BlockType block_type, int num_layers[4]
     ResNetInstance->pool2  = malloc(sizeof(PoolLayer));
     ResNetInstance->fc = malloc(sizeof(DenseLayer));
 
-    ResNet_block_init(ResNetInstance->block1, ResNetInstance, 64, num_layers[0], 1);
-    ResNet_block_init(ResNetInstance->block2, ResNetInstance, 128, num_layers[1], 2);
-    ResNet_block_init(ResNetInstance->block3, ResNetInstance, 256, num_layers[2], 2);
-    ResNet_block_init(ResNetInstance->block4, ResNetInstance, 512, num_layers[3], 1);
+    resnet_block_init(ResNetInstance->block1, ResNetInstance, 64, num_layers[0], 1);
+    resnet_block_init(ResNetInstance->block2, ResNetInstance, 128, num_layers[1], 2);
+    resnet_block_init(ResNetInstance->block3, ResNetInstance, 256, num_layers[2], 2);
+    resnet_block_init(ResNetInstance->block4, ResNetInstance, 512, num_layers[3], 1);
 
     conv_layer_init(ResNetInstance->conv1, 3, 64, 7, 7, 2, 2, 3);
     pool_layer_init(ResNetInstance->pool1, 3, 3, 2, 2, 0, MAXPOOL);
@@ -136,7 +136,7 @@ void ResNet_init(ResNet *ResNetInstance, BlockType block_type, int num_layers[4]
 
 void downsample_forward(Tensor *input, Downsample *downsample) {
     conv_layer_forward(input, downsample->conv, SAVE);
-    bnormLayer_forward(&(downsample->conv->out), downsample->bn, SAVE);
+    bnorm_layer_forward(&(downsample->conv->out), downsample->bn, SAVE);
 
     if (downsample->output.data != NULL)
         free(downsample->output.data);
@@ -145,11 +145,11 @@ void downsample_forward(Tensor *input, Downsample *downsample) {
 
 void basicblock_forward(Tensor *input, BasicBlock *basicblock) {
     conv_layer_forward(input, basicblock->conv1, SAVE);
-    bnormLayer_forward(&(basicblock->conv1->out), basicblock->bn1, SAVE);
+    bnorm_layer_forward(&(basicblock->conv1->out), basicblock->bn1, SAVE);
     relu_forward(&(basicblock->conv1->out));
 
     conv_layer_forward(&(basicblock->conv1->out), basicblock->conv2, SAVE);
-    bnormLayer_forward(&(basicblock->conv2->out), basicblock->bn2, SAVE);
+    bnorm_layer_forward(&(basicblock->conv2->out), basicblock->bn2, SAVE);
 
     if (basicblock->residual.data != NULL)
         free(basicblock->residual.data);
@@ -173,15 +173,15 @@ void basicblock_forward(Tensor *input, BasicBlock *basicblock) {
 
 void bottleneck_forward(Tensor *input, Bottleneck *bottleneck) {
     conv_layer_forward(input, bottleneck->conv1, SAVE);
-    bnormLayer_forward(&(bottleneck->conv1->out), bottleneck->bn1, SAVE);
+    bnorm_layer_forward(&(bottleneck->conv1->out), bottleneck->bn1, SAVE);
     relu_forward(&(bottleneck->conv1->out));
 
     conv_layer_forward(&(bottleneck->conv1->out), bottleneck->conv2, SAVE);
-    bnormLayer_forward(&(bottleneck->conv2->out), bottleneck->bn2, SAVE);
+    bnorm_layer_forward(&(bottleneck->conv2->out), bottleneck->bn2, SAVE);
     relu_forward(&(bottleneck->conv2->out));
 
     conv_layer_forward(&(bottleneck->conv2->out), bottleneck->conv3, SAVE);
-    bnormLayer_forward(&(bottleneck->conv3->out), bottleneck->bn3, SAVE);
+    bnorm_layer_forward(&(bottleneck->conv3->out), bottleneck->bn3, SAVE);
 
     if (bottleneck->residual.data != NULL)
         free(bottleneck->residual.data);
@@ -227,9 +227,9 @@ void resnet_block_forward(Tensor *input, ResNetBlock *block) {
     }
 }
 
-void resnet_forward(Tensor *image_tensor, ResNet *resnet) {
+void ResNet_forward(Tensor *image_tensor, ResNet *resnet) {
     conv_layer_forward(image_tensor, resnet->conv1, SAVE);
-    bnormLayer_forward(&(resnet->conv1->out), resnet->bn1, SAVE);
+    bnorm_layer_forward(&(resnet->conv1->out), resnet->bn1, SAVE);
     relu_forward(&(resnet->conv1->out));
     pool_layer_forward(&(resnet->conv1->out), resnet->pool1);
 
@@ -248,7 +248,7 @@ void resnet_forward(Tensor *image_tensor, ResNet *resnet) {
 
 void downsample_free(Downsample *downsample){
     conv_layer_free(downsample->conv);
-    bnormLayer_free(downsample->bn);
+    bnorm_layer_free(downsample->bn);
     tensor_free(&(downsample->output));
 
     free(downsample->conv);
@@ -258,8 +258,8 @@ void downsample_free(Downsample *downsample){
 void basicblock_free(BasicBlock *basicblock){
     conv_layer_free(basicblock->conv1);
     conv_layer_free(basicblock->conv2);
-    bnormLayer_free(basicblock->bn1);
-    bnormLayer_free(basicblock->bn2);
+    bnorm_layer_free(basicblock->bn1);
+    bnorm_layer_free(basicblock->bn2);
     if (basicblock->downsample != NULL) {
         downsample_free(basicblock->downsample);
         free(basicblock->downsample);
@@ -277,9 +277,9 @@ void bottleneck_free(Bottleneck *bottleneck){
     conv_layer_free(bottleneck->conv1);
     conv_layer_free(bottleneck->conv2);
     conv_layer_free(bottleneck->conv3);
-    bnormLayer_free(bottleneck->bn1);
-    bnormLayer_free(bottleneck->bn2);
-    bnormLayer_free(bottleneck->bn3);
+    bnorm_layer_free(bottleneck->bn1);
+    bnorm_layer_free(bottleneck->bn2);
+    bnorm_layer_free(bottleneck->bn3);
     if (bottleneck->downsample != NULL) {
         downsample_free(bottleneck->downsample);
         free(bottleneck->downsample);
@@ -315,14 +315,14 @@ void resnet_block_free(ResNetBlock *block){
 
 void ResNet_free(ResNet *resnet) {
     conv_layer_free(resnet->conv1);
-    bnormLayer_free(resnet->bn1);
-    poolLayer_free(resnet->pool1);
+    bnorm_layer_free(resnet->bn1);
+    pool_layer_free(resnet->pool1);
     resnet_block_free(resnet->block1);
     resnet_block_free(resnet->block2);
     resnet_block_free(resnet->block3);
     resnet_block_free(resnet->block4);
-    poolLayer_free(resnet->pool2);
-    denseLayer_free(resnet->fc);
+    pool_layer_free(resnet->pool2);
+    dense_layer_free(resnet->fc);
     tensor_free(&(resnet->output));
 
     free(resnet->conv1);

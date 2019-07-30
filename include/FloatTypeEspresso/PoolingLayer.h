@@ -24,7 +24,7 @@ typedef struct {
 void pool_layer_init(PoolLayer *pool_layer_ptr, int M, int N, int Stride_m, int Stride_n, int padding,
                      PoolingStrategy strategy);
 
-void poolLayer_free(PoolLayer *pl);
+void pool_layer_free(PoolLayer *pl);
 
 void pool_layer_forward(FloatTensor *t, PoolLayer *pl);
 

@@ -194,7 +194,7 @@ void bp_densenet_layer_free(BPDenseNetLayer *layer){
 void bp_transition_free(BPTransition *transition){
     bp_bnorm_layer_free(transition->bnorm);
     bp_conv_layer_free(transition->conv);
-    bp_poolLayer_free(transition->pool);
+    bp_pool_layer_free(transition->pool);
     bp_tensor_free(&(transition->output));
 
     free(transition->bnorm);
@@ -215,7 +215,7 @@ void bp_densenet_block_free(BPDenseBlock *block){
 void bp_densenet_features_free(BPDenseNetFeatures *features){
     bp_conv_layer_free(features->conv0);
     bp_bnorm_layer_free(features->bnorm0);
-    bp_poolLayer_free(features->pool0);
+    bp_pool_layer_free(features->pool0);
     bp_bnorm_layer_free(features->bnorm5);
 
     for (int i = 0; i < 4; i++){
@@ -240,7 +240,7 @@ void bp_densenet_features_free(BPDenseNetFeatures *features){
 void BPDenseNet_free(BPDenseNet *densenet) {
     bp_densenet_features_free(densenet->features);
     bp_dense_output_layer_free(densenet->classifier);
-    bp_poolLayer_free(densenet->avgpool);
+    bp_pool_layer_free(densenet->avgpool);
     free(densenet->output);
 
     free(densenet->features);

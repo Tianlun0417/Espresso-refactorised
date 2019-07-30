@@ -103,8 +103,8 @@ void layers_config_forward(Tensor *input, VGGFeatures *features, size_t len, con
         }else{
             conv_layer_forward(tmp_result, features->conv_list[conv_idx], SAVE);
             if (features->batch_norm){
-                bnormLayer_forward(&(features->conv_list[conv_idx]->out),
-                        features->bnorm_list[conv_idx], SAVE);
+                bnorm_layer_forward(&(features->conv_list[conv_idx]->out),
+                                    features->bnorm_list[conv_idx], SAVE);
             }
             relu_forward(&(features->conv_list[conv_idx]->out));
             tmp_result = &(features->conv_list[conv_idx]->out);
@@ -158,13 +158,13 @@ void features_free(VGGFeatures* features){
     for (int i = 0; i < features->conv_count; i++){
         conv_layer_free(features->conv_list[i]);
         if (features->batch_norm){
-            bnormLayer_free(features->bnorm_list[i]);
+            bnorm_layer_free(features->bnorm_list[i]);
             free(features->bnorm_list[i]);
         }
         free(features->conv_list[i]);
     }
     for (int i = 0; i < 5; i++){
-        poolLayer_free(features->maxpool_list[i]);
+        pool_layer_free(features->maxpool_list[i]);
         free(features->maxpool_list[i]);
     }
 
@@ -174,9 +174,9 @@ void features_free(VGGFeatures* features){
 }
 
 void classifier_free(VGGClassifier *classifier){
-    denseLayer_free(classifier->dense1);
-    denseLayer_free(classifier->dense2);
-    denseLayer_free(classifier->dense3);
+    dense_layer_free(classifier->dense1);
+    dense_layer_free(classifier->dense2);
+    dense_layer_free(classifier->dense3);
 
     free(classifier->dense1);
     free(classifier->dense2);

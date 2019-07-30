@@ -26,7 +26,7 @@ void dense_layer_init(DenseLayer *dense_layer_ptr, int M, int N);
 
 void denseLayer_print_shape(DenseLayer *dl);
 
-void denseLayer_free(DenseLayer *dl);
+void dense_layer_free(DenseLayer *dl);
 
 void denseLayer_set(FloatTensor *W, DenseLayer *dl);
 

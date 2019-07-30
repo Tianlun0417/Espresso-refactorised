@@ -12,7 +12,7 @@ typedef struct {
 
 void bp_dense_layer_init(BPDenseLayer *dense_layer_ptr, int M, int N);
 
-void bp_denseLayer_free(BPDenseLayer *dl);
+void bp_dense_layer_free(BPDenseLayer *dl);
 
 void bp_dense_layer_forward(BPTensor *input_tensor, BPDenseLayer *dense_layer, int cpy);
 

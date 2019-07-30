@@ -101,9 +101,9 @@ void features_free(BPFeatures *features){
     bp_conv_layer_free(features->conv3);
     bp_conv_layer_free(features->conv4);
     bp_conv_layer_free(features->conv5);
-    bp_poolLayer_free(features->maxpool1);
-    bp_poolLayer_free(features->maxpool2);
-    bp_poolLayer_free(features->maxpool3);
+    bp_pool_layer_free(features->maxpool1);
+    bp_pool_layer_free(features->maxpool2);
+    bp_pool_layer_free(features->maxpool3);
     bp_tensor_free(&(features->output));
 
     free(features->conv1);
@@ -117,8 +117,8 @@ void features_free(BPFeatures *features){
 }
 
 void classifier_free(BPClassifier *classifier){
-    bp_denseLayer_free(classifier->dense1);
-    bp_denseLayer_free(classifier->dense2);
+    bp_dense_layer_free(classifier->dense1);
+    bp_dense_layer_free(classifier->dense2);
     bp_dense_output_layer_free(classifier->dense3);
 
     free(classifier->dense1);

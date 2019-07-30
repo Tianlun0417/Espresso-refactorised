@@ -108,11 +108,11 @@ void DenseNet_init(DenseNet *densenet, const int *block_config, int num_init_fea
 
 void densenet_layer_forward(Tensor *input, DenseNetLayer *layer) {
     Tensor tmp = tensor_copy(input);
-    bnormLayer_forward(input, layer->bnorm1, SAVE);
+    bnorm_layer_forward(input, layer->bnorm1, SAVE);
     relu_forward(input);
     conv_layer_forward(input, layer->conv1, SAVE);
 
-    bnormLayer_forward(&(layer->conv1->out), layer->bnorm2, SAVE);
+    bnorm_layer_forward(&(layer->conv1->out), layer->bnorm2, SAVE);
     relu_forward(&(layer->conv1->out));
     conv_layer_forward(&(layer->conv1->out), layer->conv2, SAVE);
 
@@ -124,7 +124,7 @@ void densenet_layer_forward(Tensor *input, DenseNetLayer *layer) {
 }
 
 void densenet_transition_forward(Tensor *input, Transition *transition) {
-    bnormLayer_forward(input, transition->bnorm, SAVE);
+    bnorm_layer_forward(input, transition->bnorm, SAVE);
     relu_forward(input);
     conv_layer_forward(input, transition->conv, SAVE);
     pool_layer_forward(&(transition->conv->out), transition->pool);
@@ -147,7 +147,7 @@ void densenet_block_forward(Tensor *input, DenseBlock *block) {
 
 void densenet_features_forward(Tensor *input, DenseNetFeatures *features) {
     conv_layer_forward(input, features->conv0, SAVE);
-    bnormLayer_forward(&(features->conv0->out), features->bnorm0, SAVE);
+    bnorm_layer_forward(&(features->conv0->out), features->bnorm0, SAVE);
     relu_forward(&(features->conv0->out));
     pool_layer_forward(&(features->conv0->out), features->pool0);
 
@@ -160,7 +160,7 @@ void densenet_features_forward(Tensor *input, DenseNetFeatures *features) {
             tmp = &(features->transition_list[i]->output);
         }
     }
-    bnormLayer_forward(tmp, features->bnorm5, SAVE);
+    bnorm_layer_forward(tmp, features->bnorm5, SAVE);
 
     if (features->output.data != NULL)
         free(features->output.data);
@@ -179,8 +179,8 @@ void DenseNet_forward(Tensor *input, DenseNet *densenet) {
 }
 
 void densenet_layer_free(DenseNetLayer *layer){
-    bnormLayer_free(layer->bnorm1);
-    bnormLayer_free(layer->bnorm2);
+    bnorm_layer_free(layer->bnorm1);
+    bnorm_layer_free(layer->bnorm2);
     conv_layer_free(layer->conv1);
     conv_layer_free(layer->conv2);
     tensor_free(&(layer->output));
@@ -193,9 +193,9 @@ void densenet_layer_free(DenseNetLayer *layer){
 }
 
 void transition_free(Transition *transition){
-    bnormLayer_free(transition->bnorm);
+    bnorm_layer_free(transition->bnorm);
     conv_layer_free(transition->conv);
-    poolLayer_free(transition->pool);
+    pool_layer_free(transition->pool);
     tensor_free(&(transition->output));
 
     free(transition->bnorm);
@@ -215,9 +215,9 @@ void densenet_block_free(DenseBlock *block){
 
 void densenet_features_free(DenseNetFeatures *features){
     conv_layer_free(features->conv0);
-    bnormLayer_free(features->bnorm0);
-    poolLayer_free(features->pool0);
-    bnormLayer_free(features->bnorm5);
+    bnorm_layer_free(features->bnorm0);
+    pool_layer_free(features->pool0);
+    bnorm_layer_free(features->bnorm5);
 
     for (int i = 0; i < 4; i++){
         densenet_block_free(features->dense_block_list[i]);
@@ -240,8 +240,8 @@ void densenet_features_free(DenseNetFeatures *features){
 
 void DenseNet_free(DenseNet *densenet) {
     densenet_features_free(densenet->features);
-    denseLayer_free(densenet->classifier);
-    poolLayer_free(densenet->avgpool);
+    dense_layer_free(densenet->classifier);
+    pool_layer_free(densenet->avgpool);
     tensor_free(&(densenet->output));
 
     free(densenet->features);

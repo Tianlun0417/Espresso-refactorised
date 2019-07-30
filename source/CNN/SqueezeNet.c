@@ -177,7 +177,7 @@ void features_free(FeaturesSequential *features_ptr){
     }
 
     for (int i = 0; i < 3; i++){
-        poolLayer_free(features_ptr->maxpool_list[i]);
+        pool_layer_free(features_ptr->maxpool_list[i]);
         free(features_ptr->maxpool_list[i]);
     }
     tensor_free(&(features_ptr->output));
@@ -187,7 +187,7 @@ void classifier_free(ClassifierSequential *classifier_ptr){
     free(classifier_ptr->dropout);
     conv_layer_free(classifier_ptr->final_conv);
     free(classifier_ptr->final_conv);
-    poolLayer_free(classifier_ptr->avgpool);
+    pool_layer_free(classifier_ptr->avgpool);
     free(classifier_ptr->avgpool);
     tensor_free(&(classifier_ptr->output));
 }

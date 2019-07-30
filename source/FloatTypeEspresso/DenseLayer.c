@@ -24,7 +24,7 @@ void dense_layer_init(DenseLayer *dense_layer_ptr, int M, int N) {
 
 
 
-void denseLayer_free(DenseLayer *dl) {
+void dense_layer_free(DenseLayer *dl) {
     tensor_free(&dl->W);
     tensor_free(&dl->b);
     //ftens_free(&dl->dW);  tensor_free(&dl->db);

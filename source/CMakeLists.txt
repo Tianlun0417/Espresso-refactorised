@@ -5,4 +5,4 @@ file(GLOB SRC
         CNN/*.c
         DataLoader/*.c)
 
-add_library(espresso_refactorised ${SRC})
+add_library(espresso_refactorised ${SRC} CNN/BPResNet.c ../include/CNN/BPResNet.h)

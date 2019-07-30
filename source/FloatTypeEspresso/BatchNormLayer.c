@@ -19,7 +19,7 @@ void bnorm_layer_init(BnormLayer *bn_layer_ptr, size_t size) {
     bn_layer_ptr->in.data = NULL;
 }
 
-void bnormLayer_free(BnormLayer *bnl) {
+void bnorm_layer_free(BnormLayer *bnl) {
     tensor_free(&bnl->mean);
     tensor_free(&bnl->istd);
     tensor_free(&bnl->beta);
@@ -38,7 +38,7 @@ void bnormLayer_set(FloatTensor *mean, FloatTensor *istd,
            N == tensor_len(beta) &&
            N == tensor_len(gamma), "err: bnorm shape\n");
 
-    bnormLayer_free(bnl);
+    bnorm_layer_free(bnl);
     bnl->N = N;
     bnl->mean = tensor_copy(mean);
     bnl->istd = tensor_copy(istd);
@@ -58,7 +58,7 @@ void bnorm(const float *mean, const float *istd,
                  (beta[i % N]));
 }
 
-void bnormLayer_forward(FloatTensor *input_tensor, BnormLayer *batchnorm_layer, int save) {
+void bnorm_layer_forward(FloatTensor *input_tensor, BnormLayer *batchnorm_layer, int save) {
     const int D = input_tensor->D, M = input_tensor->M, N = input_tensor->N, L = input_tensor->L;
     const int asd = L > 1 ? L : N * M;
     ASSERT(asd == batchnorm_layer->N, "err: bnorm shape\n")

@@ -22,7 +22,7 @@ void pool_layer_init(PoolLayer *pool_layer_ptr, int M, int N, int Stride_m,
 }
 
 
-void poolLayer_free(PoolLayer *pl) {
+void pool_layer_free(PoolLayer *pl) {
     tensor_free(&pl->out);
     tensor_free(&pl->mask);
 }

@@ -72,18 +72,18 @@ typedef struct resnet {
 
 void ResNet_init(ResNet *ResNetInstance, BlockType block_type, int num_layers[4],
                  int num_classes);
-void ResNet_block_init(ResNetBlock *block_ptr, ResNet *resnet_ptr, int planes,
-                       int num_blocks, int stride);
-void basicblock_init(BasicBlock *basicblock, int inplanes, int planes,
-                     int stride, Downsample *downsample);
-void bottleneck_init(Bottleneck *bottleneck, int inplanes, int planes,
-                     int stride, Downsample *downsample);
+//void resnet_block_init(ResNetBlock *block_ptr, ResNet *resnet_ptr, int planes,
+//                       int num_blocks, int stride);
+//void basicblock_init(BasicBlock *basicblock, int inplanes, int planes,
+//                     int stride, Downsample *downsample);
+//void bottleneck_init(Bottleneck *bottleneck, int inplanes, int planes,
+//                     int stride, Downsample *downsample);
 
-void downsample_forward(Tensor * input, Downsample * downsample);
-void basicblock_forward(Tensor * input, BasicBlock * basicblock);
-void bottleneck_forward(Tensor * input, Bottleneck * bottleneck);
-void resnet_block_forward(Tensor * input, ResNetBlock * block);
-void resnet_forward(Tensor *image_tensor, ResNet *resnet);
+//void downsample_forward(Tensor * input, Downsample * downsample);
+//void basicblock_forward(Tensor * input, BasicBlock * basicblock);
+//void bottleneck_forward(Tensor * input, Bottleneck * bottleneck);
+//void resnet_block_forward(Tensor * input, ResNetBlock * block);
+void ResNet_forward(Tensor *image_tensor, ResNet *resnet);
 
 void ResNet_free(ResNet * resnet);
 #endif //ESPRESSO_REFACTORISED_RESNET_H

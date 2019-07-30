@@ -27,9 +27,9 @@ typedef struct {
 
 void bnorm_layer_init(BnormLayer *bn_layer_ptr, size_t size);
 
-void bnormLayer_free(BnormLayer *bnl);
+void bnorm_layer_free(BnormLayer *bnl);
 
-void bnormLayer_forward(FloatTensor *input_tensor, BnormLayer *batchnorm_layer, int save);
+void bnorm_layer_forward(FloatTensor *input_tensor, BnormLayer *batchnorm_layer, int save);
 
 void bnormLayer_backward(FloatTensor *dt, BnormLayer *bnl);
 

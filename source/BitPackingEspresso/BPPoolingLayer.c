@@ -12,7 +12,7 @@ void bp_pool_layer_init(BPPoolLayer *pool_layer_ptr, int M, int N, int Stride_m,
     pool_layer_ptr->mask.data = NULL;
 }
 
-void bp_poolLayer_free(BPPoolLayer *pl) {
+void bp_pool_layer_free(BPPoolLayer *pl) {
     bp_tensor_free(&pl->out);
     bp_tensor_free(&pl->mask);
 }

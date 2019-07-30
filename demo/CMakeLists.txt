@@ -3,7 +3,10 @@ set(ESP_RE_LIBS espresso_refactorised m)
 #add_executable(espresso_refactorised_main BPAlexNet_demo.c)
 #target_link_libraries(espresso_refactorised_main ${ESP_RE_LIBS} openblas)
 
-add_executable(espresso_refactorised_main BPDenseNet_demo.c)
+#add_executable(espresso_refactorised_main BPDenseNet_demo.c)
+#target_link_libraries(espresso_refactorised_main ${ESP_RE_LIBS} openblas)
+
+add_executable(espresso_refactorised_main BPResNet_demo.c)
 target_link_libraries(espresso_refactorised_main ${ESP_RE_LIBS} openblas)
 
 #add_executable(espresso_refactorised_main AlexNet_demo.c)

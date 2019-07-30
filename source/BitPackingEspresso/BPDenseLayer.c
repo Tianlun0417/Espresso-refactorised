@@ -9,7 +9,7 @@ void bp_dense_layer_init(BPDenseLayer *dense_layer_ptr, int M, int N) {
     dense_layer_ptr->out.data = NULL;
 }
 
-void bp_denseLayer_free(BPDenseLayer *dl) {
+void bp_dense_layer_free(BPDenseLayer *dl) {
     bp_tensor_free(&dl->W);
     bp_tensor_free(&dl->b);
     bp_tensor_free(&dl->out);

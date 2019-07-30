@@ -17,7 +17,7 @@ typedef struct {
 void bp_pool_layer_init(BPPoolLayer *pool_layer_ptr, int M, int N, int Stride_m, int Stride_n,
                         int padding, BPPoolingStrategy strategy);
 
-void bp_poolLayer_free(BPPoolLayer *pl);
+void bp_pool_layer_free(BPPoolLayer *pl);
 
 void bp_pool_layer_forward(BPTensor *t, BPPoolLayer *pl);
 

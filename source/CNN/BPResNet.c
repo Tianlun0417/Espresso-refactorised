@@ -137,8 +137,8 @@ void bp_downsample_forward(Tensor *input, BPDownsample *downsample) {
     bp_conv_layer_forward(input, downsample->conv, SAVE);
     bp_bnorm_layer_forward(&(downsample->conv->out), downsample->bn, SAVE);
 
-//    if (downsample->output.data != NULL)
-//        free(downsample->output.data);
+    if (downsample->output.data != NULL)
+        free(downsample->output.data);
     downsample->output = bp_tensor_copy(&(downsample->conv->out));
 }
 
@@ -150,8 +150,8 @@ void bp_basicblock_forward(Tensor *input, BPBasicBlock *basicblock) {
     bp_conv_layer_forward(&(basicblock->conv1->out), basicblock->conv2, SAVE);
     bp_bnorm_layer_forward(&(basicblock->conv2->out), basicblock->bn2, SAVE);
 
-//    if (basicblock->residual.data != NULL)
-//        free(basicblock->residual.data);
+    if (basicblock->residual.data != NULL)
+        free(basicblock->residual.data);
 
     if (basicblock->downsample) {
         bp_downsample_forward(input, basicblock->downsample);
@@ -166,8 +166,8 @@ void bp_basicblock_forward(Tensor *input, BPBasicBlock *basicblock) {
 
     //relu_forward(&(basicblock->conv2->out));
 
-//    if (basicblock->output.data != NULL)
-//        free(basicblock->output.data);
+    if (basicblock->output.data != NULL)
+        free(basicblock->output.data);
     basicblock->output = bp_tensor_copy(&(basicblock->conv2->out));
 }
 
@@ -212,8 +212,8 @@ void bp_resnet_block_forward(Tensor *input, BPResNetBlock *block) {
                     &(block->basicblocks[block_idx - 1]->output),
                     block->basicblocks[block_idx]
             );
-//        if (block->output.data != NULL)
-//            free(block->output.data);
+        if (block->output.data != NULL)
+            free(block->output.data);
         block->output = bp_tensor_copy(&(block->basicblocks[block->num_blocks - 1]->output));
     } else if (block->block_type == UseBottleneck) {
         bp_bottleneck_forward(input, block->bottlenecks[0]);
@@ -242,8 +242,8 @@ void BPResNet_forward(Tensor *image_tensor, BPResNet *resnet) {
     bp_pool_layer_forward(&(resnet->block4->output), resnet->pool2);
     bp_dense_output_layer_forward(&(resnet->pool2->out), resnet->fc, SAVE);
 
-//    if (resnet->output != NULL)
-//        free(resnet->output);
+    if (resnet->output != NULL)
+        free(resnet->output);
     resnet->output = resnet->fc->output_arr;
 }
 

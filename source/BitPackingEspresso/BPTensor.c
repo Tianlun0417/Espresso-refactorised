@@ -1,28 +1,31 @@
 #include "BitPackingEspresso/BPTensor.h"
 
 
-BPTensor bp_tensor_init(int D, int M, int N, int L, int packed_by_row) {
+BPTensor bp_tensor_init(int D, int M, int N, int L) {
     size_t packed_size = D * M * N * L;
-    if (packed_size % 32 != 0)
+    if (packed_size % 32 != 0){
+//        fprintf(stderr,
+//                "Invalid tensor size: %lu. Tensor size should be a multiple of 32.\n", packed_size);
+        //exit(-1);
         packed_size = ceil(packed_size / 32) + 1;
-    else
+    }else
         packed_size /= 32;
 
     BPTensor t = {D, M, N, L, M * N * L, sizeof(__uint32_t) * packed_size, packed_size};
 //    t.data = calloc(t.packed_len, sizeof(__uint32_t));
     t.data = malloc(t.packed_len * sizeof(__uint32_t));
-    t.packed_by_row = packed_by_row;
     return t;
 }
 
-BPTensor bp_tensor_zeros(int D, int M, int N, int L, int packed_by_row) {
-    BPTensor t = bp_tensor_init(D, M, N, L, packed_by_row);
+BPTensor bp_tensor_zeros(int D, int M, int N, int L) {
+    BPTensor t = bp_tensor_init(D, M, N, L);
     memset(t.data, 0, t.bytes);
     return t;
 }
 
 BPTensor bp_tensor_copy(BPTensor *in) {
-    BPTensor out = bp_tensor_init(in->D, in->M, in->N, in->L, in->packed_by_row);
+    const int D = in->D, M = in->M, N = in->N, L = in->L;
+    BPTensor out = bp_tensor_init(D, M, N, L);
     if (!in->data){
         fprintf(stderr, "Tensor Copy Error: Input tensor has no data.\n");
         exit(-1);
@@ -33,93 +36,53 @@ BPTensor bp_tensor_copy(BPTensor *in) {
 
 void unpack_bp_tensor(__uint8_t *unpacked_tensor, const BPTensor *tensor){
     int flag = 0;
-    int kernel_size = tensor->M * tensor->N;
     if ((tensor->MNL * tensor->D) != (tensor->packed_len * 32))
         flag = 1;
 
-    if (tensor->packed_by_row){
-        for (int num_idx = 0; num_idx < tensor->packed_len; num_idx++){
-            __uint32_t tmp = tensor->data[num_idx];
-            if (flag && num_idx == tensor->packed_len - 1){
-                // discard the padded zeros
-                int pad_len = tensor->packed_len * 32 - tensor->MNL * tensor->D;
-                tmp = tmp>>pad_len;
-                for (int i = 31 - pad_len; i >= 0; i--){
-                    if (tmp & 0x01) unpacked_tensor[num_idx*32+i] = 1;
-                    else unpacked_tensor[num_idx*32+i] = 0;
-                    tmp = tmp>>1;
-                }
-            }else{
-                for (int i = 31; i >= 0; i--){
-                    if (tmp & 0x01) unpacked_tensor[num_idx*32+i] = 1;
-                    else unpacked_tensor[num_idx*32+i] = 0;
-                    tmp = tmp>>1;
-                }
-            }
-        }
-    }else {
-        int num_idx = 0;
-        int bit_loc = 0;
+    for (int num_idx = 0; num_idx < tensor->packed_len; num_idx++){
         __uint32_t tmp = tensor->data[num_idx];
-        for (int col_idx = 0; col_idx < kernel_size; col_idx++){
-            for (int row_idx = 0; row_idx < tensor->L; row_idx++){
-                if (bit_loc < 31)
-                    bit_loc++;
-                else{
-                    bit_loc = 0;
-                    num_idx++;
-                    tmp = tensor->data[num_idx];
-                }
-                if (tmp & 0x01) unpacked_tensor[row_idx * kernel_size + col_idx] = 1;
-                else unpacked_tensor[row_idx * kernel_size + col_idx] = 0;
-                tmp = tmp >> 1;
+
+        if (flag && num_idx == tensor->packed_len - 1){
+            // discard the padded zeros
+            int pad_len = tensor->packed_len * 32 - tensor->MNL * tensor->D;
+            tmp = tmp>>pad_len;
+            for (int i = 31 - pad_len; i >= 0; i--){
+                if (tmp & 0x01) unpacked_tensor[num_idx*32+i] = 1;
+                else unpacked_tensor[num_idx*32+i] = 0;
+                tmp = tmp>>1;
+            }
+        }else{
+            for (int i = 31; i >= 0; i--){
+                if (tmp & 0x01) unpacked_tensor[num_idx*32+i] = 1;
+                else unpacked_tensor[num_idx*32+i] = 0;
+                tmp = tmp>>1;
             }
         }
     }
 }
 
-
 void pack_array_into_bp_tensor(const __uint8_t *arr, BPTensor *tensor){
     int flag = 0;
-    int kernel_size = tensor->M * tensor->N;
     if ((tensor->MNL * tensor->D) != (tensor->packed_len * 32))
         flag = 1;
 
-    if (tensor->packed_by_row){
-        // if the bit-packing tensor was packed by row
-        for (int num_idx = 0; num_idx < tensor->packed_len; num_idx++){
-            tensor->data[num_idx] = 0;
-
-            if (flag && num_idx == tensor->packed_len - 1) {
-                // discard the padded zeros
-                int pad_len = tensor->packed_len * 32 - tensor->MNL * tensor->D;
-                tensor->data[num_idx] = tensor->data[num_idx] << pad_len;
-                for (int i = 0; i < 32 - pad_len; i++) {
-                    tensor->data[num_idx] = (tensor->data[num_idx]) | (arr[num_idx * 32 + i] << i);
-                }
-            }else{
-                for (int i = 0; i < 32; i++){
-                    if (num_idx*32 + i > tensor->packed_len * 32)
-                        fprintf(stderr, "Array Index %d Outbound!\n", num_idx*32+i);
-                    tensor->data[num_idx] = (tensor->data[num_idx]) | (arr[num_idx * 32 + i] << i);
-                }
-            }
-        }
-    }else{
-        int num_idx = 0;
-        int bit_loc = 0;
+    for (int num_idx = 0; num_idx < tensor->packed_len; num_idx++){
         tensor->data[num_idx] = 0;
-        for (int col_idx = 0; col_idx < kernel_size; col_idx++){
-            for (int row_idx = 0; row_idx < tensor->L; row_idx++){
-                if (bit_loc < 31)
-                    bit_loc++;
-                else{
-                    bit_loc = 0;
-                    num_idx++;
-                    tensor->data[num_idx] = 0;
-                }
-                tensor->data[num_idx] =
-                        (tensor->data[num_idx]) | (arr[row_idx * kernel_size + col_idx] << bit_loc);
+
+        if (flag && num_idx == tensor->packed_len - 1) {
+            // discard the padded zeros
+            int pad_len = tensor->packed_len * 32 - tensor->MNL * tensor->D;
+            tensor->data[num_idx] = tensor->data[num_idx] << pad_len;
+            for (int i = 0; i < 32 - pad_len; i++) {
+                tensor->data[num_idx] = (tensor->data[num_idx]) | (arr[num_idx * 32 + i] << i);
+            }
+        }else{
+            for (int i = 0; i < 32; i++){
+//            __uint32_t aaa = (tensor->data[num_idx]);
+//            __uint32_t bbb = arr[num_idx*32+i];
+                if (num_idx*32+i > tensor->packed_len * 32)
+                    fprintf(stderr, "Array Index %d Outbound!\n", num_idx*32+i);
+                tensor->data[num_idx] = (tensor->data[num_idx]) | (arr[num_idx*32+i]<<i);
             }
         }
     }
@@ -128,7 +91,7 @@ void pack_array_into_bp_tensor(const __uint8_t *arr, BPTensor *tensor){
 BPTensor bp_tensor_copy_pad(BPTensor *t, int p) {
     const int Ms = t->M, Ns = t->N, L = t->L, D = t->D;
     const int Md = PAD(Ms, p), Nd = PAD(Ns, p);
-    BPTensor out = bp_tensor_init(D, Md, Nd, L, t->packed_by_row);
+    BPTensor out = bp_tensor_init(D, Md, Nd, L);
     __uint8_t *pin = malloc(sizeof(__uint8_t) * t->packed_len * 32);
     unpack_bp_tensor(pin, t);
     __uint8_t *pout = calloc(out.packed_len * 32, sizeof(__uint8_t));
@@ -144,9 +107,6 @@ BPTensor bp_tensor_copy_pad(BPTensor *t, int p) {
 
     pout -= out.MNL * D;
     pin -= t->MNL * D;
-    /*
-     * Need to be packed by column
-     * */
     pack_array_into_bp_tensor(pout, &out);
     free(pin);
     free(pout);
@@ -207,9 +167,6 @@ void bp_tensor_pad(BPTensor *src, BPTensor *dst, int p) {
     }
     //pack_array_into_bp_tensor(s, src);
     unpacked_dst -= dst->MNL;
-    /*
-     * Need to be packed by column
-     * */
     pack_array_into_bp_tensor(unpacked_dst, dst);
     free(unpacked_src);
     free(unpacked_dst);
@@ -285,9 +242,6 @@ void bp_tensor_maxpool(BPTensor *input, BPTensor *output, int pool_kernel_w, int
         }
     }
 
-    /*
-     * Need to be packed by column
-     * */
     pack_array_into_bp_tensor(unpacked_output, output);
     free(unpacked_input);
     free(unpacked_output);
@@ -342,24 +296,20 @@ void bp_tensor_avgpool(BPTensor *input, BPTensor *output, int pool_kernel_w, int
         }
     }
 
-    /*
-     * Need to be packed by column
-     * */
     pack_array_into_bp_tensor(unpacked_output, output);
     free(unpacked_input);
     free(unpacked_output);
 }
 
-void bp_tensor_lower(const int *input_params, __uint8_t *input, BPTensor *output,
+void bp_tensor_lower(BPTensor *input, BPTensor *output,
         int conv_kernel_w, int conv_kernel_h, int Sx, int Sy) {
-    const int D = input_params[0];
-    const int Ms = input_params[1], Ns = input_params[2], Ls = input_params[3];
-    int input_MNL = Ms * Ns * Ls;
+    const int D = input->D;
+    const int Ms = input->M, Ns = input->N, Ls = input->L;
     const int Md = output->M, Nd = output->N, Ld = output->L;
     ASSERT(output->D == D, "err: lowering shape\n")
 
-//    __uint8_t *unpacked_input = malloc(sizeof(__uint8_t) * input->packed_len * 32);
-//    unpack_bp_tensor(unpacked_input, input);
+    __uint8_t *unpacked_input = malloc(sizeof(__uint8_t) * input->packed_len * 32);
+    unpack_bp_tensor(unpacked_input, input);
     __uint8_t *unpacked_output = malloc(sizeof(__uint8_t) * output->packed_len * 32);
     //unpack_bp_tensor(unpacked_output, output);
 
@@ -367,7 +317,7 @@ void bp_tensor_lower(const int *input_params, __uint8_t *input, BPTensor *output
     int n = 0;
     int outbound_count = 0, loop_count = 0;
     for (int w = 0; w < D; w++) {
-        __uint8_t *s = input + w * input_MNL;
+        __uint8_t *s = unpacked_input + w * input->MNL;
         for (int i = 0; i < Md; i++) {
             for (int j = 0; j < Nd; j++) {
                 for (int y = 0; y < conv_kernel_h; y++) {
@@ -375,7 +325,7 @@ void bp_tensor_lower(const int *input_params, __uint8_t *input, BPTensor *output
                         for (int k = 0; k < Ls; k++) {
                             int id3 = ID3(i * Sy + y, j * Sx + x, k, Ns, Ls);
                             loop_count++;
-                            if (id3 >= (input_MNL * D)) {
+                            if (id3 >= (input->MNL * input->D)) {
                                 outbound_count++;
                                 fprintf(stderr, "Source Tensor Lower: Index outbund!\n");
                             }
@@ -391,15 +341,12 @@ void bp_tensor_lower(const int *input_params, __uint8_t *input, BPTensor *output
             }
         }
     }
-    /*
-     * Need to be packed by column
-     * */
     pack_array_into_bp_tensor(unpacked_output, output);
 //    puts("The outputs of lowered tensor: ");
 //    for (int i = 0; i < output->packed_len; i++)
 //        printf("%u, ", output->data[i]);
 //    puts("");
-//    free(unpacked_input);
+    free(unpacked_input);
     free(unpacked_output);
 }
 

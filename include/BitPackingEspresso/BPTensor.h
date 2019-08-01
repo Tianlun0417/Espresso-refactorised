@@ -14,12 +14,11 @@ typedef struct bit_packed_tensor {
     size_t bytes;
     size_t packed_len;
     __uint32_t *data;
-    int packed_by_row;
 }BPTensor;
 
-BPTensor bp_tensor_init(int D, int M, int N, int L, int packed_by_row);
+BPTensor bp_tensor_init(int D, int M, int N, int L);
 
-BPTensor bp_tensor_zeros(int D, int M, int N, int L, int packed_by_row);
+BPTensor bp_tensor_zeros(int D, int M, int N, int L);
 
 BPTensor bp_tensor_copy(BPTensor *in);
 
@@ -38,7 +37,7 @@ void bp_tensor_maxpool(BPTensor *input, BPTensor *output, int pool_kernel_w, int
 void bp_tensor_avgpool(BPTensor *input, BPTensor *output, int pool_kernel_w, int pool_kernel_h,
                        int Sx, int Sy);
 
-void bp_tensor_lower(const int *input_params, __uint8_t *input, BPTensor *output,
+void bp_tensor_lower(BPTensor *input, BPTensor *output,
                      int conv_kernel_w, int conv_kernel_h, int Sx, int Sy);
 
 void bp_unpack_to_float(float *arr_float, const __uint32_t *arr_packed, size_t packed_size);

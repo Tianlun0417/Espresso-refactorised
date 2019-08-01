@@ -23,7 +23,7 @@ void bp_pool_layer_forward(BPTensor *t, BPPoolLayer *pl) {
     const int Md = PADDING_OUT_LEN(Ms, W, Sy) <= 0 ? 1 : PADDING_OUT_LEN(Ms, W, Sy);
     const int Nd = PADDING_OUT_LEN(Ns, H, Sx) <= 0 ? 1 : PADDING_OUT_LEN(Ms, H, Sx);
 
-    if (!pl->out.data) pl->out = bp_tensor_init(D, Md, Nd, L, 0);
+    if (!pl->out.data) pl->out = bp_tensor_init(D, Md, Nd, L);
 
     if (pl->strategy == MAXPOOL)
         bp_tensor_maxpool(t, &pl->out, W, H, Sx, Sy);

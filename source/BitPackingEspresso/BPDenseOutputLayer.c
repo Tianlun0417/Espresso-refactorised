@@ -4,7 +4,7 @@
 void bp_dense_output_layer_init(BPDenseOutputLayer *dense_layer_ptr, int M, int N) {
     dense_layer_ptr->output_dim = M;
     dense_layer_ptr->input_dim = N;
-    dense_layer_ptr->W = bp_tensor_init(1, M, N, 1);
+    dense_layer_ptr->W = bp_tensor_init(1, M, N, 1, 1);
     dense_layer_ptr->in.data = NULL;
     dense_layer_ptr->output_arr = dense_layer_ptr->output_arr = malloc(M * sizeof(float));;
 }

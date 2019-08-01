@@ -11,7 +11,7 @@ int main() {
     BPAlexNet *alex_net = malloc(sizeof(BPAlexNet));
     BPAlexNet_init(alex_net, num_classes);
 
-    for (int idx = 0; idx < 1; idx++) {
+    for (int idx = 0; idx < 10; idx++) {
         cifar10_load_int(image_path, idx, 1, image, label);
         BPTensor image_tensor = bp_tensor_init(1, CIFAR_IMAGE_W, CIFAR_IMAGE_H, CIFAR_CHANNEL);
         bp_input_layer_forward(image, &image_tensor);

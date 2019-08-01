@@ -25,22 +25,15 @@ void bp_conv_layer_init(BPConvLayer *conv_layer_ptr, int L, int D, int M, int N,
 
 void bp_conv_layer_copy_input(BPTensor *t, BPConvLayer *cl) {
     if (!cl->in.data)
-        cl->in = bp_tensor_init(t->D, t->M, t->N, t->L);
+        cl->in = bp_tensor_init(t->D, t->M, t->N, t->L, t->packed_by_row);
     memcpy(cl->in.data, t->data, t->bytes);
 }
 
-BPTensor bp_conv_layer_pad_input(BPTensor *t, __uint32_t *scr,
-                                int *M, int *N, int padding) {
+BPTensor bp_conv_layer_pad_input(BPTensor *t, int *M, int *N, int padding) {
     BPTensor tp;
     *M = PAD(*M, padding);
     *N = PAD(*N, padding);
-    if (!scratch) tp = bp_tensor_copy_pad(t, padding);
-    else {
-        const int D = t->D, L = t->L;
-        tp = bp_tensor_from_ptr(D, *M, *N, L, scr);
-        bp_tensor_pad(t, &tp, padding);
-        scr += (*M) * (*N) * L * D;
-    }
+    tp = bp_tensor_copy_pad(t, padding);
 
     return tp;
 }
@@ -71,20 +64,24 @@ void bp_conv_layer_forward(BPTensor *input_tensor, BPConvLayer *cl, int save) {
     ASSERT(input_tensor->L == cl->L, "err: conv shape\n");
 
     if (save) bp_conv_layer_copy_input(input_tensor, cl);
-    if (p) padded_input = bp_conv_layer_pad_input(input_tensor, scr, &Ms, &Ns, p);
+
+//    // unpack the input tensor
+//    __uint8_t *unpacked_input = malloc(input_tensor->packed_len * 32 * sizeof(__uint8_t));
+
+    if (p) padded_input = bp_conv_layer_pad_input(input_tensor, &Ms, &Ns, p);
 
     // lower
     const int Md = LOWER_OUT_LEN(Ms, H, Sy);
     const int Nd = LOWER_OUT_LEN(Ns, W, Sx);
 
     const int Ld = W * H * L;
-    if (!scratch) tmp = bp_tensor_init(D, Md, Nd, Ld);
+    if (!scratch) tmp = bp_tensor_init(D, Md, Nd, Ld, input_tensor->packed_by_row);
     else tmp = bp_tensor_from_ptr(D, Md, Nd, Ld, scr);
 
     bp_tensor_lower(p ? &padded_input : input_tensor, &tmp, W, H, Sx, Sy);
 
     // mat mul
-    if (!cl->out.data) cl->out = bp_tensor_init(D, Md, Nd, F);
+    if (!cl->out.data) cl->out = bp_tensor_init(D, Md, Nd, F, 0);
     int M = Md * Nd, N = F, K = cl->W.MNL;
 
     M /= 32;

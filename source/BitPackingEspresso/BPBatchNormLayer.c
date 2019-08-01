@@ -14,10 +14,10 @@ void bnorm(const __uint32_t *mean, const __uint32_t *istd,
 void bp_bnorm_layer_init(BPBnormLayer *bn_layer, size_t size) {
     bn_layer->N = size;
     bn_layer->ug = 0;
-    bn_layer->mean = bp_tensor_init(1, 1, bn_layer->N, 1);
-    bn_layer->istd = bp_tensor_init(1, 1, bn_layer->N, 1);
-    bn_layer->beta = bp_tensor_init(1, 1, bn_layer->N, 1);
-    bn_layer->gamma = bp_tensor_init(1, 1, bn_layer->N, 1);
+    bn_layer->mean = bp_tensor_init(1, 1, bn_layer->N, 1, 1);
+    bn_layer->istd = bp_tensor_init(1, 1, bn_layer->N, 1, 1);
+    bn_layer->beta = bp_tensor_init(1, 1, bn_layer->N, 1, 1);
+    bn_layer->gamma = bp_tensor_init(1, 1, bn_layer->N, 1, 1);
     bn_layer->in.data = NULL;
 }
 
@@ -35,7 +35,7 @@ void bp_bnorm_layer_forward(BPTensor *input_tensor, BPBnormLayer *batchnorm_laye
     //ASSERT(asd == batchnorm_layer->N, "err: bnorm shape\n")
 
     if (save) {
-        if (!batchnorm_layer->in.data) batchnorm_layer->in = bp_tensor_init(D, M, N, L);
+        if (!batchnorm_layer->in.data) batchnorm_layer->in = bp_tensor_init(D, M, N, L, 1);
         memcpy(batchnorm_layer->in.data, input_tensor->data, input_tensor->bytes);
     }
 

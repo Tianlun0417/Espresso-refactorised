@@ -13,7 +13,7 @@ int main() {
     AlexNet *alex_net = malloc(sizeof(AlexNet));
     AlexNet_init(alex_net, 10);
     
-    for (int idx = 0; idx < 10; idx++) {
+    for (int idx = 0; idx < TEST_IMG; idx++) {
         cifar10_load(image_path, idx, 1, &cifar_image, &cifar_label);
 
         input_layer_load(&cifar_image, &input_layer);

@@ -12,7 +12,7 @@ int main(){
     __uint8_t *label = malloc(sizeof(__uint8_t));
 
     BPVGG *vgg = malloc(sizeof(BPVGG));
-    BPVGG_init(vgg, ConfigA, num_classes, use_batch_norm);
+    BPVGG_init(vgg, ConfigE, num_classes, use_batch_norm);
 
     for (int idx = 0; idx < TEST_IMG; idx++){
         cifar10_load_int(image_path, idx, 1, image, label);

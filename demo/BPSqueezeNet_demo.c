@@ -10,7 +10,7 @@ int main(){
     __uint8_t *label = malloc(sizeof(__uint8_t));
 
     BPSqueezeNet *squeeze_net = malloc(sizeof(BPSqueezeNet));
-    BPSqueezeNet_init(squeeze_net, Version1_1, num_classes);
+    BPSqueezeNet_init(squeeze_net, Version1_0, num_classes);
 
     for (int idx = 0; idx < TEST_IMG; idx++) {
         cifar10_load_int(image_path, idx, 1, image, label);

@@ -13,9 +13,9 @@ int main() {
     InputLayer input_layer;
 
     VGG *vgg = malloc(sizeof(VGG));
-    VGG_init(vgg, ConfigA, 10, use_batch_norm);
+    VGG_init(vgg, ConfigE, 10, use_batch_norm);
 
-    for (int idx = 0; idx < 10; idx++){
+    for (int idx = 0; idx < TEST_IMG; idx++){
         cifar10_load(image_path, idx, 1, &cifar_image, &cifar_label);
 
         input_layer_load(&cifar_image, &input_layer);

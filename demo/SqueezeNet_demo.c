@@ -13,9 +13,9 @@ int main(){
 
     int num_classes = 10;
     SqueezeNet *squeeze_net = malloc(sizeof(SqueezeNet));
-    SqueezeNet_init(squeeze_net, Version1_1, num_classes);
+    SqueezeNet_init(squeeze_net, Version1_0, num_classes);
 
-    for (int idx = 0; idx < 10; idx++) {
+    for (int idx = 0; idx < TEST_IMG; idx++) {
         cifar10_load(image_path, idx, 1, &cifar_image, &cifar_label);
 
         input_layer_load(&cifar_image, &input_layer);

@@ -8,7 +8,10 @@ int main() {
     __uint8_t *image = malloc(CIFAR_IMAGE_SIZE * sizeof(__uint8_t));
     __uint8_t *label = malloc(sizeof(__uint8_t));
 
-    int blocks[4] = {2, 2, 2, 2};
+//    int blocks[4] = {2, 2, 2, 2}; // ResNet-18
+//    int blocks[4] = {3, 4, 6, 3}; // ResNet-50
+//    int blocks[4] = {3, 4, 23, 3}; // ResNet-101
+    int blocks[4] = {3, 8, 36, 3}; // ResNet-152
 
     BPResNet *resnet = malloc(sizeof(BPResNet));
     BPResNet_init(resnet, UseBasicBlock, blocks, num_classes);

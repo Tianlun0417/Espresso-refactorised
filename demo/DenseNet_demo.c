@@ -7,8 +7,13 @@ const char *image_path = "/home/tianlun/codes/espresso-refactorised/data/test_ba
 
 int main(){
     int growth_rate = 32;
-    int block_config[4] = {6, 12, 24, 16};
     int num_init_features = 64;
+
+//    int block_config[4] = {6, 12, 24, 16}; // DenseNet-121
+//    int block_config[4] = {6, 12, 32, 32}; // DenseNet-169
+//    int block_config[4] = {6, 12, 48, 32}; // DenseNet-201
+    int block_config[4] = {6, 12, 36, 24}; // DenseNet-161
+
     int bn_size = 4;
     float drop_rate = 0.5;
     int num_classes = 10;
@@ -21,7 +26,7 @@ int main(){
     DenseNet *densenet = malloc(sizeof(DenseNet));
     DenseNet_init(densenet, block_config, num_init_features, growth_rate, bn_size, drop_rate, num_classes);
 
-    for (int idx = 0; idx < 10; idx++) {
+    for (int idx = 0; idx < TEST_IMG; idx++) {
         cifar10_load(image_path, idx, 1, &cifar_image, &cifar_label);
 
         input_layer_load(&cifar_image, &input_layer);

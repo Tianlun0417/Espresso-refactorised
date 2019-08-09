@@ -35,7 +35,7 @@ void pool_layer_forward(FloatTensor *t, PoolLayer *pl) {
     const int Nd = PADDING_OUT_LEN(Ns, H, Sx) <= 0 ? 1 : PADDING_OUT_LEN(Ms, H, Sx);
 
     if (!pl->out.data) pl->out = tensor_init(D, Md, Nd, L);
-    printf("New pooling layer. Size: %d\n", pl->out.MNL*pl->out.D);
+    //printf("New pooling layer. Size: %d\n", pl->out.MNL*pl->out.D);
 
     if (pl->strategy == MAXPOOL)
         tensor_maxpool(t, &pl->out, W, H, Sx, Sy);

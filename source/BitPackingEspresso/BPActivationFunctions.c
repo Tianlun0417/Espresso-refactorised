@@ -1,5 +1,6 @@
 #include "BitPackingEspresso/BPActivationFunctions.h"
 
 
-void relu_forward(BPTensor *t) {
+void bp_relu_forward(BPTensor *t) {
+    exit(-1);
 }

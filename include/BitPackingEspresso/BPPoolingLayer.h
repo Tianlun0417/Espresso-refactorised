@@ -5,7 +5,7 @@
 #include "FloatTypeEspresso/Utilities.h"
 
 typedef enum {
-    MAXPOOL, AVGPOOL
+    BPMAXPOOL, BPAVGPOOL
 } BPPoolingStrategy;
 
 typedef struct {

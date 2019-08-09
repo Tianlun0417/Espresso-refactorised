@@ -1,7 +1,7 @@
 #include "BitPackingEspresso/BPConvolutionalLayer.h"
 #include <cblas.h>
 
-__uint32_t *scratch = NULL;
+__uint32_t *bp_scratch = NULL;
 
 void bp_conv_layer_init(BPConvLayer *conv_layer_ptr, int L, int D, int M, int N,
         int Stride_m, int Stride_n, int padding) {
@@ -34,7 +34,7 @@ BPTensor bp_conv_layer_pad_input(BPTensor *t, __uint32_t *scr,
     BPTensor tp;
     *M = PAD(*M, padding);
     *N = PAD(*N, padding);
-    if (!scratch) tp = bp_tensor_copy_pad(t, padding);
+    if (!bp_scratch) tp = bp_tensor_copy_pad(t, padding);
     else {
         const int D = t->D, L = t->L;
         tp = bp_tensor_from_ptr(D, *M, *N, L, scr);
@@ -63,7 +63,7 @@ void bp_conv_layer_forward(BPTensor *input_tensor, BPConvLayer *cl, int save) {
 //        printf("%u, ", input_tensor->data[i]);
 //    puts("");
 
-    __uint32_t *scr = scratch;
+    __uint32_t *scr = bp_scratch;
     BPTensor padded_input, tmp;
     int D = input_tensor->D, Ms = input_tensor->M, Ns = input_tensor->N, Ls = input_tensor->L;
     int F = cl->D, W = cl->M, H = cl->N, L = cl->L;
@@ -78,7 +78,7 @@ void bp_conv_layer_forward(BPTensor *input_tensor, BPConvLayer *cl, int save) {
     const int Nd = LOWER_OUT_LEN(Ns, W, Sx);
 
     const int Ld = W * H * L;
-    if (!scratch) tmp = bp_tensor_init(D, Md, Nd, Ld);
+    if (!bp_scratch) tmp = bp_tensor_init(D, Md, Nd, Ld);
     else tmp = bp_tensor_from_ptr(D, Md, Nd, Ld, scr);
 
     bp_tensor_lower(p ? &padded_input : input_tensor, &tmp, W, H, Sx, Sy);
@@ -99,9 +99,9 @@ void bp_conv_layer_forward(BPTensor *input_tensor, BPConvLayer *cl, int save) {
 //        printf("%u, ", cl->out.data[i]);
 //    puts("");
 
-    if (!scratch)
+    if (!bp_scratch)
         bp_tensor_free(&tmp);
-    if (!scratch && p)
+    if (!bp_scratch && p)
         bp_tensor_free(&padded_input);
 }
 

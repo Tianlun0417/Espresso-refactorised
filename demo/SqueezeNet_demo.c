@@ -3,8 +3,6 @@
 #include "DataLoader/Cifar10Loader.h"
 
 
-const char *image_path = "/home/tianlun/codes/espresso-refactorised/data/test_batch.bin";
-
 int main(){
     FloatTensor cifar_image = tensor_init(1, CIFAR_IMAGE_W, CIFAR_IMAGE_H, CIFAR_CHANNEL);
     FloatTensor cifar_label = tensor_init(1, 1, 1, 1);
@@ -13,7 +11,7 @@ int main(){
 
     int num_classes = 10;
     SqueezeNet *squeeze_net = malloc(sizeof(SqueezeNet));
-    SqueezeNet_init(squeeze_net, Version1_0, num_classes);
+    SqueezeNet_init(squeeze_net, Version1_1, num_classes);
 
     for (int idx = 0; idx < TEST_IMG; idx++) {
         cifar10_load(image_path, idx, 1, &cifar_image, &cifar_label);

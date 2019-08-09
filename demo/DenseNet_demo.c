@@ -3,8 +3,6 @@
 #include "DataLoader/Cifar10Loader.h"
 
 
-const char *image_path = "/home/tianlun/codes/espresso-refactorised/data/test_batch.bin";
-
 int main(){
     int growth_rate = 32;
     int num_init_features = 64;

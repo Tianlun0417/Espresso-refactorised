@@ -1,8 +1,6 @@
 #include "CNN/BPAlexNet.h"
 
 
-const char *image_path = "/home/tianlun/codes/espresso-refactorised/data/test_batch.bin";
-
 int main() {
     int num_classes = 10;
     __uint8_t *image = malloc(CIFAR_IMAGE_SIZE * sizeof(__uint8_t));

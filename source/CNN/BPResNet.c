@@ -121,8 +121,8 @@ void BPResNet_init(BPResNet *ResNetInstance, BPBlockType block_type, int *num_la
     bp_resnet_block_init(ResNetInstance->block4, ResNetInstance, 512, num_layers[3], 1);
 
     bp_conv_layer_init(ResNetInstance->conv1, 3, 64, 7, 7, 2, 2, 3);
-    bp_pool_layer_init(ResNetInstance->pool1, 3, 3, 2, 2, 0, MAXPOOL);
-    bp_pool_layer_init(ResNetInstance->pool2, 7, 7, 1, 1, 0, AVGPOOL);
+    bp_pool_layer_init(ResNetInstance->pool1, 3, 3, 2, 2, 0, BPMAXPOOL);
+    bp_pool_layer_init(ResNetInstance->pool2, 7, 7, 1, 1, 0, BPAVGPOOL);
     bp_bnorm_layer_init(ResNetInstance->bn1, 64);
     bp_dense_output_layer_init(ResNetInstance->fc, num_classes, 512 * (block_type == UseBasicBlock ? 1 : 4));
 

@@ -3,7 +3,6 @@
 #include "CNN/VGG.h"
 #include <stdbool.h>
 
-const char *image_path = "/home/tianlun/codes/espresso-refactorised/data/test_batch.bin";
 bool use_batch_norm = true;
 
 int main() {
@@ -13,7 +12,7 @@ int main() {
     InputLayer input_layer;
 
     VGG *vgg = malloc(sizeof(VGG));
-    VGG_init(vgg, ConfigD, 10, use_batch_norm);
+    VGG_init(vgg, ConfigE, 10, use_batch_norm);
 
     for (int idx = 0; idx < TEST_IMG; idx++){
         cifar10_load(image_path, idx, 1, &cifar_image, &cifar_label);

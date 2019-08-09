@@ -64,7 +64,7 @@ void bp_features_sequential_init(BPFeaturesSequential *features_ptr,
 
     for(int maxpool_idx = 0; maxpool_idx < 3; maxpool_idx++){
         features_ptr->maxpool_list[maxpool_idx] = malloc(sizeof(BPPoolLayer));
-        bp_pool_layer_init(features_ptr->maxpool_list[maxpool_idx], 3, 3, 2, 2, 0, MAXPOOL);
+        bp_pool_layer_init(features_ptr->maxpool_list[maxpool_idx], 3, 3, 2, 2, 0, BPMAXPOOL);
     }
 }
 
@@ -76,7 +76,7 @@ void bp_classifier_sequential_init(BPClassifierSequential *classifier_ptr,
     classifier_ptr->avgpool     = malloc(sizeof(BPPoolLayer));
 //    classifier_ptr->output      = malloc(sizeof(Tensor));
 
-    bp_pool_layer_init(classifier_ptr->avgpool, 13, 13, 1, 1, 0, AVGPOOL);
+    bp_pool_layer_init(classifier_ptr->avgpool, 13, 13, 1, 1, 0, BPAVGPOOL);
     bp_conv_layer_init(classifier_ptr->final_conv, 512, num_classes, 1, 1, 1, 1, 0);
     bp_dropout_layer_init(classifier_ptr->dropout, 0.5);
 

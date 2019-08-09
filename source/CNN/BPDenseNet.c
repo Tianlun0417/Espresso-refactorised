@@ -31,7 +31,7 @@ void bp_transition_init(BPTransition *transition, int num_input_faetures,
 
     bp_bnorm_layer_init(transition->bnorm, num_input_faetures);
     bp_conv_layer_init(transition->conv, num_input_faetures, num_output_faetures, 1, 1, 1, 1, 0);
-    bp_pool_layer_init(transition->pool, 2, 2, 2, 2, 0, AVGPOOL);
+    bp_pool_layer_init(transition->pool, 2, 2, 2, 2, 0, BPAVGPOOL);
 
     if (!LOAD_PRETRAINED_WEIGHT){
         bp_bnorm_layer_rand_weight(transition->bnorm);
@@ -81,7 +81,7 @@ void bp_densenet_features_init(BPDenseNetFeatures *features, const int *block_co
 
     bp_conv_layer_init(features->conv0, 3, num_init_features, 7, 7, 2, 2, 3);
     bp_bnorm_layer_init(features->bnorm0, num_init_features);
-    bp_pool_layer_init(features->pool0, 3, 3, 2, 2, 1, MAXPOOL);
+    bp_pool_layer_init(features->pool0, 3, 3, 2, 2, 1, BPMAXPOOL);
     bp_bnorm_layer_init(features->bnorm5, num_features);
 
     if (!LOAD_PRETRAINED_WEIGHT){
@@ -101,7 +101,7 @@ void BPDenseNet_init(BPDenseNet *densenet, const int *block_config, int num_init
     bp_densenet_features_init(densenet->features, block_config, num_init_features,
                            growth_rate, bn_size, drop_rate);
     bp_dense_output_layer_init(densenet->classifier, num_classes, densenet->features->num_features);
-    bp_pool_layer_init(densenet->avgpool, 7, 7, 1, 1, 0, AVGPOOL);
+    bp_pool_layer_init(densenet->avgpool, 7, 7, 1, 1, 0, BPAVGPOOL);
 
     if (!LOAD_PRETRAINED_WEIGHT)
         bp_dense_output_layer_rand_weight(densenet->classifier);

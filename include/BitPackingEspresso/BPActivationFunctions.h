@@ -4,6 +4,6 @@
 #include "BPTensor.h"
 
 
-void relu_forward(BPTensor *t);
+void bp_relu_forward(BPTensor *t);
 
 #endif //ESPRESSO_REFACTORISED_BPACTIVATIONFUNCTIONS_H

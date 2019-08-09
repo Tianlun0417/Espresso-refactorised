@@ -18,7 +18,7 @@ void bp_layers_config_init(BPVGGFeatures *features, size_t len, const int *confi
         int v = config[i];
         if (v == M) {
             features->maxpool_list[maxpool_idx] = malloc(sizeof(BPPoolLayer));
-            bp_pool_layer_init(features->maxpool_list[maxpool_idx], 2, 2, 2, 2, 0, MAXPOOL);
+            bp_pool_layer_init(features->maxpool_list[maxpool_idx], 2, 2, 2, 2, 0, BPMAXPOOL);
             maxpool_idx++;
         } else {
             features->conv_list[features->conv_count] = malloc(sizeof(BPConvLayer));

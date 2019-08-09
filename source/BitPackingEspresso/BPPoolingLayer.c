@@ -25,7 +25,7 @@ void bp_pool_layer_forward(BPTensor *t, BPPoolLayer *pl) {
 
     if (!pl->out.data) pl->out = bp_tensor_init(D, Md, Nd, L);
 
-    if (pl->strategy == MAXPOOL)
+    if (pl->strategy == BPMAXPOOL)
         bp_tensor_maxpool(t, &pl->out, W, H, Sx, Sy);
     else
         bp_tensor_avgpool(t, &pl->out, W, H, Sx, Sy);

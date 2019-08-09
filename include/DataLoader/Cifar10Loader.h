@@ -13,6 +13,8 @@
 #define CIFAR_IMAGE_SIZE CIFAR_IMAGE_W * CIFAR_IMAGE_H * CIFAR_CHANNEL
 #define TEST_IMG 1
 
+static const char *image_path = "/home/tianlun/codes/espresso-refactorised/data/test_batch.bin";
+
 void cifar10_load(const char *tf, int start, int num, FloatTensor *pixel, FloatTensor *label);
 void cifar10_load_int(const char *tf, int start, int num, __uint8_t *pixel, __uint8_t *label);
 

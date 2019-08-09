@@ -3,8 +3,8 @@
 #include "CNN/BPVGG.h"
 #include <stdbool.h>
 
-const char *image_path = "/home/tianlun/codes/espresso-refactorised/data/test_batch.bin";
 bool use_batch_norm = true;
+
 
 int main(){
     int num_classes = 10;

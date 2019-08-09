@@ -2,7 +2,7 @@
 #include "DataLoader/Cifar10Loader.h"
 
 
-const char *image_path = "/home/tianlun/codes/espresso-refactorised/data/test_batch.bin";
+
 
 int main() {
     FloatTensor cifar_image = tensor_init(1, CIFAR_IMAGE_W, CIFAR_IMAGE_H, CIFAR_CHANNEL);

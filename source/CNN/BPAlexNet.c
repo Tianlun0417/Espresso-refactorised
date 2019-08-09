@@ -24,9 +24,9 @@ void new_features(BPFeatures *features) {
     features->maxpool1 = malloc(sizeof(BPPoolLayer));
     features->maxpool2 = malloc(sizeof(BPPoolLayer));
     features->maxpool3 = malloc(sizeof(BPPoolLayer));
-    bp_pool_layer_init(features->maxpool1, 3, 3, 2, 2, 0, MAXPOOL);
-    bp_pool_layer_init(features->maxpool2, 3, 3, 2, 2, 0, MAXPOOL);
-    bp_pool_layer_init(features->maxpool3, 3, 3, 2, 2, 0, MAXPOOL);
+    bp_pool_layer_init(features->maxpool1, 3, 3, 2, 2, 0, BPMAXPOOL);
+    bp_pool_layer_init(features->maxpool2, 3, 3, 2, 2, 0, BPMAXPOOL);
+    bp_pool_layer_init(features->maxpool3, 3, 3, 2, 2, 0, BPMAXPOOL);
 }
 
 void new_classifier(BPClassifier *classifier, int num_classes) {

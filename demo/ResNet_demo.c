@@ -10,9 +10,9 @@ int main() {
 
     InputLayer input_layer;
 //    int blocks[4] = {2, 2, 2, 2}; // ResNet-18
-    int blocks[4] = {3, 4, 6, 3}; // ResNet-50
+    //int blocks[4] = {3, 4, 6, 3}; // ResNet-50
     //int blocks[4] = {3, 4, 23, 3}; // ResNet-101
-    //int blocks[4] = {3, 8, 36, 3}; // ResNet-152
+    int blocks[4] = {3, 8, 36, 3}; // ResNet-152
 
     ResNet *resnet = malloc(sizeof(ResNet));
     ResNet_init(resnet, UseBasicBlock, blocks, 10);

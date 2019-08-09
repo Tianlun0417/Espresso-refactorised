@@ -2,12 +2,14 @@
 
 
 void dense_layer_rand_weight(DenseLayer *den_layer) {
+    printf("Random init dense layer. Size: %d\n", den_layer->M * den_layer->N);
     den_layer->W.data = (float *) malloc(den_layer->M * den_layer->N * sizeof(float));
 
     random_init_arr(den_layer->W.data, den_layer->M * den_layer->N);
 }
 
 void bnorm_layer_rand_weight(BnormLayer *bnorm_layer) {
+    printf("Random init bnorm layer. Size: %d\n", bnorm_layer->N);
     bnorm_layer_free(bnorm_layer);
     bnorm_layer->mean.data  = malloc(bnorm_layer->N * sizeof(float));
     bnorm_layer->istd.data  = malloc(bnorm_layer->N * sizeof(float));
@@ -27,6 +29,7 @@ void conv_layer_rand_weight(ConvLayer *conv_layer) {
     // N - kernel width
 
     size_t tensor_size  = conv_layer->D * conv_layer->M * conv_layer->N * conv_layer->L;
+    printf("Random init conv layer. Size: %lu\n", tensor_size);
     conv_layer->W.data  = malloc(tensor_size * sizeof(float));
     conv_layer->W.D     = conv_layer->D;
     conv_layer->W.M     = conv_layer->M;

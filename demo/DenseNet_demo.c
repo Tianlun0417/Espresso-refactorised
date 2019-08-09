@@ -11,8 +11,8 @@ int main(){
 
 //    int block_config[4] = {6, 12, 24, 16}; // DenseNet-121
 //    int block_config[4] = {6, 12, 32, 32}; // DenseNet-169
-//    int block_config[4] = {6, 12, 48, 32}; // DenseNet-201
-    int block_config[4] = {6, 12, 36, 24}; // DenseNet-161
+    int block_config[4] = {6, 12, 48, 32}; // DenseNet-201
+    //int block_config[4] = {6, 12, 36, 24}; // DenseNet-161
 
     int bn_size = 4;
     float drop_rate = 0.5;
@@ -42,5 +42,6 @@ int main(){
     DenseNet_free(densenet);
     free(densenet);
 
+    printf("Size of float is: %lu", sizeof(float));
     return 0;
 }
